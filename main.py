@@ -60,10 +60,13 @@ def define_env(env):
     def terminal2(tc) -> str:
         return f"<div onclick='start_term(\"id{tc}\")' id=\"fake_id{tc}\" class=\"terminal_f\"><label class=\"terminal\"><span>>>> </span></label></div><div id=\"id{tc}\" class=\"hide\"></div>"
 
+    env.variables['REPL_counter'] = 0
     @env.macro
     def REPL(nom_script='',prem = 0) -> str:
+        tc = env.variables['REPL_counter']
+        env.variables['REPL_counter'] += 1
         print('pif', nom_script, os.path.dirname(env.variables.page.url))
-        if len(nom_script) > 0: chemin = f'docs/scripts/{nom_script}.py'
-        else : chemin = ''
-        return f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_1">{chemin}</div></div>\
-        <div id="term_editor_1" class="term_editor"></div></div><button onclick=\'interpretACE("editor_1")\' style="font-size:2em">⚙️</button>'
+        if len(nom_script) > 0: div_edit = f'<div id="editor_1">docs/scripts/{nom_script}.py</div>'
+        else : div_edit = f'<div id="editor_{tc}"></div>'
+        return f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\
+        <div id="term_editor_{tc}" class="term_editor"></div></div><button onclick=\'interpretACE("editor_{tc}")\' style="font-size:2em">⚙️</button>'

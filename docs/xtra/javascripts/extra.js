@@ -167,7 +167,6 @@ async function interpretACE(id_editor) {
 
 async function loadFile(id_editor, url) {
     const response = await fetch(url)  // or FETCH ??
-    console.log(response, script)
     const script = await response.text()
     var editor = ace.edit(id_editor)
     editor.getSession().setValue(script);
@@ -185,7 +184,9 @@ $(document).ready(function() {
         let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
         let id_editor = "editor_" + number
         createACE(id_editor)                // Creating Ace Editor #id_editor
-        if (url_pyfile !== '') { loadFile('editor_' + number, url_pyfile)
+        if (url_pyfile !== '') { 
+            console.log(url_pyfile, 'je suis ici')
+            loadFile('editor_' + number, url_pyfile)
         } else {
             let editor = ace.edit(id_editor)
             editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
