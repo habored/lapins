@@ -65,5 +65,5 @@ def define_env(env):
         print('pif', nom_script, os.path.dirname(env.variables.page.url))
         if len(nom_script) > 0: chemin = f'docs/scripts/{nom_script}.py'
         else : chemin = ''
-        return f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_1">chemin</div></div>\
+        return f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_1">{chemin}</div></div>\
         <div id="term_editor_1" class="term_editor"></div></div><button onclick=\'interpretACE("editor_1")\' style="font-size:2em">⚙️</button>'
