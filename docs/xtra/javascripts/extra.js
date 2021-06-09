@@ -191,9 +191,9 @@ $(document).ready(function() {
         //     console.log(data);//$( ".result" ).html( data );
         //   }, 'text'))
         var editor = ace.edit(id_editor)
-        
+
         if (url_pyfile !== '') { 
-            $.get(url_pyfile, function( data ) {
+            $.get("https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/scripts/exo1.py", function( data ) {
                 editor.getSession().setValue(data);
               }, 'text'); }
         else {
