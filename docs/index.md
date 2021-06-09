@@ -10,7 +10,7 @@
 <button onclick='interpretACE("editor_1")' style='font-size:2em'>⚙️</button> -->
 
 {{ REPL() }}
-{{ REPL(exo1) }}
+{{ REPL('exo1') }}
 
 <!--
 <div class="wrapper">
