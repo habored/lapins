@@ -64,10 +64,8 @@ def define_env(env):
     env.variables['REPL_counter'] = 0
     @env.macro
     def REPL(nom_script='',prem = 0) -> str:
-        print(f'{env.variables.site_url}{env.variables.page.url}../{nom_script}')
         tc = env.variables['REPL_counter']
         env.variables['REPL_counter'] += 1
-        print('pif', nom_script, os.path.dirname(env.variables.page.url))
         if len(nom_script) > 0: div_edit = f"""<div id="editor_{tc}">docs/{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom_script}.py</div>"""
         else : div_edit = f'<div id="editor_{tc}"></div>'
         return f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\

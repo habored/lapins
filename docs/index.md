@@ -11,8 +11,8 @@
 
 {{py('exo1')}}
 
-{{ REPL() }}
-{{ REPL('exo1') }}
+{{REPL()}}
+{{REPL('exo1')}}
 
 
 <!--
