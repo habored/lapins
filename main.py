@@ -27,6 +27,7 @@ def define_env(env):
         return f"""```{lang}
 --8<---  "docs/""" + os.path.dirname(env.variables.page.url.rstrip('/')) + f"""/{nom}"
 ```"""
+    # f"docs/{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom}.py"
 
     @env.macro
     def py(nom: str) -> str:
@@ -67,7 +68,7 @@ def define_env(env):
         tc = env.variables['REPL_counter']
         env.variables['REPL_counter'] += 1
         print('pif', nom_script, os.path.dirname(env.variables.page.url))
-        if len(nom_script) > 0: div_edit = f'<div id="editor_{tc}">./scripts/{nom_script}.py</div>'
+        if len(nom_script) > 0: div_edit = f"""<div id="editor_{tc}">docs/{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom_script}.py</div>"""
         else : div_edit = f'<div id="editor_{tc}"></div>'
         return f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\
         <div id="term_editor_{tc}" class="term_editor"></div></div><button onclick=\'interpretACE("editor_{tc}")\' style="font-size:2em">⚙️</button>'
