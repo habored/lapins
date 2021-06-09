@@ -50,14 +50,10 @@ async function interpreter(command) {  /// reads the commands
     try {
     term.pause();
     // multiline should be splitted (useful when pasting)
-    console.log(command)
     for( const c of command.split('\n') ) {
         let run_complete = pyconsole.run_complete;   // trying to run the commands
-        console.log('159', run_complete)
         try {
-            console.log('135 line:',c)
             const incomplete = pyconsole.push(c);    // wait for completion of a Python command
-            console.log('136 incomplete:',incomplete)
             term.set_prompt(incomplete ? ps2 : ps1); // set the prompt line
             let r = await run_complete;
             if(pyodide.isPyProxy(r)){
@@ -127,9 +123,6 @@ function createACE(id_editor){
 async function evaluatePythonFromACE(code, id_editor) {
     await pyodideReadyPromise;
 
-    // TODO WARNING : only the active terminal is getting the output
-    // This is problematic when you have a REPL and multiple terminals on a page.
-    // Not a problem with the current workaround.
     $.terminal.active().clear();   
     pyodide.runPython(`
       import sys as __sys__
@@ -160,46 +153,38 @@ async function evaluatePythonFromACE(code, id_editor) {
   }
 
 async function interpretACE(id_editor) {
-  var editor = ace.edit(id_editor)
-  let stream = await editor.getSession().getValue()
-  evaluatePythonFromACE(stream, id_editor)
+    $('#term_'+id_editor).terminal().focus(true)   // gives the focus to the corresponding terminal
+    var editor = ace.edit(id_editor)
+    let stream = await editor.getSession().getValue()
+    evaluatePythonFromACE(stream, id_editor)
 }
 
-async function loadFile(id_editor, url) {
-    const response = await fetch(url)  // or FETCH ??
-    const script = await response.text()
-    var editor = ace.edit(id_editor)
-    editor.getSession().setValue(script);
-}
 
 function start_term(nom_id) {
     document.getElementById(nom_id).className = "terminal terminal_f";
     document.getElementById('fake_'+nom_id).className = "hide";
     window.console_ready = pyterm('#'+nom_id);
     }
-
+    
 $(document).ready(function() {
+    // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
+    // $('[id^=cons_]').each(function() {
+    //     let number = this.id.split('_').pop();
+    //     window.console_ready = pyterm('#cons_'+number);
+    // });
+
     $('[id^=editor_]').each(function() {
         let number = this.id.split('_').pop();
         let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
         let id_editor = "editor_" + number
-        // console.log('186', url_pyfile)
-        createACE(id_editor)            // Creating Ace Editor #id_editor
-        // $('#'+id_editor).load('exo1.py')   // looks ideal instead of LOADFILE // Doesn't work
-        // console.log($('#'+id_editor).text())
-        // console.log('190',$.get('exo1.py', function( data ) {
-        //     console.log(data);//$( ".result" ).html( data );
-        //   }, 'text'))
-        
-        // if (url_pyfile !== '') { 
-            // $.get(url_pyfile, function( data ) {
-            //     editor.getSession().setValue(data);
-            //   }, 'text'); }
-        // else {
+
+        createACE(id_editor)                  // Creating Ace Editor #id_editor
+
         if (url_pyfile === '') { 
             let editor = ace.edit(id_editor)
             editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
         }
         window.console_ready = pyterm('#term_editor_'+number);
     });
+    //  $('#term_editor_0').terminal().focus(true)
 });

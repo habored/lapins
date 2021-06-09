@@ -9,6 +9,12 @@
   border-radius: 6px;
   border-color: rgba(87,147,240);
   display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto;
+}
+
+.wrapper > * {
+  flex: 1 1 300px;
 }
 
 .interior_wrapper {

@@ -1,34 +1,15 @@
 # : Terminal et REPL dans Mkdocs
 
 ## Introduction
-<!-- <div class="wrapper">
-<div class="interior_wrapper">
-<div id="editor_1">docs/scripts/exo1.py</div> 
-</div>
-<div id="term_editor_1" class="term_editor"></div>
-</div>
-<button onclick='interpretACE("editor_1")' style='font-size:2em'>⚙️</button> -->
 
 {{py('exo1')}}
 
 {{REPL()}}
 {{REPL('exo1')}}
 
-
-<!--
-<div class="wrapper">
-<div class="interior_wrapper">
-<div id="editor_2"></div>
-</div>
-<div id="term_editor_2" class="term_editor"></div>
-</div>
-<button onclick='interpretACE("editor_2")'>⚙️</button> -->
-
-<!-- {{REPL}} -->
-
 {{terminal()}}
 
-{{terminal2(7)}}
+
 
 !!! {{exercice()}}
 
