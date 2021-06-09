@@ -193,7 +193,7 @@ $(document).ready(function() {
         var editor = ace.edit(id_editor)
 
         if (url_pyfile !== '') { 
-            $.get("https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/scripts/exo1.py", function( data ) {
+            $.get("https://bouillotvincent.gitlab.io/pyodide-mkdocs/-/raw/main/docs/scripts/exo1.py", function( data ) {
                 editor.getSession().setValue(data);
               }, 'text'); }
         else {
