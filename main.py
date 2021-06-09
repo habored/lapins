@@ -66,8 +66,12 @@ def define_env(env):
     def REPL(nom_script='',prem = 0) -> str:
         tc = env.variables['REPL_counter']
         env.variables['REPL_counter'] += 1
-        print(env.variables)
-        if len(nom_script) > 0: div_edit = f"""<div id="editor_{tc}">{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom_script}.py</div>"""
+        # print(env.variables)
+        
+        #if len(nom_script) > 0: div_edit = f"""<div id="editor_{tc}">{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom_script}.py</div>"""
+        if len(nom_script) > 0: 
+            content = ''.join(open(f"scripts/{nom_script}.py").readlines())
+            div_edit = f"""<div id="editor_{tc}">{content}</div>"""        
         else : div_edit = f'<div id="editor_{tc}"></div>'
         return f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\
         <div id="term_editor_{tc}" class="term_editor"></div></div><button onclick=\'interpretACE("editor_{tc}")\' style="font-size:2em">⚙️</button>'

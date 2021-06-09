@@ -183,20 +183,21 @@ $(document).ready(function() {
         let number = this.id.split('_').pop();
         let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
         let id_editor = "editor_" + number
-        console.log('186', url_pyfile)
+        // console.log('186', url_pyfile)
         createACE(id_editor)            // Creating Ace Editor #id_editor
         // $('#'+id_editor).load('exo1.py')   // looks ideal instead of LOADFILE // Doesn't work
         // console.log($('#'+id_editor).text())
         // console.log('190',$.get('exo1.py', function( data ) {
         //     console.log(data);//$( ".result" ).html( data );
         //   }, 'text'))
-        var editor = ace.edit(id_editor)
-
-        if (url_pyfile !== '') { 
-            $.get("https://gl.githack.com/bouillotvincent/pyodide-mkdocs/raw/main/scripts/exo1.py", function( data ) {
-                editor.getSession().setValue(data);
-              }, 'text'); }
-        else {
+        
+        // if (url_pyfile !== '') { 
+            // $.get(url_pyfile, function( data ) {
+            //     editor.getSession().setValue(data);
+            //   }, 'text'); }
+        // else {
+        if (url_pyfile === '') { 
+            let editor = ace.edit(id_editor)
             editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
         }
         window.console_ready = pyterm('#term_editor_'+number);
