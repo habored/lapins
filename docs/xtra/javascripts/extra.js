@@ -184,12 +184,11 @@ $(document).ready(function() {
         let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
         let id_editor = "editor_" + number
 
-        $(id_editor).load(url_pyfile)   // looks ideal instead of LOADFILE
-
         createACE(id_editor)                // Creating Ace Editor #id_editor
         if (url_pyfile !== '') { 
             console.log(url_pyfile, 'je suis ici')
-            loadFile('editor_' + number, url_pyfile)
+            $(id_editor).load(url_pyfile)   // looks ideal instead of LOADFILE
+            // loadFile('editor_' + number, url_pyfile)
         } else {
             let editor = ace.edit(id_editor)
             editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
