@@ -187,10 +187,7 @@ $(document).ready(function() {
         $(id_editor).load(url_pyfile)   // looks ideal instead of LOADFILE
 
         createACE(id_editor)                // Creating Ace Editor #id_editor
-        if (url_pyfile !== '') { 
-            console.log(url_pyfile, 'je suis ici')
-            // loadFile('editor_' + number, url_pyfile)
-        } else {
+        if (url_pyfile === '') { 
             let editor = ace.edit(id_editor)
             editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
         }

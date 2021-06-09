@@ -9,8 +9,11 @@
 </div>
 <button onclick='interpretACE("editor_1")' style='font-size:2em'>⚙️</button> -->
 
+{{py('exo1')}}
+
 {{ REPL() }}
 {{ REPL('exo1') }}
+
 
 <!--
 <div class="wrapper">
@@ -104,10 +107,15 @@ Pour afficher des touches, on fait `++ctrl++`+`++alt++`.
 
 ## Inclure un fichier Python
 
-!!! info "Fichier Python `docs/exo1.py`"
+!!! info "Fichier Python `docs/scripts/exo1.py`"
     ```python
-    --8<--- "docs/exo1.py"
+    --8<--- "docs/scripts/exo1.py"
     ```
+
+ou même !
+
+!!! info "Fichier Python `docs/scripts/exo1.py`"
+
 
 `Un blabla introductif:`
 :   et voilà la définition
