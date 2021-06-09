@@ -183,6 +183,9 @@ $(document).ready(function() {
         let number = this.id.split('_').pop();
         let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
         let id_editor = "editor_" + number
+
+        $(id_editor).load(url_pyfile)   // looks ideal instead of LOADFILE
+
         createACE(id_editor)                // Creating Ace Editor #id_editor
         if (url_pyfile !== '') { 
             console.log(url_pyfile, 'je suis ici')
