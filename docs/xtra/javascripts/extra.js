@@ -184,7 +184,7 @@ $(document).ready(function() {
         let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
         let id_editor = "editor_" + number
         console.log('186', url_pyfile)
-        $(id_editor).load(url_pyfile)   // looks ideal instead of LOADFILE
+        $(id_editor).load("docs/scripts/exo1.py")   // looks ideal instead of LOADFILE
 
         createACE(id_editor)                // Creating Ace Editor #id_editor
         if (url_pyfile === '') { 
