@@ -8,7 +8,7 @@ async function main() {
 
 let pyodideReadyPromise = main();
 
-async function pyterm(id) {
+async function pyterm(id, height) {
 await pyodideReadyPromise;
 let namespace = pyodide.globals.get("dict")();
 
@@ -74,14 +74,13 @@ async function interpreter(command) {  /// reads the commands
     }
 }
 
-
 let term = $(id).terminal(   // creates terminal
     interpreter,      // how to read the input
     {
     greetings: '',    // pyconsole.banner(),
     prompt: ps1,
     completionEscape: false,
-    height: 200,
+    height: height,  // if not specified, css says 200
     completion: function(command, callback) {     // autocompletion
         callback(pyconsole.complete(command).toJs()[0]);
     }
@@ -109,17 +108,6 @@ pyodide._module.on_fatal = async (e) => {
 }
 
 
-function createACE(id_editor){
-    var editor = ace.edit(id_editor, {
-        theme: "ace/theme/tomorrow_night_bright",
-        mode: "ace/mode/python",
-        autoScrollEditorIntoView: true,
-        maxLines: 30,
-        minLines: 6,
-        tabSize: 4
-    });
-}
-
 async function evaluatePythonFromACE(code, id_editor) {
     await pyodideReadyPromise;
 
@@ -144,8 +132,8 @@ async function evaluatePythonFromACE(code, id_editor) {
     $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
 
     try {
-      let output = await pyodide.runPythonAsync(code);    // Running the code OUTPUT ????
-      var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Redirecting the output
+      let output = await pyodide.runPythonAsync(code);    // Running the code OUTPUT
+      var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
       $.terminal.active().echo(">>> Script exécuté !\n"+stdout); 
     } catch(err) {
       $.terminal.active().echo(">>> Script exécuté !\n"+err);
@@ -153,10 +141,11 @@ async function evaluatePythonFromACE(code, id_editor) {
   }
 
 async function interpretACE(id_editor) {
-    $('#term_'+id_editor).terminal().focus(true)   // gives the focus to the corresponding terminal
-    var editor = ace.edit(id_editor)
-    let stream = await editor.getSession().getValue()
-    evaluatePythonFromACE(stream, id_editor)
+    window.console_ready = await pyterm('#term_'+id_editor, 150);
+    $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
+    var editor = ace.edit(id_editor);
+    let stream = await editor.getSession().getValue();
+    evaluatePythonFromACE(stream, id_editor);
 }
 
 
@@ -165,26 +154,40 @@ function start_term(nom_id) {
     document.getElementById('fake_'+nom_id).className = "hide";
     window.console_ready = pyterm('#'+nom_id);
     }
-    
-$(document).ready(function() {
+
+// $(document).ready(function() {
     // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
     // $('[id^=cons_]').each(function() {
     //     let number = this.id.split('_').pop();
     //     window.console_ready = pyterm('#cons_'+number);
     // });
+// $('[id^=editor_]').each(function() {
+//     let number = this.id.split('_').pop();
+//     let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
+//     let id_editor = "editor_" + number
+//     function createACE(id_editor){
+//         var editor = ace.edit(id_editor, {
+//             theme: "ace/theme/tomorrow_night_bright",
+//             mode: "ace/mode/python",
+//             autoScrollEditorIntoView: true,
+//             maxLines: 30,
+//             minLines: 6,
+//             tabSize: 4,
+//             printMargin: false   // hide ugly margins...
+//         });
+//     }
+//     console.log(180, number)
+//     window.REPL_ready=createACE(id_editor)                  // Creating Ace Editor #id_editor
 
-    $('[id^=editor_]').each(function() {
-        let number = this.id.split('_').pop();
-        let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
-        let id_editor = "editor_" + number
+//     if (url_pyfile === '') { 
+//         let editor = ace.edit(id_editor)
+//         editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
+//     }});
+// });
+// window.console_ready = pyterm('#term_editor_0', 150);
+// window.console_ready = pyterm('#term_editor_1', 150);
+// window.console_ready = pyterm('#term_editor_2', 150);
 
-        createACE(id_editor)                  // Creating Ace Editor #id_editor
+// if ($('#term_editor_0').length) {$('#term_editor_0').terminal().focus(true)}
 
-        if (url_pyfile === '') { 
-            let editor = ace.edit(id_editor)
-            editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
-        }
-        window.console_ready = pyterm('#term_editor_'+number);
-    });
-    //  $('#term_editor_0').terminal().focus(true)
-});
+// });

@@ -4,8 +4,6 @@
 
 {{terminal()}}
 
-{{terminal2(7)}}
-
 !!! {{exercice()}}
 
     === "Énoncé"

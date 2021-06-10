@@ -4,8 +4,12 @@
 
 {{py('exo1')}}
 
+{{REPLh()}}
+
 {{REPL()}}
-{{REPL('exo1')}}
+{{REPLh('exo1',1)}}
+
+
 
 {{terminal()}}
 
@@ -116,5 +120,5 @@ Elle renvoie un booléen avec le mot clé `return`
 
 Let's try some Maths : 
 
-$$\int_0^t x^2 dx$$
+$$\int_0^t x^2 \text{d}x$$
 
