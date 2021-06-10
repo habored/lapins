@@ -60,7 +60,7 @@ def define_env(env):
 
     env.variables['REPL_counter'] = 0
     @env.macro
-    def REPL(nom_script='',last = -1) -> str:
+    def REPL(nom_script='',last = 0) -> str:
         tc = env.variables['REPL_counter']
         if len(nom_script) > 0: 
             f = open(f"scripts/{nom_script}.py")
@@ -72,9 +72,9 @@ def define_env(env):
         div_edit = f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\
         <div id="term_editor_{tc}" class="term_editor"></div></div><button onclick=\'interpretACE("editor_{tc}")\' style="font-size:2em">⚙️</button>'
         return f"""{div_edit}<script src="xtra/javascripts/repl.js"></script> """ if last==-1 else div_edit
-        
+
     @env.macro
-    def REPLh(nom_script='', last = -1) -> str:
+    def REPLh(nom_script='', last = 0) -> str:
         tc = env.variables['REPL_counter']
         if len(nom_script) > 0: 
             f = open(f"scripts/{nom_script}.py")
