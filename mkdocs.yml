@@ -8,9 +8,10 @@ copyright: |
 docs_dir: docs
 
 nav:
-  - "Terminal et REPL dans MkDocs": index.md
-  - "Installation du terminal 🐍": install_term.md
-  - "Installation du REPL 🐍": install_repl.md
+  - "Terminal ▶️ et REPL 🖥 dans MkDocs": index.md
+  - "Guide du Terminal 🐍": install_term.md
+  - "Guide du REPL 🐍" : install_repl.md
+  - "En développement 🧪": todo.md
 
 
 theme:
@@ -111,7 +112,6 @@ extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   - xtra/javascripts/extra.js
-  # - xtra/javascripts/repl.js
 # - https://unpkg.com/mermaid@8.9.2/dist/mermaid.min.js
 # - javascripts/mermaid.js
 

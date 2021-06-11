@@ -60,10 +60,10 @@ def define_env(env):
 
     env.variables['REPL_counter'] = 0
     @env.macro
-    def REPL(nom_script='',last = 0) -> str:
+    def REPLv(nom_script='',last = 0) -> str:
         tc = env.variables['REPL_counter']
         if len(nom_script) > 0: 
-            f = open(f"scripts/{nom_script}.py")
+            f = open(f"""docs/{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom_script}.py""")
             content = ''.join(f.readlines())
             f.close()
             div_edit = f"""<div id="editor_{tc}">{content}</div>"""        
@@ -74,10 +74,10 @@ def define_env(env):
         return f"""{div_edit}<script src="xtra/javascripts/repl.js"></script> """ if last==-1 else div_edit
 
     @env.macro
-    def REPLh(nom_script='', last = 0) -> str:
+    def REPL(nom_script='', last = 0) -> str:
         tc = env.variables['REPL_counter']
         if len(nom_script) > 0: 
-            f = open(f"scripts/{nom_script}.py")
+            f = open(f"""docs/{os.path.dirname(env.variables.page.url.rstrip('/'))}/scripts/{nom_script}.py""")
             content = ''.join(f.readlines())
             f.close()
             div_edit = f"""<div class="line" id="editor_{tc}">{content}</div>"""        

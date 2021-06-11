@@ -1,18 +1,109 @@
-# : Terminal et REPL dans Mkdocs
+# Terminal et REPL dans Mkdocs
 
 ## Introduction
 
-{{py('exo1')}}
+Afin d'écrire un cours interactif utilisant sur Mkdocs, le besoin s'est fait sentir de pouvoir  écrire directement des scripts en ligne :
 
-{{REPLh()}}
+- dans le navigateur
+- sans iframe
+- sans cookie
+- sans inscription
 
-{{REPL()}}
+!!! info "Solution"
+    La solution existe et s'appelle [Pyodide](https://pyodide.org/en/stable/ "Pyodide, Python with the scientific stack, compiled to WebAssembly"). 
+    
+    Pyodide utilise WebAssembly pour faire le lien entre Python et Javascript et proposer un environnement permettant de manipuler le DOM avec Python, ou de manipuler Python avec Javascript.
 
-{{REPLh('exo1',-1)}}
+??? warning "Un hic"
+    La documentation quasi-absente ou réservée aux experts du projet Pyodide...
 
 
 
-{{terminal()}}
+## Prise en main
+
+Je vous propose ici des commandes Markdown permettant de créer un terminal ainsi qu'un REPL grâce au **plugin macro**.
+
+### Balises
+
+Vite vite ! Le résultat, histoire d'appâter le chaland.
+
+!!! summary "Les commandes"
+
+    === "Terminal"
+        ```markdown
+        {% raw %}
+        {{ terminal() }}
+        {% endraw %}
+        ```
+        Cette commande crée un terminal vide. L'auto-complétion avec ++tab++ et le rappel de l'historique (avec ++ctrl++ + ++"R"++ ) sont possibles.
+
+        {{ terminal () }}
+
+    === "REPL vide"
+        ```markdown
+        {% raw %}
+        {{ REPL() }}
+        {% endraw %}
+        ```
+        Cette commande crée un REPL (~ Thonny) vide. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion avec ++tab++.
+
+        {{REPL()}}
+
+    === "REPL vertical"
+        ```markdown
+        {% raw %}
+        {{ REPLv() }}
+        {% endraw %}
+        ```
+        Cette commande crée un REPL vide, avec division verticale. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion avec ++tab++.
+
+        {{REPLv()}}
+
+    === "REPL avec code"
+        ```markdown
+        {% raw %}
+        {{ REPL('nom_de_fichier') }}
+        {% endraw %}
+        ```
+        Cette commande charge le fichier `nom_de_fichier.py` dans un REPL. Le fichier doit être dans `docs/scripts/`. Ne pas oublier les guillemets.
+
+    === "REPL vertical avec code"
+        ```markdown
+        {% raw %}
+        {{ REPLv('nom_de_fichier') }}
+        {% endraw %}
+        ```
+        Cette commande charge le fichier `nom_de_fichier` dans un REPL avec division verticale. Le fichier doit être dans `docs/scripts/`.        
+
+??? warning "Détails techniques"
+
+    Tous les REPL et les terminaux partagent le même namespace. On peut donc accéder à n'importe quelle fonction créée dans n'importe quel REPL ou terminal. 
+    
+    **C'est un comportement voulu que l'on pourra discuter.**
+
+!!! danger "Très très important"
+
+    Pour que les REPL fonctionnent, il faut absolument indiquer `{% raw %} {{ REPL('nom_de_fichier', -1) }} {% endraw %}` sur le dernier REPL de la page. 
+    
+    **Notez le -1. Si vous souhaitez un REPL vide, utilisez `{% raw %} {{ REPL('', -1) }} {% endraw %}`**.
+
+    Cette solution _temporaire_ permet de générer la balise `#!html <script>` permettant le chargement des REPL.
+
+### Exemples
+
+L'exemple ci-dessous, obtenu avec `#!markdown {% raw %} {{ REPLv('exo2') }} {% endraw %}`. N'hésitez pas à modifier le code pour calculer la moyenne, l'écart-type, afficher cela dans le terminal etc.
+
+{{REPLv('exo2')}}
+
+L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ REPL('algo_glouton', -1) }} {% endraw %}`. C'est en effet le dernier REPL de la page.
+
+{{REPL('algo_glouton', -1)}}
+
+
+## Installation
+
+
+
 
 
 
