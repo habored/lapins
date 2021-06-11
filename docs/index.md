@@ -35,7 +35,7 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
         {{ terminal() }}
         {% endraw %}
         ```
-        Cette commande crée un terminal vide. L'auto-complétion avec ++tab++ et le rappel de l'historique (avec ++ctrl++ + ++"R"++ ) sont possibles.
+        Cette commande crée un terminal vide. L'auto-complétion avec ++tab++ et le rappel de l'historique (avec ++ctrl+"R"++ ) sont possibles.
 
         {{ terminal () }}
 
@@ -102,6 +102,15 @@ L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ REPL('algo_glo
 
 ## Installation
 
+L'installation demande d'ajouter :
+
+- un dossier `custom_dir` de Mkdocs `#!bash my_theme_customizations/` ;
+- un template HTML `#!bash my_theme_customizations/main.html` ;
+- un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
+- deux fichiers Javascript `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
+- des macros Python.
+
+### Fichier YML
 
 
 

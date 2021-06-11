@@ -108,7 +108,7 @@ pyodide._module.on_fatal = async (e) => {
 }
 
 
-async function evaluatePythonFromACE(code, id_editor) {
+async function evaluatePythonFromACE(code, id_editor, mode) {
     await pyodideReadyPromise;
 
     $.terminal.active().clear();   
@@ -129,7 +129,9 @@ async function evaluatePythonFromACE(code, id_editor) {
     // console.log(pyodide.globals.dict())
 
     // resize terminal to the size of editor on interpreting
-    $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+    if (mode === "vert") {
+        $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+    }
 
     try {
       let output = await pyodide.runPythonAsync(code);    // Running the code OUTPUT
@@ -140,12 +142,12 @@ async function evaluatePythonFromACE(code, id_editor) {
     }
   }
 
-async function interpretACE(id_editor) {
+async function interpretACE(id_editor, mode) {
     window.console_ready = await pyterm('#term_'+id_editor, 150);
     $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
     var editor = ace.edit(id_editor);
     let stream = await editor.getSession().getValue();
-    evaluatePythonFromACE(stream, id_editor);
+    evaluatePythonFromACE(stream, id_editor, mode);
 }
 
 

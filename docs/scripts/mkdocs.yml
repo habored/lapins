@@ -1,18 +1,6 @@
 site_name: "Terminal et REPL dans Mkdocs"
-site_url: https://bouillotvincent.gitlab.io/pyodide-mkdocs
-repo_url: https://gitlab.com/bouillotvincent/pyodide-mkdocs
-edit_uri: tree/main/docs/
-site_description: Tutoriel pour un REPL et un Terminal dans MkDocs Material 
-copyright: |
-  Copyleft &#127279 2021 <a href="https://bouillotvincent.gitlab.io/tests-avec-mkdocs/" target="_blank" rel="noopener">Vincent BOUILLOT</a>
-docs_dir: docs
 
-nav:
-  - "Terminal ▶️ et REPL 🖥 dans MkDocs": index.md
-  - "Guide du Terminal 🐍": install_term.md
-  - "Guide du REPL 🐍" : install_repl.md
-  - "En développement 🧪": todo.md
-
+...
 
 theme:
     name: material
@@ -111,7 +99,7 @@ extra_javascript:
   - javascripts/config.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
-  - xtra/javascripts/interpreter.js
+  - xtra/javascripts/extra.js
 # - https://unpkg.com/mermaid@8.9.2/dist/mermaid.min.js
 # - javascripts/mermaid.js
 

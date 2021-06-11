@@ -70,7 +70,7 @@ def define_env(env):
         else : div_edit = f'<div id="editor_{tc}"></div>'
         env.variables['REPL_counter'] += 1
         div_edit = f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\
-        <div id="term_editor_{tc}" class="term_editor"></div></div><button onclick=\'interpretACE("editor_{tc}")\' style="font-size:2em">⚙️</button>'
+        <div id="term_editor_{tc}" class="term_editor"></div></div><button onclick=\'interpretACE("editor_{tc}","vert")\' style="font-size:2em">⚙️</button>'
         return f"""{div_edit}<script src="xtra/javascripts/repl.js"></script> """ if last==-1 else div_edit
 
     @env.macro
@@ -83,5 +83,5 @@ def define_env(env):
             div_edit = f"""<div class="line" id="editor_{tc}">{content}</div>"""        
         else : div_edit = f'<div class="line" id="editor_{tc}"></div>'
         env.variables['REPL_counter'] += 1
-        div_edit = f'<div class="wrapper_h">{div_edit}<div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div><button onclick=\'interpretACE("editor_{tc}")\' style="font-size:2em">⚙️</button>' 
+        div_edit = f'<div class="wrapper_h">{div_edit}<div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div><button onclick=\'interpretACE("editor_{tc}","hori")\' style="font-size:2em">⚙️</button>' 
         return f"""{div_edit}<script src="xtra/javascripts/repl.js"></script> """ if last==-1 else div_edit
