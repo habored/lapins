@@ -10,7 +10,7 @@ Afin d'écrire un cours interactif utilisant sur Mkdocs, le besoin s'est fait se
 - sans inscription
 
 !!! info "Solution"
-    La solution existe et s'appelle [Pyodide](https://pyodide.org/en/stable/ "Pyodide, Python with the scientific stack, compiled to WebAssembly"). 
+    La solution existe et s'appelle [Pyodide](https://pyodide.org/en/stable/ "Pyodide, Python with the scientific stack, compiled to WebAssembly").
     
     Pyodide utilise WebAssembly pour faire le lien entre Python et Javascript et proposer un environnement permettant de manipuler le DOM avec Python, ou de manipuler Python avec Javascript.
 
@@ -18,16 +18,15 @@ Afin d'écrire un cours interactif utilisant sur Mkdocs, le besoin s'est fait se
     La documentation quasi-absente ou réservée aux experts du projet Pyodide...
 
 
-
 ## Prise en main
 
 Je vous propose ici des commandes Markdown permettant de créer un terminal ainsi qu'un REPL grâce au **plugin macro**.
 
-### Balises
+### Syntaxe Markdown
 
 Vite vite ! Le résultat, histoire d'appâter le chaland.
 
-!!! summary "Les commandes"
+!!! summary "La syntaxe"
 
     === "Terminal"
         ```markdown
@@ -102,124 +101,54 @@ L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ REPL('algo_glo
 
 ## Installation
 
-L'installation demande d'ajouter :
+L'installation demande
 
-- un dossier `custom_dir` de Mkdocs `#!bash my_theme_customizations/` ;
-- un template HTML `#!bash my_theme_customizations/main.html` ;
-- un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-- deux fichiers Javascript `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-- des macros Python.
+- de modifier :
+  
+    - le fichier YML `mkdocs.yml` ;
+    - le fichier de macro `main.py` ;
 
-### Fichier YML
+- d'ajouter :
 
+    - un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
+    - un template HTML `#!bash my_theme_customizations/main.html` ;
+    - un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
+    - deux fichiers Javascript `#!bash docs/xtra/stylesheets/interpreter.js` et `#!bash docs/xtra/stylesheets/repl.js` ;
 
+### Fichier YML `mkdocs.yml`
 
+Ajoutez les lignes surlignées dans votre fichier mkdocs.yml .
 
+```yaml hl_lines="7 16 19"
+    --8<--- "docs/scripts/mkdocs.yml"
+```
 
-!!! {{exercice()}}
+### Fichier macro Python `main.py`
 
-    === "Énoncé"
+Ajoutez ces lignes dans votre fichier `main.py` .
 
-        ${1: enonce}
+```python linenums="1"
+    --8<--- "docs/scripts/main.py"
+```
 
-    === "Tips"
+### Création du dossier `custom_dir`
 
-        ${1: enonce}
+**N'oubliez pas de créer le dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs**.
 
-	=== "Solutions"
+Dans ce dossier, ajoutez le template Jinja `#!bash main.html` :
 
-        ${2: sol}
+```jinja
+    --8<--- "my_theme_customizations/main.html"
+```
 
-`#!python lambda x : x**2`
+### Fichier CSS `pyoditeur.css`
 
-`#!latex \left( \dfrac 1x \right)^2=1`
+Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/stylesheets/pyoditeur.css "Pyoditeur CSS sur Gitlab") au dossier `docs/xtra/stylesheets/`.
 
-<!-- !!! danger "Les consoles"
+### Fichiers javascripts `interpreter.js` et `repl.js`
 
-    === "Une console Linux"
-        {{ linux(700) }}
+Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/repl.js "interpreter JS sur Gitlab ").
 
-    === "Une console python"
-        {{ basthon('scripts/exo1.py', 700) }} -->
+Ces deux fichiers doivent être placés dans le dossier `docs/xtra/stylesheets/`.
 
-Lorem ipsum dolor sit amet, consectetur
-adipiscing elit. Proin at cursus nibh,
-et lobortis mauris. Sed tempus turpis
-quis turpis pulvinar, ac vehicula dui
-convallis. Phasellus tempus massa quam,
-ac mollis libero cursus eget.
-Donec convallis a nisl vitae scelerisque.
-Ut vel nisl id augue ullamcorper lobortis at id dolor.
-
-    Lorem ipsum dolor sit amet, consectetur
-adipiscing elit. Proin at cursus nibh,
-et lobortis mauris. Sed tempus turpis
-quis turpis pulvinar, ac vehicula dui
-convallis. Phasellus tempus massa quam,
-ac mollis libero cursus eget.
-    Donec convallis a nisl vitae scelerisque.
-    Ut vel nisl id augue ullamcorper lobortis
-at id dolor.
-
-> Ceci est un texte cité. Vous pouvez répondre
-> à cette citation en écrivant un paragraphe
-> normal juste en-dessous !
-
-???+ warning "Attention au Python:"
-    !!! summary "Voici un code Python:"
-        ```python 
-        [i**2 for i in range(10)]
-        ```
-    !!! summary "Voici un code Python:"
-        ```python linenums="1" hl_lines="1-3"
-        def tableau_markdown(liste: list) -> str:
-            lignes = ['|n|']+[f'{i}|' for i in range(len(liste))]+['\n']
-            lignes.extend(['|']+['-|']*(len(liste)+1) +['\n'])
-            lignes.extend(['|u_n|']+[f'{liste[i]}|' for i in range(len(liste))])
-            print(lignes)
-            return "".join(lignes)
-        ```
-
-Pour afficher des touches, on fait `++ctrl++`+`++alt++`. 
-
-++ctrl+alt++
-
-++"Maj"+"Entrée"++
-
-??? info "Fichier YAML"
-    ```yaml
-    --8<--- "mkdocs.yml"
-    ```
-
-## Inclure un fichier Python
-
-!!! info "Fichier Python `docs/scripts/exo1.py`"
-    ```python
-    --8<--- "docs/scripts/exo1.py"
-    ```
-
-ou même !
-
-!!! info "Fichier Python `docs/scripts/exo1.py`"
-
-
-`Un blabla introductif:`
-:   et voilà la définition
-
-`Un blabla plus précis:`
-:   et voilà une autre définition
-
-    et ca marche avec deux paragraphes
-
-J'essaie les caractères Unicode : `&#127140`&#127140
-
-La définition de la fonction `premier` commence avec le mot clé `def`
-
-Elle prend en paramètre un entier `n`
-
-Elle renvoie un booléen avec le mot clé `return`
-
-Let's try some Maths : 
-
-$$\int_0^t x^2 \text{d}x$$
-
+Et c'est tout !

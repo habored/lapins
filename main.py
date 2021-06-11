@@ -55,7 +55,7 @@ def define_env(env):
     def terminal(prem = 0) -> str:
         tc = env.variables['term_counter']
         env.variables['term_counter'] += 1
-        return f"<div onclick='start_term(\"id{tc}\")' id=\"fake_id{tc}\" class=\"terminal_f\"><label class=\"terminal\"><span>>>> </span></label></div><div id=\"id{tc}\" class=\"hide\"></div>"
+        return f""""<div onclick='start_term("id{tc}")' id="fake_id{tc}" class="terminal_f"><label class="terminal"><span>>>> </span></label></div><div id="id{tc}" class="hide"></div>"""
 
 
     env.variables['REPL_counter'] = 0

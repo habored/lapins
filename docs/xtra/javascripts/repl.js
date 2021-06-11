@@ -2,7 +2,6 @@ $('[id^=editor_]').each(function() {
     let number = this.id.split('_').pop();
     let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
     let id_editor = "editor_" + number
-    console.log(id_editor,number)
     function createACE(id_editor){
         var editor = ace.edit(id_editor, {
             theme: "ace/theme/tomorrow_night_bright",
@@ -14,7 +13,6 @@ $('[id^=editor_]').each(function() {
             printMargin: false   // hide ugly margins...
         });
     }
-    console.log(180, number)
     window.REPL_ready=createACE(id_editor)           // Creating Ace Editor #id_editor
 
     if (url_pyfile === '') { 
