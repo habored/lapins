@@ -113,7 +113,7 @@ L'installation demande
     - un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
     - un template HTML `#!bash my_theme_customizations/main.html` ;
     - un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-    - deux fichiers Javascript `#!bash docs/xtra/stylesheets/interpreter.js` et `#!bash docs/xtra/stylesheets/repl.js` ;
+    - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash docs/xtra/javascripts/repl.js` ;
 
 ### Fichier YML `mkdocs.yml`
 

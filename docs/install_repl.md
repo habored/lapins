@@ -5,3 +5,5 @@
 ??? info "Patience, patience"
 
     Le guide du REPL arrive bientôt.
+
+{{REPL('',-1)}}

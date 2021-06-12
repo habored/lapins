@@ -5,3 +5,5 @@
 ??? info "Patience, patience"
 
     Le guide du Terminal arrive bientôt.
+
+{{ terminal() }}
