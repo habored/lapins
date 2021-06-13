@@ -15,7 +15,7 @@ Afin d'écrire un cours interactif utilisant sur Mkdocs, le besoin s'est fait se
     Pyodide utilise WebAssembly pour faire le lien entre Python et Javascript et proposer un environnement permettant de manipuler le DOM avec Python, ou de manipuler Python avec Javascript.
 
 ??? warning "Un hic"
-    La documentation quasi-absente ou réservée aux experts du projet Pyodide...
+    La documentation quasi-absente ou réservée aux initiés du projet Pyodide...
 
 
 ## Prise en main
@@ -84,7 +84,7 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
 
     ~~Pour que les REPL fonctionnent, il faut absolument indiquer `{% raw %} {{ REPL('nom_de_fichier', -1) }} {% endraw %}` sur le dernier REPL de la page.~~
 
-    Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée.
+    Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée. Plus besoin d'indiquer le dernier REPL !
 
 ### Exemples
 
