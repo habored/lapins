@@ -80,13 +80,11 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
     
     **C'est un comportement voulu que l'on pourra discuter.**
 
-!!! danger "Très très important"
+!!! done "Amélioration notable"
 
-    Pour que les REPL fonctionnent, il faut absolument indiquer `{% raw %} {{ REPL('nom_de_fichier', -1) }} {% endraw %}` sur le dernier REPL de la page. 
-    
-    **Notez le -1. Si vous souhaitez un REPL vide, utilisez `{% raw %} {{ REPL('', -1) }} {% endraw %}`**.
+    ~~Pour que les REPL fonctionnent, il faut absolument indiquer `{% raw %} {{ REPL('nom_de_fichier', -1) }} {% endraw %}` sur le dernier REPL de la page.~~
 
-    Cette solution _temporaire_ permet de générer la balise `#!html <script>` permettant le chargement des REPL.
+    Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée.
 
 ### Exemples
 
@@ -94,9 +92,9 @@ L'exemple ci-dessous, obtenu avec `#!markdown {% raw %} {{ REPLv('exo2') }} {% e
 
 {{REPLv('exo2')}}
 
-L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ REPL('algo_glouton', -1) }} {% endraw %}`. C'est en effet le dernier REPL de la page.
+L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ REPL('algo_glouton') }} {% endraw %}`.
 
-{{REPL('algo_glouton', -1)}}
+{{REPL('algo_glouton')}}
 
 
 ## Installation
@@ -147,7 +145,7 @@ Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css
 
 ### Fichiers javascripts `interpreter.js` et `repl.js`
 
-Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/repl.js "interpreter JS sur Gitlab ").
+Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/repl.js "interpreter JS sur Gitlab ") sont nécessaires.
 
 Ces deux fichiers doivent être placés dans le dossier `docs/xtra/stylesheets/`.
 

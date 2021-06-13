@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block content %}
+    {{super()}}
+    <script src="../xtra/javascripts/repl.js"></script> 
+{% endblock %}
+
 {% block libs %}
     {{ super() }}
     <!-- Load CDNs : Pyodide (Python in WASM), Ace (Editor) and JQuery (Terminal) -->
