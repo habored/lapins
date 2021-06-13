@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Afin d'écrire un cours interactif utilisant sur Mkdocs, le besoin s'est fait sentir de pouvoir  écrire directement des scripts en ligne :
+Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir de pouvoir écrire directement des scripts en ligne :
 
 - dans le navigateur
 - sans iframe
@@ -111,7 +111,7 @@ L'installation demande
     - un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
     - un template HTML `#!bash my_theme_customizations/main.html` ;
     - un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-    - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash docs/xtra/javascripts/repl.js` ;
+    - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/repl.js` ;
 
 ### Fichier YML `mkdocs.yml`
 
@@ -145,8 +145,9 @@ Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css
 
 ### Fichiers javascripts `interpreter.js` et `repl.js`
 
-Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/repl.js "interpreter JS sur Gitlab ") sont nécessaires.
+Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/repl.js "interpreter JS sur Gitlab ") sont nécessaires :
 
-Ces deux fichiers doivent être placés dans le dossier `docs/xtra/stylesheets/`.
+- `interpreter.js` doit être placé dans le dossier : `docs/xtra/javascripts/` ;
+- `repl.js` doit être placé dans le dossier : `my_theme_customizations/js/repl.js`.
 
-Et c'est tout !
+**Et c'est tout !**
