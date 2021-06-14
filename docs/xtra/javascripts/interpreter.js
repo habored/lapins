@@ -161,7 +161,7 @@ function download_file(id_editor, nom_script) {
     var editor = ace.edit(id_editor);
     let data = editor.getValue();
     let splitDate = new Date().toISOString().split('T')
-    let date = splitDate[0] + '-' + splitDate[1].split('.')[0].replaceAll(":", "-"); 
+    let date = splitDate[0] + '-' + splitDate[1].split('.')[0].replace(/:/g, "-"); 
     var script2download = 'script_' + date + '.py';
     if (nom_script !== '') {
         console.log(nom_script)

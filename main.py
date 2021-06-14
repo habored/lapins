@@ -81,12 +81,15 @@ def define_env(env):
         return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()">⤴️</button>\
                 <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide" />"""
 
+    def blank_space() -> str:
+        return f"""<span style="indent-text:5em"> </span>"""
+
     @env.macro
     def REPLv(nom_script='') -> str:
         div_edit, tc = generate_content(nom_script)
         div_edit = f'<div class="wrapper"><div class="interior_wrapper">{div_edit}</div>\
         <div id="term_editor_{tc}" class="term_editor"></div></div><button class="emoji" onclick=\'interpretACE("editor_{tc}","vert")\'>▶️</button>'
-        div_edit += f"""<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>"""
+        div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>{blank_space()}"""
         div_edit += create_upload_button(tc)
         return div_edit
 
@@ -94,6 +97,6 @@ def define_env(env):
     def REPL(nom_script='') -> str:
         div_edit, tc = generate_content(nom_script, True)
         div_edit = f'<div class="wrapper_h">{div_edit}<div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div><button class="emoji" onclick=\'interpretACE("editor_{tc}","hori")\'>▶️</button>' 
-        div_edit += f"""<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>"""
+        div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>{blank_space()}"""
         div_edit += create_upload_button(tc)
         return div_edit
