@@ -151,11 +151,33 @@ async function interpretACE(id_editor, mode) {
 }
 
 
-function start_term(nom_id) {
+async function start_term(nom_id) {
     document.getElementById(nom_id).className = "terminal terminal_f";
     document.getElementById('fake_'+nom_id).className = "hide";
     window.console_ready = pyterm('#'+nom_id);
     }
+
+function download_file(id_editor, nom_script) {
+    var editor = ace.edit(id_editor);
+    let data = editor.getValue();
+    let splitDate = new Date().toISOString().split('T')
+    let date = splitDate[0] + '-' + splitDate[1].split('.')[0].replaceAll(":", "-"); 
+    var script2download = 'script_' + date + '.py';
+    if (nom_script !== '') {
+        console.log(nom_script)
+        script2download = nom_script+'.py';
+    }
+
+    let link = document.createElement('a');
+    link.download = script2download;
+    let blob = new Blob(['' + data + ''], {
+        type: 'text/plain'
+    });
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+    
 
 // $(document).ready(function() {
     // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
@@ -163,33 +185,3 @@ function start_term(nom_id) {
     //     let number = this.id.split('_').pop();
     //     window.console_ready = pyterm('#cons_'+number);
     // });
-// $('[id^=editor_]').each(function() {
-//     let number = this.id.split('_').pop();
-//     let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
-//     let id_editor = "editor_" + number
-//     function createACE(id_editor){
-//         var editor = ace.edit(id_editor, {
-//             theme: "ace/theme/tomorrow_night_bright",
-//             mode: "ace/mode/python",
-//             autoScrollEditorIntoView: true,
-//             maxLines: 30,
-//             minLines: 6,
-//             tabSize: 4,
-//             printMargin: false   // hide ugly margins...
-//         });
-//     }
-//     console.log(180, number)
-//     window.REPL_ready=createACE(id_editor)                  // Creating Ace Editor #id_editor
-
-//     if (url_pyfile === '') { 
-//         let editor = ace.edit(id_editor)
-//         editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
-//     }});
-// });
-// window.console_ready = pyterm('#term_editor_0', 150);
-// window.console_ready = pyterm('#term_editor_1', 150);
-// window.console_ready = pyterm('#term_editor_2', 150);
-
-// if ($('#term_editor_0').length) {$('#term_editor_0').terminal().focus(true)}
-
-// });

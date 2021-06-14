@@ -20,3 +20,22 @@ $('[id^=editor_]').each(function() {
         editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
     }
 });
+
+// Javascript to upload file from customized buttons
+$('[id^=input_editor_]').each(function() {
+    let number = this.id.split('_').pop();
+    let id_editor = "editor_" + number
+    document.getElementById('input_'+id_editor).addEventListener('change', function(e) {readFile(e,id_editor)}, false);
+
+});
+function readFile (evt, id_editor) {
+    var files = evt.target.files;
+    var file = files[0];
+    var reader = new FileReader();
+    var editor = ace.edit(id_editor);
+    reader.onload = function(event) {
+        editor.getSession().setValue(event.target.result);
+        console.log('plaf')
+    }
+    reader.readAsText(file)
+};

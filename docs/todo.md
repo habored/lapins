@@ -1,4 +1,4 @@
-# Des questions techniques et métaphysiques.
+# Des questions techniques et métaphysiques
 
 ## Partis pris
 
@@ -25,9 +25,11 @@
 
 ## En développement
 
-!!! help "Fichiers javascripts"
+!!! done "Fichiers javascripts"
 
-    C'est le bazar dans l'appel des fichiers JS. Si quelqu'un peut me mettre de l'ordre dans tout cela, je suis preneur !
+    ~~C'est le bazar dans l'appel des fichiers JS. Si quelqu'un peut me mettre de l'ordre dans tout cela, je suis preneur !~~
+
+    J'ai repris l'organisation générale. C'est toujours un peu le bazar mais cela me semble acceptable.
 
 !!! help "Importation automatique de module"
 
@@ -42,3 +44,9 @@
     ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du REPL, est vraiment naze. Il faut trouver autre chose.~~
     
     Je devais vraiment dormir. On peut tout simplement ajouter une ligne dans le template Jinja2 des pages mkdocs. Cela permet de charger le javascript nécessaire au bon fonctionnement des REPL sans s'embêter.
+
+!!! done "Boutons et REPL"
+
+    ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du REPL, est vraiment naze. Il faut trouver autre chose.~~
+    
+    Ajout de boutons permettant de télécharger les scripts écrits et téléverser les scripts disponibles localement.
