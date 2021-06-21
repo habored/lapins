@@ -45,14 +45,14 @@
 .term_editor {
  --color:rgba(87,147,240);
  --background: rgba(50,51,64,0);
- --size : 1.5;
+ --size : 1.4;
  height: 205px;
 }
 
 .term_editor_h {
   --color:rgba(87,147,240);
   --background: rgba(50,51,64,0);
-  --size : 1.5;
+  --size : 1.4;
   height: 150px;
  }
 
@@ -65,7 +65,7 @@
 .terminal_f {
   --color:rgba(87,147,240);
   --background: rgba(50,51,64,0);
-  --size : 1.5;
+  --size : 1.4;
  border: solid 1px;
  border-radius: 6px;
  border-color: rgba(87,147,240);
@@ -77,7 +77,7 @@
 .terminal_f_h {
   --color:rgba(87,147,240);
   --background: rgba(50,51,64,0);
-  --size : 1.5;
+  --size : 1.4;
  height: 150px; 
  width: 100%;
 }
