@@ -1,64 +1,5 @@
 # Guide du REPL
 
-!!! info "paf"
-
-    === "test"
-        Blablabla
-        
-        {{REPL('exo2')}}
-        
-    === "Corrigé"
-        {{REPL('exo2')}}
-
-    === "Truc"
-        {{REPL('exo2')}}
-
-!!! info "pif"
-
-    === "test2"
-        {{REPL('exo2')}}
-    
-    === "Corrigé2"
-        {{REPL('exo2')}}
-
-    === "Truc2"
-        {{REPL('exo2')}}
-
-    
-
-??? info "pouf"
-
-    === "test3"
-        {{REPL('exo2')}}
-    
-    === "Corrigé3"
-        {{REPL('exo2')}}
-
-    === "Truc3"
-        {{REPL('exo2')}}
-
-    ??? "Solution3"
-
-        bidule à lire
-
-<div class="admonition warning">
-<p class="admonition-title" style="::before">paf</p>
-<div class="tabbed-set" data-tabs="1:1">
-<input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio"></input>
-<label for="__tabbed_4_1">test</label>
-<div class="tabbed-content"><p></p>blabla<p></p></div>
-
-<input id="__tabbed_4_2" name="__tabbed_4" type="radio"></input>
-<label for="__tabbed_4_2">test2</label>
-<div class="tabbed-content"><p></p>blabla2<p></p></div>
-
-<input id="__tabbed_4_31" name="__tabbed_4" type="radio"></input>
-<label for="__tabbed_4_31">test3</label>
-<div class="tabbed-content"><p></p>blabla3<p></p></div>
-</div>
-</div>
-
-
 ## Aperçu
 
 Un REPL se présente sous cette forme :
@@ -94,11 +35,42 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
 
 ## Plein d'exercices !
 
-!!! info "Exercice 1"
+!!! info "Exercices sur la longueur d'un tableau"
 
-    Écrire une fonction qui découpe une phrase en mots.
+    === "Exercice 1"
+        Complétez la fonction `longueur` afin que celle-ci renvoie la taille d'un tableau L.
+        
+        {{REPL('demo/demo1')}}
+        
+    === "Exercice 2"
+        Complétez la fonction `longueur_ajout` afin que celle-ci renvoie la taille de deux tableaux T1 et T2.
+        {{REPL('demo/demo2')}}
 
-    {{REPL('exo_demo_1')}}
+    === "Exercice 3"
+        On découpe une phrase à l'aide de l'instruction [split](https://docs.python.org/fr/3/library/stdtypes.html#str.split "Instruction split en Python").
+
+        Complétez la fonction `nombre_mots` afin que celle-ci renvoie le nombre de mots séparé par un espace d'une phrase `phrase`.
+        {{REPLv('demo/demo3')}}
+
+
+On peut bien sur enrouler tout cela...
+
+??? info "Exercices sur la longueur d'un tableau"
+
+    === "Exercice 1"
+        Complétez la fonction `longueur` afin que celle-ci renvoie la taille d'un tableau L.
+        
+        {{REPL('demo/demo1')}}
+        
+    === "Exercice 2"
+        Complétez la fonction `longueur_ajout` afin que celle-ci renvoie la taille de deux tableaux T1 et T2.
+        {{REPL('demo/demo2')}}
+
+    === "Exercice 3"
+        On découpe une phrase à l'aide de l'instruction [split](https://docs.python.org/fr/3/library/stdtypes.html#str.split "Instruction split en Python").
+
+        Complétez la fonction `nombre_mots` afin que celle-ci renvoie le nombre de mots séparé par un espace d'une phrase `phrase`.
+        {{REPLv('demo/demo3')}}
 
 
 <!-- ??? info "Patience, patience"
