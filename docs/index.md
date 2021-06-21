@@ -1,5 +1,6 @@
 # Terminal et REPL dans Mkdocs
 
+
 ## Introduction
 
 Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir de pouvoir écrire directement des scripts en ligne :
@@ -61,30 +62,36 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
     === "REPL avec code"
         ```markdown
         {% raw %}
-        {{ REPL('nom_de_fichier') }}
+        {{ REPL('foo/bar/nom_de_fichier') }}
         {% endraw %}
         ```
-        Cette commande charge le fichier `nom_de_fichier.py` dans un REPL. Le fichier doit être dans `docs/scripts/`. Ne pas oublier les guillemets.
+        Cette commande charge le fichier `nom_de_fichier.py` dans un REPL. Le fichier doit être dans `docs/scripts/foo/bar/`. Ne pas oublier les guillemets.
+
+        {{REPL('demo/demo1')}}
 
     === "REPL vertical avec code"
         ```markdown
         {% raw %}
-        {{ REPLv('nom_de_fichier') }}
+        {{ REPLv('foo/bar/nom_de_fichier') }}
         {% endraw %}
         ```
-        Cette commande charge le fichier `nom_de_fichier` dans un REPL avec division verticale. Le fichier doit être dans `docs/scripts/`.        
+        Cette commande charge le fichier `nom_de_fichier` dans un REPL avec division verticale. Le fichier doit être dans `docs/scripts/foo/bar/`.       
+
+        {{REPLv('demo/demo1')}}
+ 
 
 ??? warning "Détails techniques"
 
     Tous les REPL et les terminaux partagent le même namespace. On peut donc accéder à n'importe quelle fonction créée dans n'importe quel REPL ou terminal. 
     
-    **C'est un comportement voulu que l'on pourra discuter.**
+    **C'est un comportement voulu qui a des avantages et des inconvénients.**
 
 !!! done "Amélioration notable"
 
     ~~Pour que les REPL fonctionnent, il faut absolument indiquer `{% raw %} {{ REPL('nom_de_fichier', -1) }} {% endraw %}` sur le dernier REPL de la page.~~
 
     Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée. Plus besoin d'indiquer le dernier REPL !
+
 
 ### Exemples
 
@@ -123,11 +130,8 @@ Ajoutez les lignes surlignées dans votre fichier mkdocs.yml .
 
 ### Fichier macro Python `main.py`
 
-Ajoutez ces lignes dans votre fichier `main.py` .
+À votre fichier `main.py`, ajoutez les lignes du fichier [`main.py`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/scripts/main.py "main.py sur Gitlab").
 
-```python linenums="1"
-    --8<--- "docs/scripts/main.py"
-```
 
 ### Création du dossier `custom_dir`
 
@@ -145,7 +149,7 @@ Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css
 
 ### Fichiers javascripts `interpreter.js` et `repl.js`
 
-Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/repl.js "interpreter JS sur Gitlab ") sont nécessaires :
+Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/js/repl.js "repl JS sur Gitlab ") sont nécessaires :
 
 - `interpreter.js` doit être placé dans le dossier : `docs/xtra/javascripts/` ;
 - `repl.js` doit être placé dans le dossier : `my_theme_customizations/js/repl.js`.

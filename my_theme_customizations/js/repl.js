@@ -1,6 +1,10 @@
 $('[id^=editor_]').each(function() {
     let number = this.id.split('_').pop();
-    let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
+    //let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
+    let url_pyfile = $('#content_'+this.id).text()  // Extracting url from the div before Ace layer
+    console.log('fichier sauvegardé', url_pyfile, number)
+//    content = document.getElementById('content_'+id_editor)
+ //   console.log(content)
     let id_editor = "editor_" + number
     function createACE(id_editor){
         var editor = ace.edit(id_editor, {
@@ -12,8 +16,11 @@ $('[id^=editor_]').each(function() {
             tabSize: 4,
             printMargin: false   // hide ugly margins...
         });
+        // Decode the backslashes into newlines for ACE editor from admonitions 
+        // (<div> autocloses in an admonition) 
+        editor.getSession().setValue(url_pyfile.replace(/backslash_newline/g, "\n"))  
     }
-    window.REPL_ready=createACE(id_editor)           // Creating Ace Editor #id_editor
+    window.REPL_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
 
     if (url_pyfile === '') { 
         let editor = ace.edit(id_editor)
@@ -25,9 +32,9 @@ $('[id^=editor_]').each(function() {
 $('[id^=input_editor_]').each(function() {
     let number = this.id.split('_').pop();
     let id_editor = "editor_" + number
-    document.getElementById('input_'+id_editor).addEventListener('change', function(e) {readFile(e,id_editor)}, false);
-
+    document.getElementById('input_'+id_editor).addEventListener('change', function(e) {readFile(e, id_editor)}, false);
 });
+
 function readFile (evt, id_editor) {
     var files = evt.target.files;
     var file = files[0];
@@ -35,7 +42,6 @@ function readFile (evt, id_editor) {
     var editor = ace.edit(id_editor);
     reader.onload = function(event) {
         editor.getSession().setValue(event.target.result);
-        console.log('plaf')
     }
     reader.readAsText(file)
 };

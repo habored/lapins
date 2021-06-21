@@ -1,11 +1,10 @@
 import random
 
-L = [random.randint(1,100) for i in range(100)]
-
 def sommation(T: list) -> float:
-    somme = 0
-    for nombre in L:
-        somme = somme+nombre
-    return somme
+    a = 0
+    for nombre in T:
+        a = a+nombre
+    return a
 
-print(sommation(L))
+def somme(L):
+    return None if len(L)==0 else sum(L)

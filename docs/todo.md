@@ -20,7 +20,7 @@
 
     ~~Ma solution est un peu sale mais a-t-on vraiment le choix avec l'inclusion de balise HTML ?~~
 
-    J'ai choisi de diviser le problème en sous-fonctions. Cela semble plus lisible à présent avec : lecture de fichier avec `#!python def read_ext_file()` et `#!python def generate_content()`. 
+    J'ai choisi de diviser le problème en sous-fonctions. Cela semble plus lisible à présent avec : lecture de fichier avec `#!python def read_ext_file()` et `#!python def generate_content()`, une seule macro REPL avec deux modes ('v' et 'h' par défaut).
 
 
 ## En développement
@@ -31,19 +31,27 @@
 
     J'ai repris l'organisation générale. C'est toujours un peu le bazar mais cela me semble acceptable.
 
+
 !!! help "Importation automatique de module"
 
     Pyodide propose un module `#!python micropip` permettant de charger les modules manquants. Nous pourrions faire des interfaces graphiques à l'aide de cela mais est-ce vraiment utile ? 
 
-!!! help "Evaluateur de code"
+!!! done "Evaluateur de code"
 
-    Avec l'utilisation du code de [fjunier](https://mooc-forums.inria.fr/moocnsi/t/mkdocs-une-solution-ideale/1758/175), nous pourrions intégrer un juge en ligne ? Utile ou non ?
+    ~~Avec l'utilisation du code de [fjunier](https://mooc-forums.inria.fr/moocnsi/t/mkdocs-une-solution-ideale/1758/175), nous pourrions intégrer un juge en ligne ? Utile ou non ?~~
+
+    L'évaluateur de code est fonctionnel et permet de faire des benchmarks complexes. 
+    
+    Le bouton du juge en ligne n'apparaitra que s'il existe un fichier de benchmark **`test_nom_de_script.py`**.
+
+    [TODO] Le corrigé n'apparaitra que si un fichier de **`corr_nom_de_script.py`** est présent.
+
 
 !!! done "Javascript et REPL"
 
     ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du REPL, est vraiment naze. Il faut trouver autre chose.~~
     
-    Je devais vraiment dormir. On peut tout simplement ajouter une ligne dans le template Jinja2 des pages mkdocs. Cela permet de charger le javascript nécessaire au bon fonctionnement des REPL sans s'embêter.
+    Je devais vraiment dormir. On peut tout simplement ajouter une ligne dans le template Jinja2 `main.html` du `custom_dir` de mkdocs. Cela permet de charger le javascript nécessaire au bon fonctionnement des REPL sans s'embêter.
 
 !!! done "Boutons et REPL"
 

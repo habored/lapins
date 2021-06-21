@@ -129,12 +129,12 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     // console.log(pyodide.globals.dict())
 
     // resize terminal to the size of editor on interpreting
-    if (mode === "vert") {
+    if (mode === "v") {
         $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
     }
 
     try {
-      let output = await pyodide.runPythonAsync(code);    // Running the code OUTPUT
+      await pyodide.runPythonAsync(code);    // Running the code
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
       $.terminal.active().echo(">>> Script exécuté !\n"+stdout); 
     } catch(err) {
@@ -142,14 +142,40 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     }
   }
 
+async function silent_evaluatePythonFromACE(code, id_editor, mode) {
+    await pyodideReadyPromise;
+
+    $.terminal.active().clear();
+
+    if (mode === "vert") {
+        $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+    }
+
+    try {
+      pyodide.runPython(code);    // Running the code OUTPUT
+    } catch(err) {
+      $.terminal.active().echo(">>> Code invalide !\n"+err);
+      return err
+    }
+  }
+
+
 async function interpretACE(id_editor, mode) {
     window.console_ready = await pyterm('#term_'+id_editor, 150);
     $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
     var editor = ace.edit(id_editor);
     let stream = await editor.getSession().getValue();
+    console.log('interpretACE', stream)
     evaluatePythonFromACE(stream, id_editor, mode);
 }
 
+async function silent_interpretACE(id_editor) {
+    window.console_ready = await pyterm('#term_'+id_editor, 150);
+    $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
+    var editor = ace.edit(id_editor);
+    let stream = await editor.getSession().getValue();
+    return stream
+}
 
 async function start_term(nom_id) {
     document.getElementById(nom_id).className = "terminal terminal_f";
@@ -177,8 +203,88 @@ function download_file(id_editor, nom_script) {
     link.click();
     URL.revokeObjectURL(link.href);
 }
-    
 
+function calcTermSize(text) {
+    let nlines = text.split(/\r\n|\r|\n/).length
+    $.terminal.active().resize($.terminal.active().width(), nlines*30);
+    return nlines
+  }
+
+async function executeTest(id_editor, mode) {
+    await pyodideReadyPromise;
+    let interpret_code = silent_interpretACE("editor_"+id_editor, "")
+
+    let code = await interpret_code;
+    $.terminal.active().clear();
+
+    // if (mode === "vert") {
+    //     $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+    // }
+
+    try {
+        console.log(code)
+        pyodide.runPython(code);    // Running the student code (no output)
+
+        let test_code = document.getElementById("test_term_editor_"+id_editor).textContent.replace(/backslash_newline/g, "\n");
+        pyodide.runPython(`
+        import sys as __sys__
+        import io as __io__
+        import js
+        __sys__.stdout = __io__.StringIO()
+
+        if 'test_unitaire' not in list(globals()):
+            from random import choice
+
+        def test_unitaire(numerous_benchmark):
+            success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
+            fail_smb = ['🌩','🙈','🙉','⛑','🌋','💣']
+            if type(numerous_benchmark[0]) not in [list, tuple]:
+                type_bench = 'multiple' 
+                numerous_benchmark = (numerous_benchmark, )
+
+            for benchmark in numerous_benchmark:
+                failed = 0
+                print(f">>> Test de la fonction ** {benchmark[0].split('(')[0].upper()} **")
+                
+                for k, test in enumerate(benchmark, 1):
+                    if eval(test):
+                        print(f'Test {k} réussi :  {test} ')
+                    else:
+                        print(f'Test {k} échoué :  {test} ')
+                        failed += 1
+
+                if not failed :
+                    print(f"Bravo vous avez réussi tous les tests {choice(success_smb)}")
+                else :
+                    if failed == 1 : msg = f"{failed} test a échoué. "
+                    else : msg = f"{failed} tests ont échoué. "
+                    print(msg + f"Reprenez votre code {choice(fail_smb)}")
+        `);
+
+        let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
+        var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
+
+        nlines = calcTermSize(stdout)
+        let editor = ace.edit("editor_"+id_editor);
+        let stream = await editor.getSession().getValue();
+
+        if(editor.session.getLength()<=nlines && mode==='v') {
+            nslash = editor.session.getLength()- nlines + 3; // +3 takes into account shift and newlines
+            for (var i = 0; i < nslash; i++) {
+                stream += "\n"
+            }
+            editor.session.setValue(stream); // set value and reset undo history
+        }
+        $.terminal.active().echo(stdout); 
+
+    } catch(err) {
+        err = err.toString().split("\n").slice(-7).join("\n");
+        nlines = calcTermSize(err);
+        $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
+      }
+    } 
+    
+    
 // $(document).ready(function() {
     // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
     // $('[id^=cons_]').each(function() {

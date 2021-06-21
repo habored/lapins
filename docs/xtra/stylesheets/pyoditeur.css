@@ -3,12 +3,15 @@
     filter: opacity(35%);
   }
 
+/* :root {
+  --main-bg-color: blue;
+} */
+
 .wrapper_h {
     border: solid 1px;
     border-radius: 6px;
     border-color: rgba(87,147,240);
   }
-  
 
 .wrapper {
   border: solid 1px;
@@ -115,12 +118,27 @@ textarea:focus {
 }
 
 .emoji {
-  filter: sepia(1) brightness(50%) hue-rotate(178deg) saturate(286%) brightness(176%);
+  filter: sepia(1) brightness(50%) hue-rotate(178deg) saturate(286%) brightness(186%);
+  text-shadow: 2px 2px rgba(87,147,240);
+  font-size : 2em;
+  /* border: 0;
+  text-align: center;
+  text-shadow: 1px 1px 1px #000;
+  border-radius: 10px;
+  background-color: rgba(220, 0, 0, 1);
+  background-image: linear-gradient(to top left,
+                                    rgba(0, 0, 0, .2),
+                                    rgba(0, 0, 0, .2) 30%,
+                                    rgba(0, 0, 0, 0));
+  box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
+              inset -2px -2px 3px rgba(0, 0, 0, .6); */
+}
+.emoji_dark {
+  filter: sepia(1) brightness(50%) hue-rotate(183deg) saturate(276%) brightness(236%);
   text-shadow: 2px 2px rgba(87,147,240);
   font-size : 2em;
 }
-
-.emoji:hover {
+.emoji:hover, .emoji_dark:hover {
   /* green filter filter: sepia(1) brightness(50%) hue-rotate(58deg) saturate(286%) brightness(176%); */
   text-shadow: 0px 0px rgba(87,147,240,0);
   position:relative; 
@@ -129,3 +147,4 @@ textarea:focus {
   cursor: pointer;
   font-size : 2em;
 }
+

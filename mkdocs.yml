@@ -22,7 +22,7 @@ theme:
     palette:                        # Palettes de couleurs jour/nuit
       - media: "(prefers-color-scheme: light)"
         scheme: default
-        primary: yellow
+        primary: indigo
         accent: indigo
         toggle:
             icon: material/weather-sunny
