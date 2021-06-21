@@ -1,3 +1,6 @@
+var dict = {};  // Global dictionnary tracking the number of clicks
+const nAttempts = 5;
+
 function sleep(s){
     return new Promise(resolve => setTimeout(resolve, s));
   }
@@ -165,6 +168,7 @@ async function interpretACE(id_editor, mode) {
     $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
     var editor = ace.edit(id_editor);
     let stream = await editor.getSession().getValue();
+    calcTermSize(stream, mode)
     console.log('interpretACE', stream)
     evaluatePythonFromACE(stream, id_editor, mode);
 }
@@ -204,15 +208,46 @@ function download_file(id_editor, nom_script) {
     URL.revokeObjectURL(link.href);
 }
 
-function calcTermSize(text) {
-    let nlines = text.split(/\r\n|\r|\n/).length
+function calcTermSize(text, mode) {
+    let nlines = (mode === 'v' ? text.split(/\r\n|\r|\n/).length : Math.max(5,Math.min(10, text.split(/\r\n|\r|\n/).length)))
     $.terminal.active().resize($.terminal.active().width(), nlines*30);
     return nlines
   }
 
-function executeTest(id_editor, mode) {
+function executeTest(id_editor, mode) {    
     executeTestAsync(id_editor, mode)
 }
+
+function showCorrection(id_editor) {
+    if (document.getElementById("corr_"+id_editor) === null) {
+    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to REPL+buttons */ 
+    while (wrapperElement.className !== "repl_classe") {
+        wrapperElement = wrapperElement.parentNode
+    }
+    var txt = document.createElement("div");
+    txt.innerHTML='<details class="check"><summary>Solution</summary>\
+    <div class="highlight" id="corr_'+id_editor+'"></div></details>'
+
+    let url_pyfile = document.getElementById("corr_content_"+id_editor).textContent
+
+    function createACE(id_editor){
+        var editor = ace.edit(id_editor, {
+            theme: "ace/theme/tomorrow_night_bright",
+            mode: "ace/mode/python",
+            autoScrollEditorIntoView: true,
+            maxLines: 30,
+            minLines: 6,
+            tabSize: 4,
+            readOnly: true,
+            printMargin: false   // hide ugly margins...
+        });
+        // Decode the backslashes into newlines for ACE editor from admonitions 
+        // (<div> autocloses in an admonition) 
+        editor.getSession().setValue(url_pyfile.replace(/backslash_newline/g, "\n"))  
+    }
+    wrapperElement.insertAdjacentElement('afterend', txt)
+    window.REPL_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
+}}
 
 async function executeTestAsync(id_editor, mode) {
     await pyodideReadyPromise;
@@ -226,7 +261,6 @@ async function executeTestAsync(id_editor, mode) {
     // }
 
     try {
-        console.log(code)
         pyodide.runPython(code);    // Running the student code (no output)
 
         let test_code = document.getElementById("test_term_editor_"+id_editor).textContent.replace(/backslash_newline/g, "\n");
@@ -240,6 +274,7 @@ async function executeTestAsync(id_editor, mode) {
             from random import choice
 
         def test_unitaire(numerous_benchmark):
+            global_failed = 0
             success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
             fail_smb = ['🌩','🙈','🙉','⛑','🌋','💣']
             if type(numerous_benchmark[0]) not in [list, tuple]:
@@ -263,12 +298,28 @@ async function executeTestAsync(id_editor, mode) {
                     if failed == 1 : msg = f"{failed} test a échoué. "
                     else : msg = f"{failed} tests ont échoué. "
                     print(msg + f"Reprenez votre code {choice(fail_smb)}")
+                    global_failed += 1
+            return global_failed
         `);
 
         let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
+        if (output === 0) {
+            dict[id_editor] = nAttempts
+        } else {
+            dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0)
+        }
 
-        nlines = calcTermSize(stdout)
+        if (dict[id_editor] === nAttempts) {
+        let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
+        if (correctionExists !== "") {
+            console.log('entrée')
+            showCorrection('editor_'+id_editor);
+        };
+        }
+
+        // console.log('nombre de fail', id_editor, dict[id_editor])
+        nlines = calcTermSize(stdout, mode)
         let editor = ace.edit("editor_"+id_editor);
         let stream = await editor.getSession().getValue();
 
@@ -283,12 +334,24 @@ async function executeTestAsync(id_editor, mode) {
 
     } catch(err) {
         err = err.toString().split("\n").slice(-7).join("\n");
-        nlines = calcTermSize(err);
+        nlines = calcTermSize(err, mode);
         $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
       }
     } 
-    
-    
+
+/* <div class="admonition info">
+    <p class="admonition-title">paf</p>
+    <div class="tabbed-set" data-tabs="1:3">
+        <input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"></input>
+        <label for="__tabbed_1_1">test</label>
+        <div class="tabbed-content">blabla</div>
+
+        <input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"></input>
+        <label for="__tabbed_1_1">test2</label>
+        <div class="tabbed-content">blabla2</div>
+    </div>
+</div> */
+
 // $(document).ready(function() {
     // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
     // $('[id^=cons_]').each(function() {

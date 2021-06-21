@@ -142,14 +142,18 @@ def define_env(env):
         Last span hides the code content of the REPL if loaded.
         """
         content, tc = generate_content(nom_script)
+        corr_content, tc = generate_content("corr_"+nom_script)
+        div_edit = f'<div class="repl_classe">'
         if mode == 'v':
-            div_edit = f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
+            div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
-            div_edit = f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
+            div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
         div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'>▶️</button>"""
         div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>{blank_space()}"""
         div_edit += create_upload_button(tc)
         div_edit += create_unittest_button(tc, nom_script, mode)
+        div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
+        div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
         return div_edit

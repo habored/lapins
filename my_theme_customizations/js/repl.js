@@ -2,11 +2,10 @@ $('[id^=editor_]').each(function() {
     let number = this.id.split('_').pop();
     //let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
     let url_pyfile = $('#content_'+this.id).text()  // Extracting url from the div before Ace layer
-    console.log('fichier sauvegardé', url_pyfile, number)
-//    content = document.getElementById('content_'+id_editor)
- //   console.log(content)
+
     let id_editor = "editor_" + number
     function createACE(id_editor){
+        ace.require("ace/ext/language_tools");
         var editor = ace.edit(id_editor, {
             theme: "ace/theme/tomorrow_night_bright",
             mode: "ace/mode/python",
@@ -15,6 +14,11 @@ $('[id^=editor_]').each(function() {
             minLines: 6,
             tabSize: 4,
             printMargin: false   // hide ugly margins...
+        });
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: false
         });
         // Decode the backslashes into newlines for ACE editor from admonitions 
         // (<div> autocloses in an admonition) 

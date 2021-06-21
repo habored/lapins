@@ -3,10 +3,60 @@
 !!! info "paf"
 
     === "test"
+        Blablabla
+        
         {{REPL('exo2')}}
-    
+        
     === "Corrigé"
         {{REPL('exo2')}}
+
+    === "Truc"
+        {{REPL('exo2')}}
+
+!!! info "pif"
+
+    === "test2"
+        {{REPL('exo2')}}
+    
+    === "Corrigé2"
+        {{REPL('exo2')}}
+
+    === "Truc2"
+        {{REPL('exo2')}}
+
+    
+
+??? info "pouf"
+
+    === "test3"
+        {{REPL('exo2')}}
+    
+    === "Corrigé3"
+        {{REPL('exo2')}}
+
+    === "Truc3"
+        {{REPL('exo2')}}
+
+    ??? "Solution3"
+
+        bidule à lire
+
+<div class="admonition warning">
+<p class="admonition-title" style="::before">paf</p>
+<div class="tabbed-set" data-tabs="1:1">
+<input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio"></input>
+<label for="__tabbed_4_1">test</label>
+<div class="tabbed-content"><p></p>blabla<p></p></div>
+
+<input id="__tabbed_4_2" name="__tabbed_4" type="radio"></input>
+<label for="__tabbed_4_2">test2</label>
+<div class="tabbed-content"><p></p>blabla2<p></p></div>
+
+<input id="__tabbed_4_31" name="__tabbed_4" type="radio"></input>
+<label for="__tabbed_4_31">test3</label>
+<div class="tabbed-content"><p></p>blabla3<p></p></div>
+</div>
+</div>
 
 
 ## Aperçu

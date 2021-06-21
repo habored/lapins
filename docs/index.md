@@ -1,6 +1,5 @@
 # Terminal et REPL dans Mkdocs
 
-
 ## Introduction
 
 Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir de pouvoir écrire directement des scripts en ligne :
@@ -45,7 +44,7 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
         {{ REPL() }}
         {% endraw %}
         ```
-        Cette commande crée un REPL (~ Thonny) vide. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion avec ++tab++.
+        Cette commande crée un REPL (~ Thonny) vide. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
 
         {{REPL()}}
 
@@ -55,7 +54,7 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
         {{ REPLv() }}
         {% endraw %}
         ```
-        Cette commande crée un REPL vide, avec division verticale. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion avec ++tab++.
+        Cette commande crée un REPL vide, avec division verticale. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
 
         {{REPLv()}}
 
