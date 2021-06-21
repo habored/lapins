@@ -1,5 +1,14 @@
 # Guide du REPL
 
+!!! info "paf"
+
+    === "test"
+        {{REPL('exo2')}}
+    
+    === "Corrigé"
+        {{REPL('exo2')}}
+
+
 ## Aperçu
 
 Un REPL se présente sous cette forme :

@@ -210,11 +210,12 @@ function calcTermSize(text) {
     return nlines
   }
 
-async function executeTest(id_editor, mode) {
-    await pyodideReadyPromise;
+function executeTest(id_editor, mode) {
+    //tt await pyodideReadyPromise;
     let interpret_code = silent_interpretACE("editor_"+id_editor, "")
 
-    let code = await interpret_code;
+    //tt let code = await interpret_code;
+    let code = interpret_code;
     $.terminal.active().clear();
 
     // if (mode === "vert") {
@@ -261,12 +262,14 @@ async function executeTest(id_editor, mode) {
                     print(msg + f"Reprenez votre code {choice(fail_smb)}")
         `);
 
-        let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
+        //tt let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
+        let output = pyodide.runPython(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
 
         nlines = calcTermSize(stdout)
         let editor = ace.edit("editor_"+id_editor);
-        let stream = await editor.getSession().getValue();
+        //tt let stream = await editor.getSession().getValue();
+        let stream = editor.getSession().getValue();
 
         if(editor.session.getLength()<=nlines && mode==='v') {
             nslash = editor.session.getLength()- nlines + 3; // +3 takes into account shift and newlines
