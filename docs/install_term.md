@@ -2,6 +2,8 @@
 
 ## Exemple
 
+:octicons-heart-fill-24:{.heart}
+
 {{ terminal() }}
 
 ## Technique

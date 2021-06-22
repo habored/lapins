@@ -33,6 +33,45 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
 
     Le lancement du script, le téléchargement et le téléversement sont présentes par défaut.
 
+!!! warning "Format de fichiers"
+
+    === "Fichier Python"
+        Le script Python est écrit de manière classique. 
+        
+        Les librairies standards sont acceptés. Les annotations, même complexes, sont normalement acceptées : merci de me contacter si vous observez des comportements inattendus.
+        
+
+    === "Fichier Correction"
+
+        Le fichier Python de correction `corr_nom_de_script.py` est écrit de manière classique. 
+
+        ```python linenums="1"
+        --8<-- "docs/scripts/corr_exo2.py"
+        ```
+
+    === "Fichier Juge"
+
+        Le fichier de juge en ligne doit contenir une variable appelée `benchmark`, de type `#!python list` ou `#!python tuple` :
+
+        1) Si l'on souhaite vérifier une unique fonction grâce à l'évaluateur de code :
+
+        ```python linenums="1"
+        --8<-- "docs/scripts/demo/test_demo2.py"
+        ```
+        
+        On a donc un tableau de chaines de caractères qui seront évaluées avec `#!python eval()`. Attention donc aux caractères d'échappement.
+ 
+        1) Si l'on souhaite vérifier plusieurs fonctions grâce à l'évaluateur de code :
+   
+        ```python linenums="1"
+        --8<-- "docs/scripts/test_exo2.py"
+        ```
+
+        On a donc un tableau de tableau de chaines de caractères qui seront évaluées avec `#!python eval()`. 
+
+
+    
+
 !!! conclu "Conclusion"
 
     À condition que les fichiers `corr_` et `test_`soient présents, `#!markdown {% raw %}{{REPL('foo/bar/truc/muche/fichier')}}{% endraw %}` gère **tout seul** :
@@ -69,7 +108,6 @@ En quelques mots, on crée deux `#!html div` désigné par un numéro auto-incr�
 
         Complétez la fonction `nombre_mots` afin que celle-ci renvoie le nombre de mots séparé par un espace d'une phrase `phrase`.
         {{REPLv('demo/demo3')}}
-
 
 On peut bien sur enrouler tout cela...
 

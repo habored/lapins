@@ -38,6 +38,7 @@ pyodide.runPython(`
 `, namespace);
 namespace.destroy();
 
+
 let ps1 = '>>> ', ps2 = '... ';
 
 async function lock(){
@@ -137,7 +138,7 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     }
 
     try {
-      await pyodide.runPythonAsync(code);    // Running the code
+      await pyodide.runPythonAsync("from __future__ import annotations\n"+code);    // Running the code
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
       $.terminal.active().echo(">>> Script exécuté !\n"+stdout); 
     } catch(err) {
@@ -150,12 +151,12 @@ async function silent_evaluatePythonFromACE(code, id_editor, mode) {
 
     $.terminal.active().clear();
 
-    if (mode === "vert") {
-        $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
-    }
+    // if (mode === "vert") {
+    //     $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+    // }
 
     try {
-      pyodide.runPython(code);    // Running the code OUTPUT
+      pyodide.runPython("from __future__ import annotations\n"+code);    // Running the code OUTPUT
     } catch(err) {
       $.terminal.active().echo(">>> Code invalide !\n"+err);
       return err
@@ -169,7 +170,6 @@ async function interpretACE(id_editor, mode) {
     var editor = ace.edit(id_editor);
     let stream = await editor.getSession().getValue();
     calcTermSize(stream, mode)
-    console.log('interpretACE', stream)
     evaluatePythonFromACE(stream, id_editor, mode);
 }
 
@@ -194,7 +194,6 @@ function download_file(id_editor, nom_script) {
     let date = splitDate[0] + '-' + splitDate[1].split('.')[0].replace(/:/g, "-"); 
     var script2download = 'script_' + date + '.py';
     if (nom_script !== '') {
-        console.log(nom_script)
         script2download = nom_script+'.py';
     }
 
@@ -261,7 +260,7 @@ async function executeTestAsync(id_editor, mode) {
     // }
 
     try {
-        pyodide.runPython(code);    // Running the student code (no output)
+        pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
 
         let test_code = document.getElementById("test_term_editor_"+id_editor).textContent.replace(/backslash_newline/g, "\n");
         pyodide.runPython(`
@@ -317,14 +316,11 @@ async function executeTestAsync(id_editor, mode) {
 
         if (dict[id_editor] === nAttempts) {
         let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
-        console.log(id_editor, correctionExists)
         if (correctionExists !== "") {
-            console.log('entrée')
             showCorrection('editor_'+id_editor);
         };
         }
 
-        // console.log('nombre de fail', id_editor, dict[id_editor])
         nlines = calcTermSize(stdout, mode)
         let editor = ace.edit("editor_"+id_editor);
         let stream = await editor.getSession().getValue();

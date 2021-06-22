@@ -155,6 +155,5 @@ def define_env(env):
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
-        print(tc, corr_content)
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
         return div_edit
