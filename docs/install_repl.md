@@ -1,6 +1,6 @@
 # Guide du REPL
 
-## Aperçu
+## Exemple
 
 Un REPL se présente sous cette forme :
 
@@ -23,15 +23,33 @@ Il dispose de quatre boutons :
 
 Par défaut, la commande `#!markdown {% raw %}{{REPL('exo2')}}{% endraw %}` permet de charger un script placé dans `docs/scripts/`. 
 
-Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!markdown {% raw %}{{REPL('c1/exo2')}}{% endraw %}` chargera le script exo2.py depuis `docs/scripts/c1`.
+Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!markdown {% raw %}{{REPL('foo/bar/exo2')}}{% endraw %}` chargera le script exo2.py depuis `docs/scripts/foo/bar`.
 
 !!! warning "Important"
 
     Le bouton de validation du script à l'aide de tests unitaires est présent uniquement si vous fournissez un fichier `test_nom_du_fichier.py` présent dans le même répertoire que `nom_du_fichier.py`.
 
+    La solution apparait au bout de 5 tests unitaires si vous fournissez un fichier `corr_nom_du_fichier.py`dans le même répertoire que `nom_du_fichier.py`.
+
     Le lancement du script, le téléchargement et le téléversement sont présentes par défaut.
 
-    Pour l'instant, aucun fichier de correction n'est fourni.
+!!! conclu "Conclusion"
+
+    À condition que les fichiers `corr_` et `test_`soient présents, `#!markdown {% raw %}{{REPL('foo/bar/truc/muche/fichier')}}{% endraw %}` gère **tout seul** :
+
+    - l'énoncé, 
+    - le juge en ligne, 
+    - les fichiers de correction
+
+## Technique !
+
+_Pour l'instant, j'ai la grosse flemme d'écrire cette section._
+
+En quelques mots, on crée deux `#!html div` désigné par un numéro auto-incrémenté : 
+
+- `#!html <div id="editor_6">` crée la partie éditeur de texte. Ce `#!html div` est converti en éditeur grâce à l'[éditeur ACE](https://ace.c9.io "ACE Editor") ;
+- `#!html <div id="term_editor_6">` crée la partie Terminal. Le Terminal n'est créé qu'au moment de la validation du script ou du juge en ligne. Il est créé grâce au plugin Terminal de jQuery par converstion du `#!html div` (voir section Guide du Terminal).
+
 
 ## Plein d'exercices !
 

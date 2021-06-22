@@ -40,11 +40,13 @@
 
     ~~Avec l'utilisation du code de [fjunier](https://mooc-forums.inria.fr/moocnsi/t/mkdocs-une-solution-ideale/1758/175), nous pourrions intégrer un juge en ligne ? Utile ou non ?~~
 
-    L'évaluateur de code est fonctionnel et permet de faire des benchmarks complexes. 
+    L'évaluateur de code est fonctionnel et permet de faire des benchmarks complexes.
     
     Le bouton du juge en ligne n'apparaitra que s'il existe un fichier de benchmark **`test_nom_de_script.py`**.
 
-    [TODO] Le corrigé n'apparaitra que si un fichier de **`corr_nom_de_script.py`** est présent.
+    Le corrigé n'apparaitra que si un fichier de **`corr_nom_de_script.py`** est présent.
+
+    Il faudra créer un pipe pour générer automatiquement un fichier de benchmark depuis un script de corrigé.
 
 
 !!! done "Javascript et REPL"
@@ -57,4 +59,4 @@
 
     ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du REPL, est vraiment naze. Il faut trouver autre chose.~~
     
-    Ajout de boutons permettant de télécharger les scripts écrits et téléverser les scripts disponibles localement.
+    Ajout de boutons permettant de télécharger les scripts écrits et téléverser les scripts disponibles localement. Evaluateur de code ajouté.

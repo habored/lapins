@@ -104,7 +104,7 @@ def define_env(env):
         return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()">⤴️</button>\
                 <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
 
-    def create_unittest_button(tc : str, nom_script: str, mode) -> str:
+    def create_unittest_button(tc: str, nom_script: str, mode: str) -> str:
         """
         Purpose : Generate the button for REPL {tc} to perform the unit tests if a valid test_script.py is present.
         Methods : Hide the content in a div that is called in the Javascript
@@ -142,7 +142,7 @@ def define_env(env):
         Last span hides the code content of the REPL if loaded.
         """
         content, tc = generate_content(nom_script)
-        corr_content, tc = generate_content("corr_"+nom_script)
+        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/corr_{nom_script.split('/')[-1]}""")
         div_edit = f'<div class="repl_classe">'
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
@@ -155,5 +155,6 @@ def define_env(env):
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
+        print(tc, corr_content)
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
         return div_edit

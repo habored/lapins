@@ -317,6 +317,7 @@ async function executeTestAsync(id_editor, mode) {
 
         if (dict[id_editor] === nAttempts) {
         let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
+        console.log(id_editor, correctionExists)
         if (correctionExists !== "") {
             console.log('entrée')
             showCorrection('editor_'+id_editor);
