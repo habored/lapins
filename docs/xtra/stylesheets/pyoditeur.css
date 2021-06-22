@@ -148,3 +148,14 @@ textarea:focus {
   font-size : 2em;
 }
 
+.compteur {
+  float: right;
+  color: rgba(87,147,240);
+  font-size : 1.2em
+}
+
+.compteur::before {
+  content: "Evaluations restantes : ";
+  color: rgba(87,147,240);
+  font-size : 0.8em
+}

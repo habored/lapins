@@ -277,7 +277,7 @@ async function executeTestAsync(id_editor, mode) {
             global_failed = 0
             success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
             fail_smb = ['🌩','🙈','🙉','⛑','🌋','💣']
-            if type(numerous_benchmark[0]) not in [list, tuple]:
+            if type(numerous_benchmark[0]) not in [list, tuple]:  # just one function has to be evaluated
                 type_bench = 'multiple' 
                 numerous_benchmark = (numerous_benchmark, )
 
@@ -304,11 +304,16 @@ async function executeTestAsync(id_editor, mode) {
 
         let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
+        elementCompteur = document.getElementById("test_term_editor_"+id_editor)
+        while (elementCompteur.className !== "compteur") {
+            elementCompteur = elementCompteur.nextElementSibling
+        }
         if (output === 0) {
             dict[id_editor] = nAttempts
         } else {
             dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0)
         }
+        elementCompteur.textContent = Math.max(0,nAttempts-dict[id_editor])+"/5"
 
         if (dict[id_editor] === nAttempts) {
         let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer

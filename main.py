@@ -114,7 +114,7 @@ def define_env(env):
         nom_script = f"{relative_path}/test_{stripped_nom_script}"
         content = read_ext_file(nom_script)
         if content is not None: 
-            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji_dark" onclick=\'executeTest("{tc}","{mode}")\'>🛂</button>"""
+            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji_dark" onclick=\'executeTest("{tc}","{mode}")\'>🛂</button><span class="compteur">5/5</span>"""
         else: 
             return ''
 
@@ -126,7 +126,7 @@ def define_env(env):
         return f"""<span style="indent-text:5em"> </span>"""
 
     @env.macro
-    def REPLv(nom_script='') -> str:
+    def REPLv(nom_script : str ='') -> str:
         """
         Purpose : Easy macro to generate vertical REPL in Markdown mkdocs.
         Methods : Fire the REPL function with 'v' mode.
@@ -135,7 +135,7 @@ def define_env(env):
 
 
     @env.macro
-    def REPL(nom_script='', mode = 'h') -> str:
+    def REPL(nom_script : str ='', mode : str = 'h') -> str:
         """
         Purpose : Create a REPL (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functioncal calls.
