@@ -49,3 +49,30 @@ function readFile (evt, id_editor) {
     }
     reader.readAsText(file)
 };
+
+// turn off copy paste of code... A bit aggressive but necessary
+$(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
+
+// Following blocks paint the REPL according to the mkdocs light/dark mode 
+function paintACE(theme) {
+    for (var editeur of document.querySelectorAll('div[id^="editor_"]')) {
+        let editor = ace.edit(editeur.id);
+        editor.setTheme(theme);
+        editor.getSession().setMode("ace/mode/python");
+    };
+}
+
+window.addEventListener('load', () => {
+    var p = document.querySelector('label[for="__palette_2"]')
+    if (p.hidden) {
+        paintACE('ace/theme/crimson_editor')
+    } else {
+        paintACE('ace/theme/tomorrow_night_bright')
+    }
+});
+
+var p2 = document.querySelector('input[id="__palette_2"]')
+p2.addEventListener('click', () => { paintACE('ace/theme/crimson_editor') });
+
+var p1 = document.querySelector('input[id="__palette_1"]')
+p1.addEventListener('click', () => { paintACE('ace/theme/tomorrow_night_bright') });

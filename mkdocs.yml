@@ -20,13 +20,6 @@ theme:
     font: false                     # RGPD ; pas de fonte Google
     language: fr                    # français
     palette:                        # Palettes de couleurs jour/nuit
-      - media: "(prefers-color-scheme: light)"
-        scheme: default
-        primary: indigo
-        accent: indigo
-        toggle:
-            icon: material/weather-sunny
-            name: Passer au mode nuit
       - media: "(prefers-color-scheme: dark)"
         scheme: slate
         primary: blue
@@ -34,6 +27,13 @@ theme:
         toggle:
             icon: material/weather-night
             name: Passer au mode jour
+      - media: "(prefers-color-scheme: light)"
+        scheme: default
+        primary: indigo
+        accent: indigo
+        toggle:
+            icon: material/weather-sunny
+            name: Passer au mode nuit
     features:
         - navigation.instant
         - navigation.tabs
