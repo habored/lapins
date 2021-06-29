@@ -53,6 +53,7 @@ function readFile (evt, id_editor) {
 // turn off copy paste of code... A bit aggressive but necessary
 $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
 
+
 // Following blocks paint the REPL according to the mkdocs light/dark mode 
 function paintACE(theme) {
     for (var editeur of document.querySelectorAll('div[id^="editor_"]')) {
@@ -64,6 +65,7 @@ function paintACE(theme) {
 
 window.addEventListener('load', () => {
     var p = document.querySelector('label[for="__palette_2"]')
+    console.log(p)
     if (p.hidden) {
         paintACE('ace/theme/crimson_editor')
     } else {

@@ -8,9 +8,9 @@ Un REPL se présente sous cette forme :
 
     {{REPL('exo2')}}
 
-Il dispose de quatre boutons : 
+Il dispose de quatre boutons :
 
-- Lancer le script : <button class="emoji">▶️</button> 
+- Lancer le script : <button class="emoji">▶️</button>
 - Télécharger le script : <button class="emoji">⤵️</button>
 - Téléverser un script : <button class="emoji">⤴️</button>
 - Valider le script avec des tests unitaires : <button class="emoji_dark">🛂</button>
@@ -21,7 +21,7 @@ Il dispose de quatre boutons :
 
 ## Prise en main
 
-Par défaut, la commande `#!markdown {% raw %}{{REPL('exo2')}}{% endraw %}` permet de charger un script placé dans `docs/scripts/`. 
+Par défaut, la commande `#!markdown {% raw %}{{REPL('exo2')}}{% endraw %}` permet de charger un script placé dans `docs/scripts/`.
 
 Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!markdown {% raw %}{{REPL('foo/bar/exo2')}}{% endraw %}` chargera le script exo2.py depuis `docs/scripts/foo/bar`.
 
