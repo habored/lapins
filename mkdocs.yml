@@ -1,16 +1,16 @@
-site_name: "Terminal et REPL dans Mkdocs"
+site_name: "Terminal et IDE dans Mkdocs"
 site_url: https://bouillotvincent.gitlab.io/pyodide-mkdocs
 repo_url: https://gitlab.com/bouillotvincent/pyodide-mkdocs
 edit_uri: tree/main/docs/
-site_description: Tutoriel pour un REPL et un Terminal dans MkDocs Material 
+site_description: Tutoriel pour un IDE et un Terminal dans MkDocs Material 
 copyright: |
   Copyleft &#127279 2021 <a href="https://bouillotvincent.gitlab.io/tests-avec-mkdocs/" target="_blank" rel="noopener">Vincent BOUILLOT</a>
 docs_dir: docs
 
 nav:
-  - "Terminal ▶️ et REPL 🖥 dans MkDocs": index.md
+  - "Terminal ▶️ et IDE 🖥 dans MkDocs": index.md
   - "Guide du Terminal 🐍": install_term.md
-  - "Guide du REPL 🐍" : install_repl.md
+  - "Guide de l'IDE 🐍" : install_ide.md
   - "En développement 🧪": todo.md
 
 

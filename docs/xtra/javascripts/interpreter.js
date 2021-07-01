@@ -219,8 +219,8 @@ function executeTest(id_editor, mode) {
 
 function showCorrection(id_editor) {
     if (document.getElementById("corr_"+id_editor) === null) {
-    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to REPL+buttons */ 
-    while (wrapperElement.className !== "repl_classe") {
+    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
+    while (wrapperElement.className !== "ide_classe") {
         wrapperElement = wrapperElement.parentNode
     }
     var txt = document.createElement("div");
@@ -245,7 +245,7 @@ function showCorrection(id_editor) {
         editor.getSession().setValue(url_pyfile.replace(/backslash_newline/g, "\n"))  
     }
     wrapperElement.insertAdjacentElement('afterend', txt)
-    window.REPL_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
+    window.IDE_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
 }}
 
 async function executeTestAsync(id_editor, mode) {

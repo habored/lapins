@@ -1,4 +1,4 @@
-# Terminal et REPL dans Mkdocs
+# Terminal et IDE dans Mkdocs
 
 ## Introduction
 
@@ -20,7 +20,7 @@ Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir
 
 ## Prise en main
 
-Je vous propose ici des commandes Markdown permettant de créer un terminal ainsi qu'un REPL grâce au **plugin macro**.
+Je vous propose ici des commandes Markdown permettant de créer un terminal ainsi qu'un IDE grâce au **plugin macro**.
 
 ### Syntaxe Markdown
 
@@ -38,69 +38,69 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
 
         {{ terminal () }}
 
-    === "REPL vide"
+    === "IDE vide"
         ```markdown
         {% raw %}
-        {{ REPL() }}
+        {{ IDE() }}
         {% endraw %}
         ```
-        Cette commande crée un REPL (~ Thonny) vide. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
+        Cette commande crée un IDE (~ Thonny) vide. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type _snippet_ avec ++tab++.
 
-        {{REPL()}}
+        {{IDE()}}
 
-    === "REPL vertical"
+    === "IDE vertical"
         ```markdown
         {% raw %}
-        {{ REPLv() }}
+        {{ IDEv() }}
         {% endraw %}
         ```
-        Cette commande crée un REPL vide, avec division verticale. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
+        Cette commande crée un IDE vide, avec division verticale. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
 
-        {{REPLv()}}
+        {{IDEv()}}
 
-    === "REPL avec code"
+    === "IDE avec code"
         ```markdown
         {% raw %}
-        {{ REPL('foo/bar/nom_de_fichier') }}
+        {{ IDE('foo/bar/nom_de_fichier') }}
         {% endraw %}
         ```
-        Cette commande charge le fichier `nom_de_fichier.py` dans un REPL. Le fichier doit être dans `docs/scripts/foo/bar/`. Ne pas oublier les guillemets.
+        Cette commande charge le fichier `nom_de_fichier.py` dans un IDE. Le fichier doit être dans `docs/scripts/foo/bar/`. Ne pas oublier les guillemets.
 
-        {{REPL('demo/demo1')}}
+        {{IDE('demo/demo1')}}
 
-    === "REPL vertical avec code"
+    === "IDE vertical avec code"
         ```markdown
         {% raw %}
-        {{ REPLv('foo/bar/nom_de_fichier') }}
+        {{ IDEv('foo/bar/nom_de_fichier') }}
         {% endraw %}
         ```
-        Cette commande charge le fichier `nom_de_fichier` dans un REPL avec division verticale. Le fichier doit être dans `docs/scripts/foo/bar/`.       
+        Cette commande charge le fichier `nom_de_fichier` dans un IDE avec division verticale. Le fichier doit être dans `docs/scripts/foo/bar/`.       
 
-        {{REPLv('demo/demo1')}}
+        {{IDEv('demo/demo1')}}
  
 
 ??? warning "Détails techniques"
 
-    Tous les REPL et les terminaux partagent le même namespace. On peut donc accéder à n'importe quelle fonction créée dans n'importe quel REPL ou terminal. 
+    Tous les IDE et les terminaux partagent le même _namespace_. On peut donc accéder à n'importe quelle fonction créée dans n'importe quel IDE ou terminal. 
     
     **C'est un comportement voulu qui a des avantages et des inconvénients.**
 
 !!! done "Amélioration notable"
 
-    ~~Pour que les REPL fonctionnent, il faut absolument indiquer `{% raw %} {{ REPL('nom_de_fichier', -1) }} {% endraw %}` sur le dernier REPL de la page.~~
+    ~~Pour que les IDE fonctionnent, il faut absolument indiquer `{% raw %} {{ IDE('nom_de_fichier', -1) }} {% endraw %}` sur le dernier IDE de la page.~~
 
-    Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée. Plus besoin d'indiquer le dernier REPL !
+    Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée. Plus besoin d'indiquer le dernier IDE !
 
 
 ### Exemples
 
-L'exemple ci-dessous, obtenu avec `#!markdown {% raw %} {{ REPLv('exo2') }} {% endraw %}`. N'hésitez pas à modifier le code pour calculer la moyenne, l'écart-type, afficher cela dans le terminal etc.
+L'exemple ci-dessous, obtenu avec `#!markdown {% raw %} {{ IDEv('exo2') }} {% endraw %}`. N'hésitez pas à modifier le code pour calculer la moyenne, l'écart-type, afficher cela dans le terminal etc.
 
-{{REPLv('exo2')}}
+{{IDEv('exo2')}}
 
-L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ REPL('algo_glouton') }} {% endraw %}`.
+L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ IDE('algo_glouton') }} {% endraw %}`.
 
-{{REPL('algo_glouton')}}
+{{IDE('algo_glouton')}}
 
 
 ## Installation

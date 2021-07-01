@@ -1,7 +1,7 @@
 # dictionnaire :
 #   - clé : nom de l'objet
 #   - valeur : tableau [poids, prix]
-inventaire = {"A": [13,700],"B": [12,650], "C": [6,250], "D": [6,400],"E": [5, 100]}
+inventaire = {"A": [13,700], "B": [12,650], "C": [6,250], "D": [6,400],"E": [5, 100]}
 
 # Calcule la valeur massique en divisant la 2ème valeur du tableau par la première
 # on ajoute cela à la valeur du dictionnaire
@@ -9,7 +9,7 @@ for objet, (poids, prix) in inventaire.items():
     inventaire[objet].append(prix/poids)
 
 # Trie le tableau en ordre décroissant suivant la valeur massique.
-def f(dico: dict, col=2):
+def f(dico: dict, col = 2):
     tableau_trié = sorted(dico.items(), key = lambda a: a[1][col], reverse=True)
     return {clé:valeur for clé, valeur in tableau_trié}
 

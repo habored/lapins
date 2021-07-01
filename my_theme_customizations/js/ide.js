@@ -24,7 +24,7 @@ $('[id^=editor_]').each(function() {
         // (<div> autocloses in an admonition) 
         editor.getSession().setValue(url_pyfile.replace(/backslash_newline/g, "\n"))  
     }
-    window.REPL_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
+    window.IDE_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
 
     if (url_pyfile === '') { 
         let editor = ace.edit(id_editor)
@@ -54,7 +54,7 @@ function readFile (evt, id_editor) {
 $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
 
 
-// Following blocks paint the REPL according to the mkdocs light/dark mode 
+// Following blocks paint the IDE according to the mkdocs light/dark mode 
 function paintACE(theme) {
     for (var editeur of document.querySelectorAll('div[id^="editor_"]')) {
         let editor = ace.edit(editeur.id);
