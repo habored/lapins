@@ -173,8 +173,16 @@ color: #DEDEDE;
   font-weight: 900;
 } */
 
+@font-face {
+  font-family: "color-emoji";
+  src: local("Apple Color Emoji"), 
+       local("Segoe UI Emoji"), 
+       local("Segoe UI Symbol"), 
+       local("Noto Color Emoji");
+}
+
 .emoji {
-font-family: "apple color emoji", "segoe ui emoji", "noto color emoji", "android emoji", "emojisymbols", "emojione mozilla", "twemoji mozilla", "segoe ui symbol";
+font-family: serif, color-emoji;
 filter: sepia(1) brightness(50%) hue-rotate(178deg) saturate(286%) brightness(186%);
 text-shadow: 2px 2px rgba(87,147,240);
 font-size : 2em;
@@ -191,7 +199,7 @@ box-shadow: inset 2px 2px 3px rgba(255, 255, 255, .6),
             inset -2px -2px 3px rgba(0, 0, 0, .6); */
 }
 .emoji_dark {
-font-family: "apple color emoji", "segoe ui emoji", "noto color emoji", "android emoji", "emojisymbols", "emojione mozilla", "twemoji mozilla", "segoe ui symbol";
+font-family: serif, color-emoji;
 filter: sepia(1) brightness(50%) hue-rotate(183deg) saturate(276%) brightness(236%);
 text-shadow: 2px 2px rgba(87,147,240);
 font-size : 2em;
