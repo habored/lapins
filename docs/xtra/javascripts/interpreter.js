@@ -39,6 +39,50 @@ pyodide.runPython(`
 namespace.destroy();
 
 
+let my_module = {
+
+    // getCanvasNumber : function() {
+    //     return false;
+    // },
+    tortue : class {
+        constructor(x = 10, y = 10){
+            this.x , this.y = x, y;
+        };
+    },
+
+    forward : function(L) {
+        var canvas = document.querySelector('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.beginPath()
+        console.log('ligne 57', ctx, this.tortue, this.tortue.y)
+        ctx.moveTo(this.tortue.x, this.tortue.y)
+        ctx.lineTo(this.tortue.x+L, this.tortue.y)
+        ctx.stroke()
+        this.tortue.x += L
+        this.tortue.y += 0
+    },
+
+    fd : function(L) {
+        this.forward(L)
+    },    
+
+    f : function(x){
+        return x*x + 1;
+    },
+    g : function(x){
+        console.log(`Calling g on argument ${x}`);
+        return x;
+    },
+    submodule : {
+        h : function(x) {
+        return x*x - 1;
+        },
+        c  : 2,
+    },
+};
+pyodide.registerJsModule("turtle", my_module);
+console.log('ici',pyodide.globals.get("dict")())
+
 let ps1 = '>>> ', ps2 = '... ';
 
 async function lock(){
@@ -340,6 +384,7 @@ async function executeTestAsync(id_editor, mode) {
         $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
       }
     } 
+
 
 /* <div class="admonition info">
     <p class="admonition-title">paf</p>
