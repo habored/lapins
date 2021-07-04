@@ -41,9 +41,6 @@ namespace.destroy();
 
 let my_module = {
 
-    // getCanvasNumber : function() {
-    //     return false;
-    // },
     tortue : class {
         constructor(x = 10, y = 10){
             this.x , this.y = x, y;
