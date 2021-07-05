@@ -40,8 +40,8 @@ namespace.destroy();
 
 await pyodideReadyPromise;
 
-// const url1 = 'https://raw.githubusercontent.com/bouillotvincent/bouillotvincent.github.io/master/js-turtle.py'
-const url1 = 'https://glcdn.githack.com/bouillotvincent/pyodide-mkdocs/-/raw/main/js-turtle.py'
+const url1 = 'https://raw.githubusercontent.com/bouillotvincent/bouillotvincent.github.io/master/js-turtle.py'
+// const url1 = 'https://glcdn.githack.com/bouillotvincent/pyodide-mkdocs/-/raw/main/js-turtle.py'
 const response = await fetch(url1);
 const data = await response.text();
 console.log(data);
