@@ -191,7 +191,7 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     }
 
     try {
-      console.log('boubou', code, JSON.stringify(code),JSON.stringify(code.replace(/\n/g, "hello")))
+      // console.log('boubou', code, JSON.stringify(code),JSON.stringify(code.replace(/\n/g, "hello")))
       // JSON.stringify() convert code intro real string with \n \t characters
       // await pyodide.myLoadPackagesFromImports(code)
     //   pyodide.runPython(`from pyodide import find_imports\nimported_modules = find_imports(${JSON.stringify(code)})`)
