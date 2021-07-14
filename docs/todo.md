@@ -1,6 +1,6 @@
 # Des questions techniques et métaphysiques
 
-## Bac à sable
+<!-- ## Bac à sable
 
 {{terminal()}}
 
@@ -27,7 +27,7 @@ function boum(L) {
         ctx.stroke()
     }
 
-</script>
+</script> -->
 
 ## Partis pris
 
