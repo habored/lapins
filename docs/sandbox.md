@@ -1,6 +1,6 @@
 # Bac à sable
 
-{{terminal()}}
+{{IDE()}}
 
 <canvas width="500" height="300">
   Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.

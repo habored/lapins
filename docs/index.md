@@ -117,7 +117,7 @@ L'installation demande
     - un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
     - un template HTML `#!bash my_theme_customizations/main.html` ;
     - un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-    - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/repl.js` ;
+    - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/ide.js` ;
 
 ### Fichier YML `mkdocs.yml`
 
@@ -146,11 +146,11 @@ Dans ce dossier, ajoutez le template Jinja `#!bash main.html` :
 
 Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/stylesheets/pyoditeur.css "Pyoditeur CSS sur Gitlab") au dossier `docs/xtra/stylesheets/`.
 
-### Fichiers javascripts `interpreter.js` et `repl.js`
+### Fichiers javascripts `interpreter.js` et `ide.js`
 
-Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`repl.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/js/repl.js "repl JS sur Gitlab ") sont nécessaires :
+Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`ide.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/js/ide.js "ide JS sur Gitlab ") sont nécessaires :
 
 - `interpreter.js` doit être placé dans le dossier : `docs/xtra/javascripts/` ;
-- `repl.js` doit être placé dans le dossier : `my_theme_customizations/js/repl.js`.
+- `ide.js` doit être placé dans le dossier : `my_theme_customizations/js/ide.js`.
 
 **Et c'est tout !**

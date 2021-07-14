@@ -1,16 +1,25 @@
-from js import document
+from js import document, window
 import inspect
 from math import cos, sin, pi
 
-class Tortue:
+class Turtle:
 
-	def __init__(self, context, x = 0, y = 0, angle = 0):
+	def __init__(self, x = 0, y = 0, angle = 0):
 		self.x, self.y = x, y
 		self.angle = angle
-		self.color = '#ff0000'
-		self.width = 1
-		self.style = '🐢'
-		self.ctx = context
+		self.color = 'red'
+		self.width = 2
+		self.style = 'classic'
+		self.canvas = document.querySelector('canvas')
+		self.ctx = document.querySelector('canvas').getContext("2d")
+		self.__set_default()
+		self.state = dict()
+
+	def __set_default(self):
+		self.ctx.lineJoin = "miter"
+		self.ctx.lineCap = "round"
+		# self.ctx.shape = self.shape(self.style)  # to be checked
+
 
 	def rad2deg(self, angle):
 		return angle / pi *180
@@ -25,32 +34,70 @@ class Tortue:
 			return self.color
 		else:
 			self.color = args
-			self.ctx.fillStyle = self.color
-			
+			self.ctx.strokeStyle = self.color
+
+	def pensize(self, width = None):
+		self.ctx.lineWidth = width
+
+	def shape(self, style = None):
+		dico_style = {'arrow' : '➡︎', 'turtle' : '🐢', \
+					  'circle' : '●', 'square' : '■', \
+					  'triangle' : '▶︎', 'classic': '➤'}
+		self.style = dico_style[style]
+
 	def forward(self, L):
+		self.state[f"""self._{inspect.currentframe().f_code.co_name}"""] = [self.angle, L]
+		# self.ctx.beginPath()
+		# self.ctx.moveTo(self.x, self.y)
+		# self.ctx.lineTo(self.x + L * cos(self.deg2rad(self.angle)), \
+		# 				self.y + L * sin(self.deg2rad(self.angle)))
+		# self.ctx.stroke()
+		# self.x += L * cos(self.deg2rad(self.angle))
+		# self.y += L * sin(self.deg2rad(self.angle))
+	
+	def _forward(self, L, current_L=1):
+		# if current_L < L:
 		self.ctx.beginPath()
 		self.ctx.moveTo(self.x, self.y)
 		self.ctx.lineTo(self.x + L * cos(self.deg2rad(self.angle)), \
 						self.y + L * sin(self.deg2rad(self.angle)))
 		self.ctx.stroke()
-		self.x = L
-	
+			# return current_L + 1
+		# else :
+		self.x += L * cos(self.deg2rad(self.angle))
+		self.y += L * sin(self.deg2rad(self.angle))
+
 	def fd(self, L):
 		self.forward(L)
 
 	def right(self, angle):
-		self.angle -= angle
+		self.angle += angle
 
 	def left(self, angle):
-		self.angle += angle
+		self.angle -= angle
+
+	def tick(self):
+		# Clear canvas
+		self.ctx.clearRect(0, 0, self.canvas.width, self.canvas.height)
+
+		# Draw current state
+		for command, vars in self.state.items() :
+			a, L = vars
+			eval(command)(L)
+
+
+	def mainloop(self):
+		self._animate()
+
+	def _animate(self):
+		self.tick()
+		window.requestAnimationFrame(self._animate())
 
 canvas = document.querySelector('canvas')
 canvas.setAttribute('width', 640)
 canvas.setAttribute('height', 480)
 context = canvas.getContext("2d")
-context.strokeStyle = "#df4b26"
-context.lineJoin = "round"
-context.lineWidth = 5
+
 pen = False
 lastPoint = (0, 0)
 
@@ -78,4 +125,4 @@ canvas.addEventListener('mousemove', onmousemove)
 canvas.addEventListener('mousedown', onmousedown)
 canvas.addEventListener('mouseup', onmouseup)
 
-fred = Tortue(context)
+fred = Turtle()
