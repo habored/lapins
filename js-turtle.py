@@ -20,7 +20,6 @@ class Turtle:
 		self.ctx.lineCap = "round"
 		# self.ctx.shape = self.shape(self.style)  # to be checked
 
-
 	def rad2deg(self, angle):
 		return angle / pi *180
 

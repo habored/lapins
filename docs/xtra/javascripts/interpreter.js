@@ -124,17 +124,7 @@ pyodide._module.on_fatal = async (e) => {
 };
 }
 
-// function find_imports
-
-// function myLoadPackagesFromImports(code){
-//     pyodide.runPython(`from pyodide import find_imports\nimported_modules = find_imports(${JSON.stringify(code)})`)
-    
-//     pyodide.loadPackagesFromImports(code)
-//     return pyodide.globals.get("my_eval_code")(code, pyodide.globals);
-// }
-
 function removeLines(data, moduleName) {
-    console.log('137', moduleName)
     return data
       .split('\n')
       .filter(sentence => !(sentence.includes("import " + moduleName) || sentence.includes("from " + moduleName)))
@@ -146,22 +136,41 @@ async function foreignModulesFromImports(code, moduleDict = {}) {
     pyodide.runPython(`from pyodide import find_imports\nimported_modules = find_imports(${JSON.stringify(code)})`)
     const importedModules = pyodide.globals.get('imported_modules').toJs();
     var executedCode = code
+    
     for (var moduleName in moduleDict) {
-        let moduleURL = moduleDict[moduleName];
+        var moduleFakeName = moduleDict[moduleName];
       
         if (importedModules.includes(moduleName)) {
-            console.log('169', importedModules, moduleName, moduleURL)
-            // let url = moduleURL//"https://raw.githubusercontent.com/bouillotvincent/bouillotvincent.github.io/master/js-turtle.py"
-            const response = await fetch(moduleURL);
-            const module_code = await response.text();
-            console.log(module_code)
-            pyodide.runPython(module_code);
+            // number of characters before the first occurrence of the module name, presumably the import clause
+            var indexModule = executedCode.indexOf(moduleName); 
+            // substring to count the number of newlines
+            var tempString = executedCode.substring(0, indexModule); 
+            // counting the newlines
+            var lineNumber = tempString.split('\n').length;
+            
+            let importLine = executedCode.split('\n')[lineNumber-1]; // getting the import line, now the business starts.
+
+            if (importLine.includes('import ' + moduleName) && !importLine.includes('as')) {
+                importLine = importLine.replace(moduleName, moduleFakeName + ' as ' + moduleName)
+            } else {
+                importLine = importLine.replace(moduleName, moduleFakeName)
+            }
+
+            // pyodide.runPythonAsync(`
+            // import micropip
+            // await micropip.install("${moduleFakeName}")
+            // ${importLine}
+            // `)
+            executedCode = `
+import micropip
+await micropip.install("${moduleFakeName}")
+${importLine}
+            ` + executedCode
         }
-        console.log('170', 'moduleName', executedCode)
+        console.log(executedCode)
         executedCode = removeLines(executedCode, moduleName)
-
+        console.log(executedCode)
     };
-
     return executedCode
 }
 
@@ -214,8 +223,8 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
 
       
     //   let executed_code = removeLines(code)
-      let executed_code = await foreignModulesFromImports(code, {'turtle': "https://raw.githubusercontent.com/bouillotvincent/bouillotvincent.github.io/master/js-turtle.py"})
-      await pyodide.runPythonAsync("from __future__ import annotations\n"+executed_code);    // Running the code
+      let executed_code = await foreignModulesFromImports(code, {'turtle': "pyo_js_turtle"})
+      await pyodide.runPythonAsync("from __future__ import annotations\n" + executed_code);    // Running the code
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
       $.terminal.active().echo(">>> Script exécuté !\n"+stdout); 
     } catch(err) {
