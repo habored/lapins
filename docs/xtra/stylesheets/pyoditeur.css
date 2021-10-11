@@ -7,6 +7,18 @@
 --main-bg-color: blue;
 } */
 
+.can_wrapper {
+  position: relative;
+  width: 500px;
+  height: 300px;
+}
+
+.can_wrapper canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .wrapper_h {
   border: solid 1px;
   border-radius: 6px;

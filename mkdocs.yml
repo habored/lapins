@@ -106,6 +106,7 @@ plugins:
   - search
   - macros
   - enumerate-headings
+  - mkdocs-jupyter
 
 extra_javascript:
   - xtra/javascripts/mathjax-config.js                    # MathJax
