@@ -22,7 +22,7 @@ $('[id^=editor_]').each(function() {
         });
         // Decode the backslashes into newlines for ACE editor from admonitions 
         // (<div> autocloses in an admonition) 
-        editor.getSession().setValue(url_pyfile.replace(/backslash_newline/g, "\n"))  
+        editor.getSession().setValue(url_pyfile.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*"))  
     }
     window.IDE_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
 
@@ -51,8 +51,7 @@ function readFile (evt, id_editor) {
 };
 
 // turn off copy paste of code... A bit aggressive but necessary
-// $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
-
+$(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
 
 // Following blocks paint the IDE according to the mkdocs light/dark mode 
 function paintACE(theme) {
@@ -65,7 +64,6 @@ function paintACE(theme) {
 
 window.addEventListener('load', () => {
     var p = document.querySelector('label[for="__palette_2"]')
-    console.log(p)
     if (p.hidden) {
         paintACE('ace/theme/crimson_editor')
     } else {

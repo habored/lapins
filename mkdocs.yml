@@ -63,15 +63,22 @@ markdown_extensions:
     - pymdownx.tasklist:            # Cases à cocher  - [ ]  et - [x]
         custom_checkbox:    false   #   avec cases d'origine
         clickable_checkbox: true    #   et cliquables.
-    - pymdownx.tabbed               # Volets glissants.  === "Mon volet"
-    - pymdownx.superfences          # Imbrication de blocs.
+    - pymdownx.tabbed:               # Volets glissants.  === "Mon volet"
+        alternate_style: true 
+    - pymdownx.superfences:          # Imbrication de blocs.
+        preserve_tabs: true
+        custom_fences:
+            - name: mermaid
+              class: mermaid
+              format: !!python/name:mermaid2.fence_mermaid
     - pymdownx.keys:                # Touches du clavier.  ++ctrl+d++
         separator: "\uff0b"
     - pymdownx.emoji:               # Émojis  :boom:
         emoji_index:     !!python/name:materialx.emoji.twemoji
         emoji_generator: !!python/name:materialx.emoji.to_svg
-
-
+    - pymdownx.tasklist:
+        custom_checkbox: true
+        clickable_checkbox: true
     - pymdownx.arithmatex:
         generic: true
     - toc:
