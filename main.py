@@ -42,20 +42,20 @@ def define_env(env):
 
     env.variables['compteur_exo'] = 0
     @env.macro
-    def exercice(var = True, prem = 1):
+    def exercice(var = True, prem = None):
         # si var == False, alors l'exercice est placé dans une superfence.
-        if prem == 0 : env.variables['compteur_exo'] = 0
+        if prem is not None : env.variables['compteur_exo'] = prem
         env.variables['compteur_exo'] += 1
         root = f"Exercice { env.variables['compteur_exo']}"
-        return f"""tip \"{root}\"""" if var else '\"'+root+'\"'
-        
+        return f"""exo \"{root}\"""" if var else '\"'+root+'\"'
+
     @env.macro
     def cours():
         return f'done "Cours"'
 
     @env.macro
     def ext():
-        return f'danger "Pour aller plus loin"'
+        return f'ext "Pour aller plus loin"'
 
     @env.macro
     def tit(ch = "", text = ""):
@@ -86,14 +86,17 @@ def define_env(env):
         Methods : The content of the file is hidden in the webpage. Replacing \n by a string makes it possible
         to integrate the content in mkdocs admonitions.
         """
-        short_path = f"""docs/{os.path.dirname(env.variables.page.url.rstrip('/'))}"""
+        short_path = f"""docs/"""
+        print('ici',short_path)
+        print(f"""{short_path}/scripts/{nom_script}.py""")
         try: 
             f = open(f"""{short_path}/scripts/{nom_script}.py""")
             content = ''.join(f.readlines())
             f.close()
             content = content+ "\n"
             # Hack to integrate code lines in admonitions in mkdocs
-            return content.replace('\n','backslash_newline')
+            # change backslash_newline by backslash-newline
+            return content.replace('\n','backslash-newline').replace('_','python-underscore').replace('*','python-star')
         except :
             return
         
@@ -126,7 +129,7 @@ def define_env(env):
         """
         stripped_nom_script = nom_script.split('/')[-1]
         relative_path = '/'.join(nom_script.split('/')[:-1])
-        nom_script = f"{relative_path}/test_{stripped_nom_script}"
+        nom_script = f"{relative_path}/{stripped_nom_script}_test"
         content = read_ext_file(nom_script)
         if content is not None: 
             return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji_dark" onclick=\'executeTest("{tc}","{mode}")\'>🛂</button><span class="compteur">5/5</span>"""
@@ -156,8 +159,8 @@ def define_env(env):
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functioncal calls.
         Last span hides the code content of the IDE if loaded.
         """
-        content, tc = generate_content(nom_script)
-        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/corr_{nom_script.split('/')[-1]}""")
+        content, tc = generate_content(nom_script)  # content with __ passed correctly here
+        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""")
         div_edit = f'<div class="ide_classe">'
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
@@ -172,3 +175,11 @@ def define_env(env):
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
         return div_edit
+    
+    @env.macro
+    def mult_col(*text):
+        cmd = """<table style="border-color:transparent;background-color:transparent"><tr>"""
+        for column in text:
+            cmd += f"""<td><b style="font-size:1.2em">{column}</td>"""
+        cmd += f"""</tr></table>"""
+        return cmd
