@@ -67,10 +67,6 @@ markdown_extensions:
         alternate_style: true 
     - pymdownx.superfences:          # Imbrication de blocs.
         preserve_tabs: true
-        custom_fences:
-            - name: mermaid
-              class: mermaid
-              format: !!python/name:mermaid2.fence_mermaid
     - pymdownx.keys:                # Touches du clavier.  ++ctrl+d++
         separator: "\uff0b"
     - pymdownx.emoji:               # Émojis  :boom:
