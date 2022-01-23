@@ -27,9 +27,9 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
 
 !!! warning "Important"
 
-    Le bouton de validation du script à l'aide de tests unitaires est présent uniquement si vous fournissez un fichier `test_nom_du_fichier.py` présent dans le même répertoire que `nom_du_fichier.py`.
+    Le bouton de validation du script à l'aide de tests unitaires est présent uniquement si vous fournissez un fichier `nom_du_fichier_test.py` présent dans le même répertoire que `nom_du_fichier.py`.
 
-    La solution apparait au bout de 5 tests unitaires si vous fournissez un fichier `corr_nom_du_fichier.py`dans le même répertoire que `nom_du_fichier.py`.
+    La solution apparait au bout de 5 tests unitaires si vous fournissez un fichier `nom_du_fichier_corr.py`dans le même répertoire que `nom_du_fichier.py`.
 
     Le lancement du script, le téléchargement et le téléversement sont présentes par défaut.
 
@@ -43,10 +43,10 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
 
     === "Fichier Correction"
 
-        Le fichier Python de correction `corr_nom_de_script.py` est écrit de manière classique. 
+        Le fichier Python de correction `nom_de_script_corr.py` est écrit de manière classique. 
 
         ```python linenums="1"
-        --8<-- "docs/scripts/corr_exo2.py"
+        --8<-- "docs/scripts/exo2_corr.py"
         ```
 
     === "Fichier Juge"
@@ -56,7 +56,7 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
         1) Si l'on souhaite vérifier une unique fonction grâce à l'évaluateur de code :
 
         ```python linenums="1"
-        --8<-- "docs/scripts/demo/test_demo2.py"
+        --8<-- "docs/scripts/demo/demo2_test.py"
         ```
         
         On a donc un tableau de chaines de caractères qui seront évaluées avec `#!python eval()`. Attention donc aux caractères d'échappement.
@@ -64,7 +64,7 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
         1) Si l'on souhaite vérifier plusieurs fonctions grâce à l'évaluateur de code :
    
         ```python linenums="1"
-        --8<-- "docs/scripts/test_exo2.py"
+        --8<-- "docs/scripts/exo2_test.py"
         ```
 
         On a donc un tableau de tableau de chaines de caractères qui seront évaluées avec `#!python eval()`. 
@@ -74,7 +74,7 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
 
 !!! conclu "Conclusion"
 
-    À condition que les fichiers `corr_` et `test_`soient présents, `#!markdown {% raw %}{{IDE('foo/bar/truc/muche/fichier')}}{% endraw %}` gère **tout seul** :
+    À condition que les fichiers `*_corr.py` et `*_test.py`soient présents, `#!markdown {% raw %}{{IDE('foo/bar/truc/muche/fichier')}}{% endraw %}` gère **tout seul** :
 
     - l'énoncé, 
     - le juge en ligne, 
