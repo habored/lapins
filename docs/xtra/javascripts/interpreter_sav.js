@@ -1,4 +1,3 @@
-var debug_mode = false;
 var dict = {};  // Global dictionnary tracking the number of clicks
 const nAttempts = 5;
 
@@ -155,9 +154,9 @@ async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
 
             executedCode = `import micropip\nawait micropip.install("${moduleFakeName}")\n${importLine}\n` + executedCode
         }
-        if (debug_mode) {console.log(executedCode)}
+        console.log(executedCode)
         executedCode = removeLines(executedCode, moduleName)
-        if (debug_mode) {console.log(executedCode)}
+        console.log(executedCode)
     };
     return executedCode
 }
@@ -185,12 +184,12 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
 
     // resize terminal to the size of editor on interpreting
     if (mode === "v") {
-        if (debug_mode) {console.log(187, id_editor )}
+        console.log(187, id_editor )
         $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
     }
 
     try {
-        if (debug_mode) {console.log(code)}
+      console.log(code)
       let executed_code = await foreignModulesFromImports(code, {'turtle': "pyo_js_turtle"}, id_editor)
       await pyodide.runPythonAsync("from __future__ import annotations\n" + executed_code);    // Running the code
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
@@ -331,7 +330,6 @@ async function executeTestAsync(id_editor, mode) {
         // pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
 
         let test_code = document.getElementById("test_term_editor_"+id_editor).textContent.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*");
-        if (!test_code.includes("assert")) {
         pyodide.runPython(`
         import sys as __sys__
         import io as __io__
@@ -378,38 +376,8 @@ async function executeTestAsync(id_editor, mode) {
                     global_failed += 1
             return global_failed
         `);
-        var output = await pyodide.runPythonAsync(test_code + "\ntest_unitaire(benchmark)");    // Running the code OUTPUT
-        } else {
-            var i = 0;
-            pyodide.runPython(`
-import sys as __sys__
-import io as __io__
-import js
-__sys__.stdout = __io__.StringIO()
-global_failed = 0
-success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
-fail_smb = ['🌩','🙈','🙉','⛑','🌋','💣']
 
-if 'test_unitaire' not in list(globals()):
-    from random import choice
-try:
-    ${test_code.replace(/assert/g, function(match) { 
-        return match === "assert" ? (i++ === 0 ? 'assert' : '    assert') : '    assert'; 
-    })}
-    print(f"Bravo vous avez réussi tous les tests {choice(success_smb)}")
-    global_failed = 0
-except AssertionError as msg:
-    msg = f"Le test {msg} a échoué" 
-    print(msg)
-    print(f"Reprenez votre code {choice(fail_smb)}")
-    global_failed = 1
-
-def dummy_fct():
-    return global_failed
-`)
-var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function avoid creating an extra level of indentation in the assert line
-}
-
+        let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
         elementCompteur = document.getElementById("test_term_editor_"+id_editor)
         while (elementCompteur.className !== "compteur") {

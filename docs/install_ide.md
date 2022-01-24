@@ -49,26 +49,38 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
         --8<-- "docs/scripts/exo2_corr.py"
         ```
 
-    === "Fichier Juge"
+    === "Fichier Juge - Benchmark"
 
         Le fichier de juge en ligne doit contenir une variable appelée `benchmark`, de type `#!python list` ou `#!python tuple` :
 
         1) Si l'on souhaite vérifier une unique fonction grâce à l'évaluateur de code :
 
         ```python linenums="1"
-        --8<-- "docs/scripts/demo/demo2_test.py"
+        --8<-- "docs/scripts/demo/demo1_test.py"
         ```
         
-        On a donc un tableau de chaines de caractères qui seront évaluées avec `#!python eval()`. Attention donc aux caractères d'échappement.
+        On a donc un tuple de chaînes de caractères qui sera évalué avec `#!python eval()`. 
  
-        1) Si l'on souhaite vérifier plusieurs fonctions grâce à l'évaluateur de code :
+        2) Si l'on souhaite vérifier plusieurs fonctions grâce à l'évaluateur de code :
    
         ```python linenums="1"
         --8<-- "docs/scripts/exo2_test.py"
         ```
 
-        On a donc un tableau de tableau de chaines de caractères qui seront évaluées avec `#!python eval()`. 
+        On a donc un tuple de tableau de chaînes de caractères qui sera évalué avec `#!python eval()`. 
 
+
+    === "Fichier Juge - Assert"
+
+        Le fichier de juge en ligne peut être écrit de manière beaucoup plus "classique" en utilisant `#!python assert` :
+
+        ```python linenums="1"
+        --8<-- "docs/scripts/demo/demo2_test.py"
+        ```
+        
+        Les `#!python assert` sont directement évalués par Pyodide. Seul le test ayant échoué sera affiché. Les tests réussis n'afficheront rien (**doit-on changer ce comportement ?**).
+        
+        Pas de problème pour tester autant de fonctions que nécessaire.
 
     
 
@@ -79,16 +91,6 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
     - l'énoncé, 
     - le juge en ligne, 
     - les fichiers de correction
-
-## Technique !
-
-_Pour l'instant, j'ai la grosse flemme d'écrire cette section._
-
-En quelques mots, on crée deux `#!html div` désigné par un numéro auto-incrémenté : 
-
-- `#!html <div id="editor_6">` crée la partie éditeur de texte. Ce `#!html div` est converti en éditeur grâce à l'[éditeur ACE](https://ace.c9.io "ACE Editor") ;
-- `#!html <div id="term_editor_6">` crée la partie Terminal. Le Terminal n'est créé qu'au moment de la validation du script ou du juge en ligne. Il est créé grâce au plugin Terminal de jQuery par converstion du `#!html div` (voir section Guide du Terminal).
-
 
 ## Plein d'exercices !
 
@@ -127,6 +129,16 @@ On peut bien sur enrouler tout cela...
 
         Complétez la fonction `nombre_mots` afin que celle-ci renvoie le nombre de mots séparé par un espace d'une phrase `phrase`.
         {{IDEv('demo/demo3')}}
+
+
+## Technique !
+
+_Pour l'instant, j'ai la grosse flemme d'écrire cette section._
+
+En quelques mots, on crée deux `#!html div` désigné par un numéro auto-incrémenté : 
+
+- `#!html <div id="editor_6">` crée la partie éditeur de texte. Ce `#!html div` est converti en éditeur grâce à l'[éditeur ACE](https://ace.c9.io "ACE Editor") ;
+- `#!html <div id="term_editor_6">` crée la partie Terminal. Le Terminal n'est créé qu'au moment de la validation du script ou du juge en ligne. Il est créé grâce au plugin Terminal de jQuery par converstion du `#!html div` (voir section Guide du Terminal).
 
 
 <!-- ??? info "Patience, patience"
