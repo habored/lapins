@@ -4,16 +4,16 @@
 
 Un IDE se présente sous cette forme :
 
-??? info "Déroulez-moi !"
+???+ info "Déroulez-moi !"
 
     {{IDE('exo2')}}
 
 Il dispose de quatre boutons :
 
-- Lancer le script : <button class="emoji">▶️</button>
-- Télécharger le script : <button class="emoji">⤵️</button>
-- Téléverser un script : <button class="emoji">⤴️</button>
-- Valider le script avec des tests unitaires : <button class="emoji_dark">🛂</button>
+- Lancer le script : <button class="emoji"><img src="../images/buttons/icons8-play-64.png"></button>
+- Télécharger le script : <button class="emoji"><img src="../images/buttons/icons8-download-64.png"></button>
+- Téléverser un script : <button class="emoji"><img src="../images/buttons/icons8-upload-64.png"></button>
+- Valider le script avec des tests unitaires : <button class="emoji"><img src="../images/buttons/icons8-check-64.png"></button>
 
 !!! info "Rappel"
 
@@ -78,7 +78,7 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
         --8<-- "docs/scripts/demo/demo2_test.py"
         ```
         
-        Les `#!python assert` sont directement évalués par Pyodide. Seul le test ayant échoué sera affiché. Les tests réussis n'afficheront rien (**doit-on changer ce comportement ?**).
+        Les `#!python assert` sont directement évalués par Pyodide. Seul le test ayant échoué sera affiché. Les tests réussis n'afficheront rien.
         
         Pas de problème pour tester autant de fonctions que nécessaire.
 
@@ -100,7 +100,8 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
         Complétez la fonction `longueur` afin que celle-ci renvoie la taille d'un tableau L.
         
         {{IDE('demo/demo1')}}
-        
+
+
     === "Exercice 2"
         Complétez la fonction `longueur_ajout` afin que celle-ci renvoie la taille de deux tableaux T1 et T2.
         {{IDE('demo/demo2')}}
@@ -113,11 +114,14 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
 
 On peut bien sur enrouler tout cela...
 
+
+
+
 ??? info "Exercices sur la longueur d'un tableau"
 
     === "Exercice 1"
         Complétez la fonction `longueur` afin que celle-ci renvoie la taille d'un tableau L.
-        
+    
         {{IDE('demo/demo1')}}
         
     === "Exercice 2"

@@ -54,6 +54,16 @@ function boum(L) {
 
 ## En développement
 
+!!! help "Inclure des fichiers externes avec macros fonctionnels"
+
+    Jinja syntax to include an external remark file, including an IDE to give the correction :
+
+    ```{% include 'scripts/demo/demo2_rem.txt' %}```
+
+    This is the future of the online judge
+    Can include automatically a correction. Needs lots of refactoring though.
+
+
 !!! done "REPL > IDE"
 
     Une reprise complète de la dénomination a été faite. Les REPL s'appellent maintenant (et à raison) [IDE](https://fr.wikipedia.org/wiki/Environnement_de_développement "Définition IDE") Merci Fred Leleu pour le travail supplémentaire 😍 .

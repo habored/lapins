@@ -80,7 +80,7 @@ def define_env(env):
         env.variables['term_counter'] += 1
         return f"""<div onclick='start_term("id{tc}")' id="fake_id{tc}" class="terminal_f"><label class="terminal"><span>>>> </span></label></div><div id="id{tc}" class="hide"></div>"""
 
-    def read_ext_file(nom_script : str) -> str:
+    def read_ext_file(nom_script : str, filetype : str = 'py') -> str:
         """
         Purpose : Read a Python file that is uploaded on the server.
         Methods : The content of the file is hidden in the webpage. Replacing \n by a string makes it possible
@@ -88,9 +88,9 @@ def define_env(env):
         """
         short_path = f"""docs/"""
         print('ici',short_path)
-        print(f"""{short_path}/scripts/{nom_script}.py""")
+        print(f"""{short_path}/scripts/{nom_script}.{filetype}""")
         try: 
-            f = open(f"""{short_path}/scripts/{nom_script}.py""")
+            f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
             f.close()
             content = content+ "\n"
@@ -100,14 +100,14 @@ def define_env(env):
         except :
             return
         
-    def generate_content(nom_script : str) -> str:
+    def generate_content(nom_script : str, filetype : str = 'py') -> str:
         """
         Purpose : Return content and current number IDE {tc}.
         """
         tc = env.variables['IDE_counter']
         env.variables['IDE_counter'] += 1
 
-        content = read_ext_file(nom_script)
+        content = read_ext_file(nom_script, filetype)
 
         if content is not None :
             return content, tc
@@ -119,8 +119,10 @@ def define_env(env):
         Methods : Use an HTML input to upload a file from user. The user clicks on the button to fire a JS event
         that triggers the hidden input.
         """
-        return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()">⤴️</button>\
+        return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()"><img src="../images/buttons/icons8-upload-64.png"></button>\
                 <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
+        # return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()">⤴️</button>\
+        #         <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
 
     def create_unittest_button(tc: str, nom_script: str, mode: str) -> str:
         """
@@ -132,7 +134,8 @@ def define_env(env):
         nom_script = f"{relative_path}/{stripped_nom_script}_test"
         content = read_ext_file(nom_script)
         if content is not None: 
-            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji_dark" onclick=\'executeTest("{tc}","{mode}")\'>🛂</button><span class="compteur">5/5</span>"""
+            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji" onclick=\'executeTest("{tc}","{mode}")\'><img src="../images/buttons/icons8-check-64.png"></button><span class="compteur">5/5</span>"""
+            # return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji_dark" onclick=\'executeTest("{tc}","{mode}")\'>🛂</button><span class="compteur">5/5</span>"""
         else: 
             return ''
 
@@ -155,25 +158,32 @@ def define_env(env):
     @env.macro
     def IDE(nom_script : str ='', mode : str = 'h') -> str:
         """
-        Purpose : Create a IDE (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
-        Methods : Two modes are available : vertical or horizontal. Buttons are added through functioncal calls.
+        Purpose : Create an IDE (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
+        Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
-        content, tc = generate_content(nom_script)  # content with __ passed correctly here
+        content, tc = generate_content(nom_script)
+        rem_content, tc = generate_content(f"""{nom_script}_rem""", "txt")
         corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""")
         div_edit = f'<div class="ide_classe">'
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
             div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
-        div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'>▶️</button>"""
-        div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>{blank_space()}"""
+        div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'><img src="../images/buttons/icons8-play-64.png"></button>"""
+        # div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'>▶️</button>"""
+        div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="../images/buttons/icons8-download-64.png"></button>{blank_space()}"""
+        # div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>{blank_space()}"""
         div_edit += create_upload_button(tc)
         div_edit += create_unittest_button(tc, nom_script, mode)
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
+        #div_edit += f"""<span id="rem_content_editor_{tc}" class="hide">{rem_content}</span>"""  # not MD format !!!
+        div_edit += f'''
+        --8<--- "docs/scripts/{nom_script}_rem.txt"
+        '''
         return div_edit
     
     @env.macro

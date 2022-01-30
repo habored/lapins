@@ -271,29 +271,31 @@ function executeTest(id_editor, mode) {
     executeTestAsync(id_editor, mode)
 }
 
+function getWrapperElement(filetype, id_editor) {
+    if (document.getElementById(filetype + id_editor) === null) {
+        let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
+        while (wrapperElement.className !== "ide_classe") {
+            wrapperElement = wrapperElement.parentNode
+        }
+    return wrapperElement;
+}}
 
 function showGUI(id_editor) {
-    if (document.getElementById("gui_"+id_editor) === null) {
-    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
-    while (wrapperElement.className !== "ide_classe") {
-        wrapperElement = wrapperElement.parentNode
-    }
+    let wrapperElement = getWrapperElement("gui_", id_editor);
     var txt = document.createElement("div");
     // txt.innerHTML='<details class="check"><summary>Fenêtre graphique</summary>\
     // <div class="highlight" id="gui_'+id_editor+'"></div></details>'
     txt.innerHTML='<details open class="check"><summary>Fenêtre graphique</summary><div class = "can_wrapper"><div id = "gui_'+id_editor+'"><canvas id = "gui_'+id_editor+'_tracer" width="700" height="400"></canvas><canvas id="gui_'+id_editor+'_pointer" width="700" height="400"></canvas></div></div></details>'
 
     wrapperElement.insertAdjacentElement('afterend', txt)
-}}
+}
 
 
 function showCorrection(id_editor) {
-    if (document.getElementById("corr_"+id_editor) === null) {
-    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
-    while (wrapperElement.className !== "ide_classe") {
-        wrapperElement = wrapperElement.parentNode
-    }
+    let wrapperElement = getWrapperElement("gui_", id_editor);
+
     var txt = document.createElement("div");
+    txt.setAttribute("id", "solution_" + id_editor);
     txt.innerHTML='<details class="check"><summary>Solution</summary>\
     <div class="highlight" id="corr_'+id_editor+'"></div></details>'
 
@@ -316,7 +318,23 @@ function showCorrection(id_editor) {
     }
     wrapperElement.insertAdjacentElement('afterend', txt)
     window.IDE_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
-}}
+
+    // var txt = document.createElement("div");
+    // let url_remfile = document.getElementById("rem_content_"+id_editor).textContent
+    // console.log(document.getElementById("rem_content_"+id_editor).textContent)
+    // txt.innerHTML='<details class="check"><summary>Remarques</summary>\
+    // <div class="highlight" id="rem_'+id_editor+'">'+url_remfile+'</div></details>'
+
+    // wrapperElement.insertAdjacentElement('afterend', txt)
+
+    var remElement = document.getElementById("rem_content_" + id_editor)
+    remElement.style.display = "block";
+    
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(remElement);
+    document.getElementById("solution_" + id_editor).firstChild.appendChild(fragment);
+
+}
 
 async function executeTestAsync(id_editor, mode) {
     await pyodideReadyPromise;

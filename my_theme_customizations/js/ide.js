@@ -30,6 +30,40 @@ $('[id^=editor_]').each(function() {
         let editor = ace.edit(id_editor)
         editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
     }
+
+    // Test if a correction exists.
+    if (document.getElementById("corr_content_" + id_editor)) {
+        prevNode = document.getElementById("corr_content_" + id_editor)
+    } else {
+        prevNode = document.getElementById("content_" + id_editor)
+    }
+    // Search for the rem DIV.
+    var workingNode = prevNode.nextElementSibling // This should be a <p>
+    workingNode = workingNode.nextElementSibling
+
+    var remNode = document.createElement("div");
+    if (workingNode === null) {
+        
+        remNode.innerHTML = 'Pas de remarque particulière.';
+
+    } else {
+
+        var tableElements = [];
+        while (workingNode !== null) {
+            tableElements.push(workingNode)
+            workingNode = workingNode.nextElementSibling;
+        }
+
+        for (let i = 0; i < tableElements.length; i++ ){
+            remNode.append(tableElements[i])
+        }
+        
+    }
+    // Should create a global div
+    prevNode.insertAdjacentElement('afterend', remNode)
+    remNode.setAttribute("id", "rem_content_" + id_editor);
+    document.getElementById("rem_content_" + id_editor).style.display = "none"
+    
 });
 
 // Javascript to upload file from customized buttons
@@ -62,14 +96,16 @@ function paintACE(theme) {
     };
 }
 
-window.addEventListener('load', () => {
+window.addEventListener('DOMContentLoaded', () => {
     var p = document.querySelector('label[for="__palette_2"]')
-    if (p.hidden) {
+    if (p.hidden == true) {
         paintACE('ace/theme/crimson_editor')
     } else {
+        console.log('tmrw')
         paintACE('ace/theme/tomorrow_night_bright')
     }
 });
+
 
 var p2 = document.querySelector('input[id="__palette_2"]')
 p2.addEventListener('click', () => { paintACE('ace/theme/crimson_editor') });
