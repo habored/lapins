@@ -1,4 +1,5 @@
-# Guide du IDE
+# Guide de l'IDE
+{{ macros_info() }}
 
 ## Exemple
 

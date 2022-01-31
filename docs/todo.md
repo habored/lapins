@@ -1,56 +1,18 @@
 # Des questions techniques et métaphysiques
 
-<!-- ## Bac à sable
+## Todo list rapide
 
-{{terminal()}}
+:white_check_mark: Fichier de remarque, <nom_du_truc>_rem.txt
 
-<canvas width="500" height="300">
-  Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
-</canvas>
-<script>
-var canvas = document.querySelector('canvas');
-var ctx = canvas.getContext('2d');
-ctx.fillStyle = 'white';
-ctx.fillRect(10, 10, 300, 300);
-ctx.beginPath()
-ctx.moveTo(10, 10)
-ctx.lineTo(310, 310)
-ctx.stroke()
+:white_check_mark: Modifications des emoji par des svg classe
 
-function boum(L) {
-        var canvas = document.querySelector('canvas');
-        var ctx = canvas.getContext('2d');
-        ctx.beginPath()
-        console.log('ligne 57', ctx)
-        ctx.moveTo(50, 50)
-        ctx.lineTo(50+L, 50)
-        ctx.stroke()
-    }
+:grey_question: Mode sombre / Mode clair
 
-</script> -->
+:grey_question: Chemins relatifs
 
-## Partis pris
+:x: Infobulles
 
-!!! warning "_Namespace_ partagé"
-    
-    Je trouve ce mode très pratique car on conserve nos fonctions et variables d'un terminal à l'autre au cours d'une leçon. 
-    
-    Pédagogiquement, c'est plus discutable car certaines variables seront initialisées dans le Terminal 1 et utilisées dans le Terminal 2. Cela cache la notion d'initialisation.
-
-!!! done "IDE vertical"
-
-    Est-ce vraiment utile de les conserver ?
-    
-    ~~Cela ralentit le chargement de la page web et consomme des ressources pour l'auto-redimensionnement de la partie terminal du IDE. Cela est spécialement visible sur mobile (ou ce mode est d'ailleurs inutile).~~
-
-    Quelques modifications ont permis de les conserver sans altérer les performances.  
-
-!!! done "macro Python"
-
-    ~~Ma solution est un peu sale mais a-t-on vraiment le choix avec l'inclusion de balise HTML ?~~
-
-    J'ai choisi de diviser le problème en sous-fonctions. Cela semble plus lisible à présent avec : lecture de fichier avec `#!python def read_ext_file()` et `#!python def generate_content()`, une seule macro IDE avec deux modes ('v' et 'h' par défaut).
-
+:-1: Plusieurs codes solutions
 
 ## En développement
 
@@ -58,10 +20,11 @@ function boum(L) {
 
     Jinja syntax to include an external remark file, including an IDE to give the correction :
 
-    ```{% include 'scripts/demo/demo2_rem.txt' %}```
+    ```{{ "{% include 'scripts/demo/demo2_rem.txt' %}" }}```
 
     This is the future of the online judge
-    Can include automatically a correction. Needs lots of refactoring though.
+
+    Can include automatically a correction. Needs lots of refactoring though ⏳⏳⏳. 
 
 
 !!! done "REPL > IDE"
@@ -103,3 +66,26 @@ function boum(L) {
     ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du IDE, est vraiment naze. Il faut trouver autre chose.~~
     
     Ajout de boutons permettant de télécharger les scripts écrits et téléverser les scripts disponibles localement. Evaluateur de code ajouté.
+
+
+## Partis pris
+
+!!! warning "_Namespace_ partagé"
+    
+    Je trouve ce mode très pratique car on conserve nos fonctions et variables d'un terminal à l'autre au cours d'une leçon. 
+    
+    Pédagogiquement, c'est plus discutable car certaines variables seront initialisées dans le Terminal 1 et utilisées dans le Terminal 2. Cela cache la notion d'initialisation.
+
+!!! done "IDE vertical"
+
+    Est-ce vraiment utile de les conserver ?
+    
+    ~~Cela ralentit le chargement de la page web et consomme des ressources pour l'auto-redimensionnement de la partie terminal du IDE. Cela est spécialement visible sur mobile (ou ce mode est d'ailleurs inutile).~~
+
+    Quelques modifications ont permis de les conserver sans altérer les performances.  
+
+!!! done "macro Python"
+
+    ~~Ma solution est un peu sale mais a-t-on vraiment le choix avec l'inclusion de balise HTML ?~~
+
+    J'ai choisi de diviser le problème en sous-fonctions. Cela semble plus lisible à présent avec : lecture de fichier avec `#!python def read_ext_file()` et `#!python def generate_content()`, une seule macro IDE avec deux modes ('v' et 'h' par défaut).
