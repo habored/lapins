@@ -119,7 +119,7 @@ def define_env(env):
         Methods : Use an HTML input to upload a file from user. The user clicks on the button to fire a JS event
         that triggers the hidden input.
         """
-        return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()"><img src="../images/buttons/icons8-upload-64.png"></button>\
+        return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()"><img src="images/buttons/icons8-upload-64.png"></button>\
                 <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
         # return f"""<button class="emoji" onclick="document.getElementById('input_editor_{tc}').click()">⤴️</button>\
         #         <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
@@ -133,8 +133,9 @@ def define_env(env):
         relative_path = '/'.join(nom_script.split('/')[:-1])
         nom_script = f"{relative_path}/{stripped_nom_script}_test"
         content = read_ext_file(nom_script)
+        # print("yoyo", env.variables.base_url )
         if content is not None: 
-            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji" onclick=\'executeTest("{tc}","{mode}")\'><img src="../images/buttons/icons8-check-64.png"></button><span class="compteur">5/5</span>"""
+            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji" onclick=\'executeTest("{tc}","{mode}")\'><img src="images/buttons/icons8-check-64.png"></button><span class="compteur">5/5</span>"""
             # return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="emoji_dark" onclick=\'executeTest("{tc}","{mode}")\'>🛂</button><span class="compteur">5/5</span>"""
         else: 
             return ''
@@ -170,9 +171,9 @@ def define_env(env):
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
             div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
-        div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'><img src="../images/buttons/icons8-play-64.png"></button>"""
+        div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'><img src="images/buttons/icons8-play-64.png"></button>"""
         # div_edit += f"""<button class="emoji" onclick='interpretACE("editor_{tc}","{mode}")'>▶️</button>"""
-        div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="../images/buttons/icons8-download-64.png"></button>{blank_space()}"""
+        div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="images/buttons/icons8-download-64.png"></button>{blank_space()}"""
         # div_edit += f"""{blank_space()}<button class="emoji" onclick=\'download_file("editor_{tc}","{nom_script}")\'>⤵️</button>{blank_space()}"""
         div_edit += create_upload_button(tc)
         div_edit += create_unittest_button(tc, nom_script, mode)
