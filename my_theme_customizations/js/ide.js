@@ -5,9 +5,10 @@ $('[id^=editor_]').each(function() {
 
     let id_editor = "editor_" + number
     function createACE(id_editor){
+        let defineTheme = document.querySelector('label[for="__palette_2"]').hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
         ace.require("ace/ext/language_tools");
         var editor = ace.edit(id_editor, {
-            theme: "ace/theme/tomorrow_night_bright",
+            theme: defineTheme,
             mode: "ace/mode/python",
             autoScrollEditorIntoView: true,
             maxLines: 30,
@@ -90,7 +91,7 @@ $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false
 
 // Following blocks paint the IDE according to the mkdocs light/dark mode 
 function paintACE(theme) {
-    for (var editeur of document.querySelectorAll('div[id^="editor_"]')) {
+    for (var editeur of document.querySelectorAll('div[id^="editor_"], div[id^="corr_editor_"]')) {
         let editor = ace.edit(editeur.id);
         editor.setTheme(theme);
         editor.getSession().setMode("ace/mode/python");
@@ -100,10 +101,10 @@ function paintACE(theme) {
 window.addEventListener('DOMContentLoaded', () => {
     var p = document.querySelector('label[for="__palette_2"]')
     if (p.hidden == true) {
-        paintACE('ace/theme/crimson_editor')
+        paintACE('ace/theme/crimson_editor') // bright mode
     } else {
         console.log('tmrw')
-        paintACE('ace/theme/tomorrow_night_bright')
+        paintACE('ace/theme/tomorrow_night_bright')  // night mode
     }
 });
 

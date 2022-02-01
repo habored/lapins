@@ -1,6 +1,5 @@
 var debug_mode = false;
 var dict = {};  // Global dictionnary tracking the number of clicks
-const nAttempts = 5;
 
 function sleep(s){
     return new Promise(resolve => setTimeout(resolve, s));
@@ -301,9 +300,11 @@ function showCorrection(id_editor) {
 
     let url_pyfile = document.getElementById("corr_content_"+id_editor).textContent
 
+
     function createACE(id_editor){
+        let defineTheme = document.querySelector('label[for="__palette_2"]').hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
         var editor = ace.edit(id_editor, {
-            theme: "ace/theme/tomorrow_night_bright",
+            theme: defineTheme,
             mode: "ace/mode/python",
             autoScrollEditorIntoView: true,
             maxLines: 30,
@@ -422,18 +423,25 @@ var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function a
 }
 
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
-        elementCompteur = document.getElementById("test_term_editor_"+id_editor)
-        while (elementCompteur.className !== "compteur") {
-            elementCompteur = elementCompteur.nextElementSibling
+        let elementCounter = document.getElementById("test_term_editor_"+id_editor)
+        let parentCounter = elementCounter.parentElement.id;
+        const nAttempts = parentCounter;
+
+        while (elementCounter.className !== "compteur") {
+            elementCounter = elementCounter.nextElementSibling
         }
         if (output === 0) {
             dict[id_editor] = nAttempts
         } else {
             dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0)
         }
-        elementCompteur.textContent = Math.max(0, nAttempts-dict[id_editor])+"/5"
-
-        if (dict[id_editor] === nAttempts) {
+        if (nAttempts !== '\u221e') {
+            elementCounter.textContent = Math.max(0, nAttempts-dict[id_editor]) + "/" + parentCounter
+        } else {
+            elementCounter.textContent = parentCounter + "/" + parentCounter
+        }
+        console.log(dict[id_editor], nAttempts)
+        if (dict[id_editor] == nAttempts && !document.getElementById('solution_editor_'+id_editor)) {
         let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
         if (correctionExists !== "") {
             showCorrection('editor_'+id_editor);
@@ -468,24 +476,4 @@ var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function a
         // }
         $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
       }
-    } 
-
-/* <div class="admonition info">
-    <p class="admonition-title">paf</p>
-    <div class="tabbed-set" data-tabs="1:3">
-        <input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"></input>
-        <label for="__tabbed_1_1">test</label>
-        <div class="tabbed-content">blabla</div>
-
-        <input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"></input>
-        <label for="__tabbed_1_1">test2</label>
-        <div class="tabbed-content">blabla2</div>
-    </div>
-</div> */
-
-// $(document).ready(function() {
-    // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
-    // $('[id^=cons_]').each(function() {
-    //     let number = this.id.split('_').pop();
-    //     window.console_ready = pyterm('#cons_'+number);
-    // });
+    }

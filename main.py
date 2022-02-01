@@ -51,6 +51,7 @@ def define_env(env):
 
     env.variables['term_counter'] = 0
     env.variables['IDE_counter'] = 0
+    INFTY_SYMBOL = '\u221e'
 
     @env.macro
     def terminal() -> str:
@@ -63,34 +64,39 @@ def define_env(env):
         env.variables['term_counter'] += 1
         return f"""<div onclick='start_term("id{tc}")' id="fake_id{tc}" class="terminal_f"><label class="terminal"><span>>>> </span></label></div><div id="id{tc}" class="hide"></div>"""
 
-    def read_ext_file(nom_script : str, filetype : str = 'py') -> str:
+    def read_ext_file(nom_script : str, path : str, filetype : str = 'py') -> str:
         """
         Purpose : Read a Python file that is uploaded on the server.
         Methods : The content of the file is hidden in the webpage. Replacing \n by a string makes it possible
         to integrate the content in mkdocs admonitions.
         """
         short_path = f"""docs/"""
-        print('ici',short_path)
-        print(f"""{short_path}/scripts/{nom_script}.{filetype}""")
+        print('path', path)
+
         try: 
-            f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
+            if path == "":
+                f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
+            else:
+                print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
+                f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
+            # f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
             f.close()
-            content = content+ "\n"
+            content = content + "\n"
             # Hack to integrate code lines in admonitions in mkdocs
             # change backslash_newline by backslash-newline
             return content.replace('\n','backslash-newline').replace('_','python-underscore').replace('*','python-star')
         except :
             return
         
-    def generate_content(nom_script : str, filetype : str = 'py') -> str:
+    def generate_content(nom_script : str, path : str, filetype : str = 'py') -> str:
         """
         Purpose : Return content and current number IDE {tc}.
         """
         tc = env.variables['IDE_counter']
         env.variables['IDE_counter'] += 1
 
-        content = read_ext_file(nom_script, filetype)
+        content = read_ext_file(nom_script, path, filetype)
 
         if content is not None :
             return content, tc
@@ -102,11 +108,11 @@ def define_env(env):
         Methods : Use an HTML input to upload a file from user. The user clicks on the button to fire a JS event
         that triggers the hidden input.
         """
-        relative_path = env.variables.page.abs_url.split('/')[1]
-        return f"""<button class="tooltip" onclick="document.getElementById('input_editor_{tc}').click()"><img src="/{relative_path}/images/buttons/icons8-upload-64.png"><span class="tooltiptext">Téléverser</span></button>\
+        path_img = env.variables.page.abs_url.split('/')[1]
+        return f"""<button class="tooltip" onclick="document.getElementById('input_editor_{tc}').click()"><img src="/{path_img}/images/buttons/icons8-upload-64.png"><span class="tooltiptext">Téléverser</span></button>\
                 <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
 
-    def create_unittest_button(tc: str, nom_script: str, mode: str) -> str:
+    def create_unittest_button(tc: str, nom_script: str, path : str, mode: str, MAX : int = 5) -> str:
         """
         Purpose : Generate the button for IDE {tc} to perform the unit tests if a valid test_script.py is present.
         Methods : Hide the content in a div that is called in the Javascript
@@ -114,11 +120,16 @@ def define_env(env):
         stripped_nom_script = nom_script.split('/')[-1]
         relative_path = '/'.join(nom_script.split('/')[:-1])
         nom_script = f"{relative_path}/{stripped_nom_script}_test"
-        content = read_ext_file(nom_script)
+        content = read_ext_file(nom_script, path)
         # print("yoyo", env.variables.base_url )
         if content is not None: 
-            relative_path = env.variables.page.abs_url.split('/')[1]
-            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span><button class="tooltip" onclick=\'executeTest("{tc}","{mode}")\'><img src="/{relative_path}/images/buttons/icons8-check-64.png"><span class="tooltiptext">Valider</span></button><span class="compteur">5/5</span>"""
+            path_img = env.variables.page.abs_url.split('/')[1]
+            return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span>\
+                <button class="tooltip" onclick=\'executeTest("{tc}","{mode}")\'>\
+                <img src="/{path_img}/images/buttons/icons8-check-64.png">\
+                <span class="tooltiptext">Valider</span></button><span class="compteur">\
+                {MAX}/{MAX}\
+                </span>"""
         else: 
             return ''
 
@@ -137,6 +148,19 @@ def define_env(env):
         """
         return IDE(nom_script, 'v')
 
+    def get_max(content : str) -> tuple[str, int]:
+        split_content = content.split('backslash-newline')
+        max_var = split_content[0]
+        if max_var[:4] != "#MAX":
+            MAX = 5 
+        else:
+            value = max_var.split('=')[1].strip()
+            MAX = int(value) if value != '+' else INFTY_SYMBOL
+            i = 1
+            while split_content[i] == '':
+                i += 1
+            content = 'backslash-newline'.join(split_content[i:])
+        return content, MAX
 
     @env.macro
     def IDE(nom_script : str ='', mode : str = 'h') -> str:
@@ -145,19 +169,23 @@ def define_env(env):
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
-        content, tc = generate_content(nom_script)
-        rem_content, tc = generate_content(f"""{nom_script}_rem""", "txt")
-        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""")
-        div_edit = f'<div class="ide_classe">'
+        path_img = env.variables.page.abs_url.split('/')[1]
+
+        #        path_files = '/'.join([folder for folder in env.variables.page.abs_url.split('/')[:-1] if folder != ""])
+        path_file = '/'.join(filter(lambda folder: folder != "", env.variables.page.abs_url.split('/')[2:-2]))
+        content, tc = generate_content(nom_script, path_file)
+
+        content, MAX = get_max(content)
+        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
+        div_edit = f'<div class="ide_classe" id={MAX}>'
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
             div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
-        relative_path = env.variables.page.abs_url.split('/')[1]
-        div_edit += f"""<button class="tooltip" onclick='interpretACE("editor_{tc}","{mode}")'><img src="/{relative_path}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span></button>"""
-        div_edit += f"""{blank_space()}<button class="tooltip" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="/{relative_path}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
+        div_edit += f"""<button class="tooltip" onclick='interpretACE("editor_{tc}","{mode}")'><img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span></button>"""
+        div_edit += f"""{blank_space()}<button class="tooltip" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
         div_edit += create_upload_button(tc)
-        div_edit += create_unittest_button(tc, nom_script, mode)
+        div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX)
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""

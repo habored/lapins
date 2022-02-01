@@ -1,18 +1,28 @@
 # Des questions techniques et métaphysiques
 
-## Todo list rapide
+## Todo list
 
 :white_check_mark: Modifications des emoji par des svg classe
 
 :white_check_mark: Infobulles
 
-:white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt`
+:white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt` 
 
-:grey_question: Mode sombre / Mode clair
+- [ ] Solution en page externe pour les fichiers longs (exclue du menu de navigation avec le hack)
+- [ ] Solution en menu déroulant pour les fichiers courts
 
-:x: Chemins relatifs
+:white_check_mark: Mode sombre / Mode clair
 
-:-1: Plusieurs codes solutions
+:white_check_mark: Chemins relatifs
+
+:x: Doctests
+
+:x: Erreur d'assertions et gestion de crash de code
+
+- [ ] Mode verbose pour les tests / mode simple
+- [ ] Mode infini pour les tentatives
+
+:x: Nombre d'essais variés
 
 ## En développement
 

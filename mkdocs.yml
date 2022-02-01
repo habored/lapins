@@ -14,6 +14,7 @@ nav:
   - "En développement 🧪": todo.md
   # - "Bac à sable 🏖": sandbox.md
   - "Bac à sable 🏖": exo3/python4.md
+  - "Bac à sable 2 🏖": machin/exo3/python5.md
 
 
 theme:
