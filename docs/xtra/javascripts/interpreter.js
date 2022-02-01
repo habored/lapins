@@ -319,14 +319,7 @@ function showCorrection(id_editor) {
     wrapperElement.insertAdjacentElement('afterend', txt)
     window.IDE_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
 
-    // var txt = document.createElement("div");
-    // let url_remfile = document.getElementById("rem_content_"+id_editor).textContent
-    // console.log(document.getElementById("rem_content_"+id_editor).textContent)
-    // txt.innerHTML='<details class="check"><summary>Remarques</summary>\
-    // <div class="highlight" id="rem_'+id_editor+'">'+url_remfile+'</div></details>'
-
-    // wrapperElement.insertAdjacentElement('afterend', txt)
-
+    // revealing the remark from Element
     var remElement = document.getElementById("rem_content_" + id_editor)
     remElement.style.display = "block";
     

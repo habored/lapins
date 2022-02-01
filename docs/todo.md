@@ -2,15 +2,15 @@
 
 ## Todo list rapide
 
-:white_check_mark: Fichier de remarque, <nom_du_truc>_rem.txt
-
 :white_check_mark: Modifications des emoji par des svg classe
+
+:white_check_mark: Infobulles
+
+:white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt`
 
 :grey_question: Mode sombre / Mode clair
 
-:grey_question: Chemins relatifs
-
-:x: Infobulles
+:x: Chemins relatifs
 
 :-1: Plusieurs codes solutions
 

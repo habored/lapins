@@ -12,7 +12,8 @@ nav:
   - "Guide du Terminal 🐍": install_term.md
   - "Guide de l'IDE 🐍" : install_ide.md
   - "En développement 🧪": todo.md
-  - "Bac à sable 🏖": sandbox.md
+  # - "Bac à sable 🏖": sandbox.md
+  - "Bac à sable 🏖": exo3/python4.md
 
 
 theme:

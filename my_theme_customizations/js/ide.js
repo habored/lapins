@@ -31,21 +31,21 @@ $('[id^=editor_]').each(function() {
         editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
     }
 
-    // Test if a correction exists.
-    if (document.getElementById("corr_content_" + id_editor)) {
-        prevNode = document.getElementById("corr_content_" + id_editor)
-    } else {
-        prevNode = document.getElementById("content_" + id_editor)
-    }
+    // A correction Element always exists (can be void)
+    prevNode = document.getElementById("corr_content_" + id_editor)
+
     // Search for the rem DIV.
-    var workingNode = prevNode.nextElementSibling // This should be a <p>
-    workingNode = workingNode.nextElementSibling
+    var workingNode = prevNode.nextElementSibling
+    // If workingNode is a <p> (admonition), we continue
+    // else, we are outside an admonition
+    if (workingNode !== null) {
+        workingNode = workingNode.nextElementSibling
+    }
 
     var remNode = document.createElement("div");
+    // No remark file. Creates standard sentence.
     if (workingNode === null) {
-        
         remNode.innerHTML = 'Pas de remarque particulière.';
-
     } else {
 
         var tableElements = [];
@@ -60,6 +60,7 @@ $('[id^=editor_]').each(function() {
         
     }
     // Should create a global div
+    console.log(prevNode)
     prevNode.insertAdjacentElement('afterend', remNode)
     remNode.setAttribute("id", "rem_content_" + id_editor);
     document.getElementById("rem_content_" + id_editor).style.display = "none"

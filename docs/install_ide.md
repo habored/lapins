@@ -10,10 +10,10 @@ Un IDE se présente sous cette forme :
 
 Il dispose de quatre boutons :
 
-- Lancer le script : <button class="emoji"><img src="../images/buttons/icons8-play-64.png"></button>
-- Télécharger le script : <button class="emoji"><img src="../images/buttons/icons8-download-64.png"></button>
-- Téléverser un script : <button class="emoji"><img src="../images/buttons/icons8-upload-64.png"></button>
-- Valider le script avec des tests unitaires : <button class="emoji"><img src="../images/buttons/icons8-check-64.png"></button>
+- Lancer le script : <button class="tooltip"><img src="../images/buttons/icons8-play-64.png"></button>
+- Télécharger le script : <button class="tooltip"><img src="../images/buttons/icons8-download-64.png"></button>
+- Téléverser un script : <button class="tooltip"><img src="../images/buttons/icons8-upload-64.png"></button>
+- Valider le script avec des tests unitaires : <button class="tooltip"><img src="../images/buttons/icons8-check-64.png"></button>
 
 !!! info "Rappel"
 
