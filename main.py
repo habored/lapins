@@ -141,21 +141,21 @@ def define_env(env):
         return f"""<span style="indent-text:5em"> </span>"""
 
     @env.macro
-    def IDEv(nom_script : str ='') -> str:
+    def IDEv(nom_script : str = '', MAX : int = 5) -> str:
         """
         Purpose : Easy macro to generate vertical IDE in Markdown mkdocs.
         Methods : Fire the IDE function with 'v' mode.
         """
-        return IDE(nom_script, 'v')
+        return IDE(nom_script, mode = 'v', MAX = 5)
 
-    def get_max(content : str) -> tuple[str, int]:
+    def get_max_from_file(content : str) -> tuple:#[str, int]: # compatibilité Python antérieur 3.8
         split_content = content.split('backslash-newline')
         max_var = split_content[0]
         if max_var[:4] != "#MAX":
             MAX = 5 
         else:
             value = max_var.split('=')[1].strip()
-            MAX = int(value) if value != '+' else INFTY_SYMBOL
+            MAX = int(value) if value not in ['+', 1000] else INFTY_SYMBOL
             i = 1
             while split_content[i] == '':
                 i += 1
@@ -163,7 +163,7 @@ def define_env(env):
         return content, MAX
 
     @env.macro
-    def IDE(nom_script : str ='', mode : str = 'h') -> str:
+    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5) -> str:
         """
         Purpose : Create an IDE (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
@@ -175,7 +175,9 @@ def define_env(env):
         path_file = '/'.join(filter(lambda folder: folder != "", env.variables.page.abs_url.split('/')[2:-2]))
         content, tc = generate_content(nom_script, path_file)
 
-        content, MAX = get_max(content)
+        content, max_from_file = get_max_from_file(content)
+        MAX = max_from_file if MAX == 5 else MAX
+        MAX = MAX if MAX not in ['+', 1000] else INFTY_SYMBOL
         corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
         div_edit = f'<div class="ide_classe" id={MAX}>'
         if mode == 'v':
@@ -190,8 +192,9 @@ def define_env(env):
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
+        print('plif',f"""docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md""")
         div_edit += f'''
-        --8<--- "docs/scripts/{nom_script}_rem.txt"
+        --8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"
         '''
         return div_edit
     

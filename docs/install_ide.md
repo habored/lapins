@@ -6,7 +6,7 @@ Un IDE se présente sous cette forme :
 
 ???+ info "Déroulez-moi !"
 
-    {{IDE('exo2')}}
+    {{IDE('exo2', MAX = 1000)}}
 
 Il dispose de quatre boutons :
 

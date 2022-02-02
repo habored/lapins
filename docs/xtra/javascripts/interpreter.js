@@ -393,6 +393,7 @@ async function executeTestAsync(id_editor, mode) {
         var output = await pyodide.runPythonAsync(test_code + "\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         } else {
             var i = 0;
+            // Use of template litterals
             pyodide.runPython(`
 import sys as __sys__
 import io as __io__
@@ -405,9 +406,7 @@ fail_smb = ['🌩','🙈','🙉','⛑','🌋','💣']
 if 'test_unitaire' not in list(globals()):
     from random import choice
 try:
-    ${test_code.replace(/assert/g, function(match) { 
-        return match === "assert" ? (i++ === 0 ? 'assert' : '    assert') : '    assert'; 
-    })}
+${test_code.split('\n').map(f => prefix + f).join('\n')}
     print(f"Bravo vous avez réussi tous les tests {choice(success_smb)}")
     global_failed = 0
 except AssertionError as msg:
@@ -435,6 +434,7 @@ var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function a
         } else {
             dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0)
         }
+        console.log('n', nAttempts)
         if (nAttempts !== '\u221e') {
             elementCounter.textContent = Math.max(0, nAttempts-dict[id_editor]) + "/" + parentCounter
         } else {
@@ -458,22 +458,13 @@ var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function a
             }
             editor.session.setValue(stream); // set value and reset undo history
         }
-        // resize terminal to the size of editor on interpreting
-        // console.log('bla', mode, nlines*30, document.getElementById("editor_" + id_editor).style.height, max(nlines*30, document.getElementById("editor_" + id_editor).style.height))
-        // if (mode === "v") {
-        //     console.log('bla', nlines*30, document.getElementById("editor_" + id_editor).style.height, max(nlines*30, document.getElementById("editor_" + id_editor).style.height))
-        //     $.terminal.active().resize($.terminal.active().width(), max(nlines*30, document.getElementById("editor_" + id_editor).style.height));
-        // }
 
         $.terminal.active().echo(stdout); 
 
     } catch(err) {
         err = err.toString().split("\n").slice(-7).join("\n");
         nlines = calcTermSize(err, mode);
-        // if (mode === "v") {
-        //     console.log('bla', nlines*30, document.getElementById("editor_" + id_editor).style.height, max(nlines*30, document.getElementById("editor_" + id_editor).style.height))
-        //     $.terminal.active().resize($.terminal.active().width(), max(nlines*30, document.getElementById("editor_" + id_editor).style.height));
-        // }
+
         $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
       }
     }
