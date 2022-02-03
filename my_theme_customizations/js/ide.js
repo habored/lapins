@@ -34,16 +34,47 @@ $('[id^=editor_]').each(function() {
 
     // A correction Element always exists (can be void)
     prevNode = document.getElementById("corr_content_" + id_editor)
+    var workingNode = prevNode
+    var remNode = document.createElement("div");
 
-    // Search for the rem DIV.
-    var workingNode = prevNode.nextElementSibling
-    // If workingNode is a <p> (admonition), we continue
-    // else, we are outside an admonition
-    if (workingNode !== null) {
-        workingNode = workingNode.nextElementSibling
+    if (prevNode.parentNode.tagName === 'P') {
+        
+        // REM file on top level
+        // console.log('51',id_editor,workingNode, workingNode.parentNode.innerHTML.includes('<strong>A</strong>'))
+        workingNode = prevNode.parentNode.nextElementSibling //'<strong>A</strong>'
+        // if (workingNode.nex)
+
+        if (workingNode.innerHTML.includes('<strong>A</strong>') && workingNode.nextElementSibling.innerHTML.includes('<strong>Z</strong>')) {
+            remNode.innerHTML = 'Pas de remarque particulière.';
+            workingNode.nextElementSibling.remove()
+            workingNode.remove()
+
+        } else {
+        workingNode.remove()
+        workingNode = prevNode.parentNode.nextElementSibling
+
+        var tableElements = [];
+        while (!workingNode.innerHTML.includes('<strong>Z</strong>')) {
+            tableElements.push(workingNode)
+            workingNode = workingNode.nextElementSibling;
+        }
+        workingNode.remove()
+
+        for (let i = 0; i < tableElements.length; i++ ){
+            remNode.append(tableElements[i])
+        }
     }
 
-    var remNode = document.createElement("div");
+    } else {
+        // Search for the rem DIV.
+        workingNode = workingNode.nextElementSibling
+        // console.log(prevNode, workingNode)
+        // If workingNode is a <p> (admonition), we continue
+        // else, we are outside an admonition
+        if (workingNode !== null) {
+            workingNode = workingNode.nextElementSibling
+        }
+    // }
     // No remark file. Creates standard sentence.
     if (workingNode === null) {
         remNode.innerHTML = 'Pas de remarque particulière.';
@@ -59,7 +90,7 @@ $('[id^=editor_]').each(function() {
             remNode.append(tableElements[i])
         }
         
-    }
+    }}
     // Should create a global div
     console.log(prevNode)
     prevNode.insertAdjacentElement('afterend', remNode)

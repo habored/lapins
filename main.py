@@ -71,13 +71,12 @@ def define_env(env):
         to integrate the content in mkdocs admonitions.
         """
         short_path = f"""docs/"""
-        print('path', path)
 
         try: 
             if path == "":
                 f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             else:
-                print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
+                # print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
             # f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
@@ -121,7 +120,6 @@ def define_env(env):
         relative_path = '/'.join(nom_script.split('/')[:-1])
         nom_script = f"{relative_path}/{stripped_nom_script}_test"
         content = read_ext_file(nom_script, path)
-        # print("yoyo", env.variables.base_url )
         if content is not None: 
             path_img = env.variables.page.abs_url.split('/')[1]
             return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span>\
@@ -162,6 +160,13 @@ def define_env(env):
             content = 'backslash-newline'.join(split_content[i:])
         return content, MAX
 
+    def test_style(nom_script : str, element : str):
+        guillemets = ["'", '"']
+        ide_style = ["", "v"]
+        styles = [f"""IDE{istyle}({i}{nom_script}{i}""" for i in guillemets for istyle in ide_style]
+        return any([style for style in styles if style in element])
+
+
     @env.macro
     def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5) -> str:
         """
@@ -192,10 +197,30 @@ def define_env(env):
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
-        print('plif',f"""docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md""")
+        elt_insertion = [elt for elt in env.page.markdown.split("\n") if test_style(nom_script, elt)]
+        elt_insertion = elt_insertion[0] if len(elt_insertion) >=1 else ""
+        spaces = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
+        if nom_script == '' : spaces = " "
+        print(tc, spaces == "", elt_insertion, len(elt_insertion) - len(elt_insertion.lstrip()))
+        if spaces == "":
+            div_edit += f'''
+{spaces}--8<--- "docs/xtra/start.md"
+'''
         div_edit += f'''
-        --8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"
-        '''
+{spaces}--8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"'''
+        if spaces == "":
+            div_edit += f'''
+{spaces}--8<--- "docs/xtra/end.md"
+'''
+
+# {spaces}--8<--- "docs/xtra/start.md"
+#         '''
+
+        # div_edit += f'''
+        # --8<-- "docs/dentiste/exo_REM.md"
+        # '''
+        # print(env.page.markdown)
+        # print(tc, div_edit)
         return div_edit
     
     @env.macro

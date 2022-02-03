@@ -9,3 +9,5 @@ La course des Animaux est un jeu qui permet de déplacer trois types d'animaux s
 En vous inspirant de la fonction ci-dessous, écrire une fonction `#!python calculer_déplacement_lion` et `#!python calculer_déplacement_éléphant` permettant de calculer le déplacement du Lion et de l'Éléphant.
 
 {{IDE("exo3")}}
+
+<!-- {% include 'exo3/exo3_REM.md' %} -->

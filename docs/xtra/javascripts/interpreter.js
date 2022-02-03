@@ -392,7 +392,7 @@ async function executeTestAsync(id_editor, mode) {
         `);
         var output = await pyodide.runPythonAsync(test_code + "\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         } else {
-            var i = 0;
+            var prefix = "    ";
             // Use of template litterals
             pyodide.runPython(`
 import sys as __sys__
@@ -442,10 +442,10 @@ var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function a
         }
         console.log(dict[id_editor], nAttempts)
         if (dict[id_editor] == nAttempts && !document.getElementById('solution_editor_'+id_editor)) {
-        let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
-        if (correctionExists !== "") {
-            showCorrection('editor_'+id_editor);
-        };
+            let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
+            if (correctionExists !== "") {
+                showCorrection('editor_'+id_editor);
+            };
         }
 
         nlines = calcTermSize(stdout, mode)
