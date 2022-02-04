@@ -138,14 +138,6 @@ def define_env(env):
         """
         return f"""<span style="indent-text:5em"> </span>"""
 
-    @env.macro
-    def IDEv(nom_script : str = '', MAX : int = 5) -> str:
-        """
-        Purpose : Easy macro to generate vertical IDE in Markdown mkdocs.
-        Methods : Fire the IDE function with 'v' mode.
-        """
-        return IDE(nom_script, mode = 'v', MAX = 5)
-
     def get_max_from_file(content : str) -> tuple:#[str, int]: # compatibilité Python antérieur 3.8
         split_content = content.split('backslash-newline')
         max_var = split_content[0]
@@ -166,6 +158,13 @@ def define_env(env):
         styles = [f"""IDE{istyle}({i}{nom_script}{i}""" for i in guillemets for istyle in ide_style]
         return any([style for style in styles if style in element])
 
+    @env.macro
+    def IDEv(nom_script : str = '', MAX : int = 5) -> str:
+        """
+        Purpose : Easy macro to generate vertical IDE in Markdown mkdocs.
+        Methods : Fire the IDE function with 'v' mode.
+        """
+        return IDE(nom_script, mode = 'v', MAX = MAX)
 
     @env.macro
     def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5) -> str:
@@ -212,21 +211,12 @@ def define_env(env):
             div_edit += f'''
 {spaces}--8<--- "docs/xtra/end.md"
 '''
-
-# {spaces}--8<--- "docs/xtra/start.md"
-#         '''
-
-        # div_edit += f'''
-        # --8<-- "docs/dentiste/exo_REM.md"
-        # '''
-        # print(env.page.markdown)
-        # print(tc, div_edit)
         return div_edit
     
-    @env.macro
-    def mult_col(*text):
-        cmd = """<table style="border-color:transparent;background-color:transparent"><tr>"""
-        for column in text:
-            cmd += f"""<td><b style="font-size:1.2em">{column}</td>"""
-        cmd += f"""</tr></table>"""
-        return cmd
+@env.macro
+def mult_col(*text):
+    cmd = """<table style="border-color:transparent;background-color:transparent"><tr>"""
+    for column in text:
+        cmd += f"""<td><b style="font-size:1.2em">{column}</td>"""
+    cmd += f"""</tr></table>"""
+    return cmd

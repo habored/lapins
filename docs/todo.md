@@ -2,18 +2,11 @@
 
 ## Todo list
 
-:white_check_mark: Modifications des emoji par des svg classe
+:x: Caractères non-ASCII pour nom de fichier et contenu
 
-:white_check_mark: Infobulles
+:x: gestion des fichiers d'initialisation (pour les codes longs)
 
-:white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt` 
-
-- [ ] Solution en page externe pour les fichiers longs (exclue du menu de navigation avec le hack)
-- [ ] Solution en menu déroulant pour les fichiers courts
-
-:white_check_mark: Mode sombre / Mode clair
-
-:white_check_mark: Chemins relatifs
+:x: télécharger tous les codes écrits dans les éditeurs de la page en un seul fichier
 
 :x: Doctests
 
@@ -22,7 +15,21 @@
 - [ ] Mode verbose pour les tests / mode simple
 - [ ] Mode infini pour les tentatives
 
-:x: Nombre d'essais variés
+:white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt` 
+
+- [ ] Solution en page externe pour les fichiers longs (exclue du menu de navigation avec le hack)
+- [x] Solution en menu déroulant pour les fichiers courts
+
+:white_check_mark: Modifications des emoji par des svg classe
+
+:white_check_mark: Infobulles
+
+:white_check_mark: Mode sombre / Mode clair
+
+:white_check_mark: Chemins relatifs
+
+:white_check_mark: Nombre d'essais variés
+
 
 ## En développement
 

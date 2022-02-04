@@ -2,12 +2,13 @@
 
 ## Introduction
 
-Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir de pouvoir écrire directement des scripts en ligne :
+Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir de pouvoir écrire des scripts Python en ligne directement dans le navigateur.
 
-- dans le navigateur
-- sans iframe
-- sans cookie
-- sans inscription
+Garantie :
+
+- [x] sans iframe
+- [x] sans cookie
+- [x] sans inscription
 
 !!! info "Solution"
     La solution existe et s'appelle [Pyodide](https://pyodide.org/en/stable/ "Pyodide, Python with the scientific stack, compiled to WebAssembly").
@@ -20,11 +21,11 @@ Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir
 
 ## Prise en main
 
-Je vous propose ici des commandes Markdown permettant de créer un terminal ainsi qu'un IDE grâce au **plugin macro**.
+Voici les commandes Markdown permettant de créer un terminal ainsi qu'un IDE grâce au **plugin macro**.
 
 ### Syntaxe Markdown
 
-Vite vite ! Le résultat, histoire d'appâter le chaland.
+Mais d'abord, le résultat, histoire d'appâter le chaland.
 
 !!! summary "La syntaxe"
 
@@ -34,7 +35,7 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
         {{ terminal() }}
         {% endraw %}
         ```
-        Cette commande crée un terminal vide. L'auto-complétion avec ++tab++ et le rappel de l'historique (avec ++ctrl+"R"++ ) sont possibles.
+        Création d'un terminal vide. L'auto-complétion avec ++tab++ et le rappel de l'historique (avec ++ctrl+"R"++ ) sont possibles.
 
         {{ terminal () }}
 
@@ -44,7 +45,7 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
         {{ IDE() }}
         {% endraw %}
         ```
-        Cette commande crée un IDE (~ Thonny) vide. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type _snippet_ avec ++tab++.
+        Création d'un IDE (~ Thonny) vide. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type _snippet_ avec ++tab++.
 
         {{IDE()}}
 
@@ -54,42 +55,38 @@ Vite vite ! Le résultat, histoire d'appâter le chaland.
         {{ IDEv() }}
         {% endraw %}
         ```
-        Cette commande crée un IDE vide, avec division verticale. L'engrenage permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
+        Cette commande crée un IDE vide, avec division verticale. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
 
         {{IDEv()}}
 
     === "IDE avec code"
         ```markdown
         {% raw %}
-        {{ IDE('foo/bar/nom_de_fichier') }}
+        {{ IDE('foo/bar/nom_de_fichier', MAX = 8) }}
         {% endraw %}
         ```
-        Cette commande charge le fichier `nom_de_fichier.py` dans un IDE. Le fichier doit être dans `docs/scripts/foo/bar/`. Ne pas oublier les guillemets.
+        Cette commande charge le fichier `nom_de_fichier.py` dans un IDE. Le fichier doit être dans `docs/scripts/foo/bar/`. Ne pas oublier les guillemets. 
+        
+        `MAX = 8` indique le nombre maximal de tentatives de validation que l'élève peut effectuer. `MAX = 1000` permet de mettre ce nombre à l'infini. Valeur par défaut : `MAX = 5` .
 
         {{IDE('demo/demo1')}}
 
     === "IDE vertical avec code"
         ```markdown
         {% raw %}
-        {{ IDEv('foo/bar/nom_de_fichier') }}
+        {{ IDEv('foo/bar/nom_de_fichier', MAX = 1000) }}
         {% endraw %}
         ```
         Cette commande charge le fichier `nom_de_fichier` dans un IDE avec division verticale. Le fichier doit être dans `docs/scripts/foo/bar/`.       
 
-        {{IDEv('demo/demo1')}}
+        {{IDEv('demo/demo1', MAX = 3)}}
  
 
-??? warning "Détails techniques"
+???+ warning "Détails techniques"
 
     Tous les IDE et les terminaux partagent le même _namespace_. On peut donc accéder à n'importe quelle fonction créée dans n'importe quel IDE ou terminal. 
     
-    **C'est un comportement voulu qui a des avantages et des inconvénients.**
-
-!!! done "Amélioration notable"
-
-    ~~Pour que les IDE fonctionnent, il faut absolument indiquer `{% raw %} {{ IDE('nom_de_fichier', -1) }} {% endraw %}` sur le dernier IDE de la page.~~
-
-    Une solution plus élégante modifiant le template Jinja2 `my_theme_customizations/main.html` est maintenant utilisée. Plus besoin d'indiquer le dernier IDE !
+    **C'est un comportement qui a l'avantage de pouvoir proposer des exercices où l'on construit petit à petit un code complexe.**
 
 
 ### Exemples
@@ -105,19 +102,22 @@ L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ IDE('algo_glou
 
 ## Installation
 
-L'installation demande
+On part d'une installation comme indiqué sur https://ens-fr.gitlab.io/mkdocs/ avec le module macro.
 
-- de modifier :
+L'installation demande de rajouter à cette configuration les éléments suivants.
+
+__Modification__ :
   
-    - le fichier YML `mkdocs.yml` ;
-    - le fichier de macro `main.py` ;
+- fichier YML `mkdocs.yml` ;
+- fichier de macro `main.py` ;
 
-- d'ajouter :
+__Ajout__ :
 
-    - un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
-    - un template HTML `#!bash my_theme_customizations/main.html` ;
-    - un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-    - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/ide.js` ;
+- un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
+- un template HTML `#!bash my_theme_customizations/main.html` ;
+- un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
+- deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/ide.js` ;
+- deux fichiers Markdown `#!bash docs/xtra/start.md` et `#!bash docs/xtra/end.md`.
 
 ### Fichier YML `mkdocs.yml`
 
@@ -152,5 +152,9 @@ Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/p
 
 - `interpreter.js` doit être placé dans le dossier : `docs/xtra/javascripts/` ;
 - `ide.js` doit être placé dans le dossier : `my_theme_customizations/js/ide.js`.
+
+### Fichiers `start.md` et `end.md`
+
+Pour la bonne gestion des fichiers de remarque, il faut également ajouter deux fichiers standardisés au format markdown : [`start.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/start.md "start.md sur Gitlab ") et [`end.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/end.md "end.md sur Gitlab ")
 
 **Et c'est tout !**
