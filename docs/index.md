@@ -1,6 +1,6 @@
 # Terminal et IDE dans Mkdocs
 
-{{ macros_info() }}
+<!-- {{ macros_info() }} -->
 
 
 
