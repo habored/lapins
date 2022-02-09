@@ -4,7 +4,7 @@
 
 Un IDE se présente sous cette forme :
 
-???+ info "Déroulez-moi !"
+???+ info "Enroulez-moi !"
 
     {{IDE('exo2', MAX = 1000)}}
 
@@ -23,7 +23,29 @@ Il dispose de quatre boutons :
 
 Par défaut, la commande `#!markdown {% raw %}{{IDE('exo2')}}{% endraw %}` permet de charger un script placé dans `docs/scripts/`.
 
-Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!markdown {% raw %}{{IDE('foo/bar/exo2')}}{% endraw %}` chargera le script exo2.py depuis `docs/scripts/foo/bar`.
+!!! summary "Organisation possible"
+
+    === "Classement par chapitre"
+    
+        Une page `markdown` regroupe de nombreux exercices. 
+        
+        Par exemple : `#!markdown {% raw %}{{IDE('chapitre1/exo2')}}{% endraw %}` chargera le script exo2.py depuis `docs/scripts/chapitre1/`.
+
+        AJOUTER UN EXEMPLE d'ARBORESCENCE
+
+    === "Classement par exercice" 
+    
+        Une page `markdown` par exercice, comme indiqué dans `mkdocs.yml`. Dans ce cas, seul le chemin relatif depuis la position du fichier `markdown` dans l'arborescence est à indiquer. 
+    
+        Par exemple: 
+        
+        `mkdocs.yml` contient la ligne `#!markdown {% raw %}- "E-nsi 🏖": dentiste/sujet.md{% endraw %}`. 
+        
+        `#!markdown {% raw %}{{IDE('exo_dentiste')}}{% endraw %}` chargera le script exo_dentiste.py depuis `docs/dentiste/`.
+
+        AJOUTER UN EXEMPLE d'ARBORESCENCE
+
+
 
 !!! warning "Important"
 
@@ -61,7 +83,7 @@ Pour une organisation en chapitre, utilisez un chemin relatif. Par exemple : `#!
         
         On a donc un tuple de chaînes de caractères qui sera évalué avec `#!python eval()`. 
  
-        2) Si l'on souhaite vérifier plusieurs fonctions grâce à l'évaluateur de code :
+        1) Si l'on souhaite vérifier plusieurs fonctions grâce à l'évaluateur de code :
    
         ```python linenums="1"
         --8<-- "docs/scripts/exo2_test.py"

@@ -1,5 +1,9 @@
 # Terminal et IDE dans Mkdocs
 
+{{ macros_info() }}
+
+
+
 ## Introduction
 
 Afin d'écrire un cours interactif utilisant Mkdocs, le besoin s'est fait sentir de pouvoir écrire des scripts Python en ligne directement dans le navigateur.

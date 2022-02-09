@@ -52,6 +52,7 @@ def define_env(env):
     env.variables['term_counter'] = 0
     env.variables['IDE_counter'] = 0
     INFTY_SYMBOL = '\u221e'
+    from urllib.parse import unquote
 
     @env.macro
     def terminal() -> str:
@@ -74,9 +75,11 @@ def define_env(env):
 
         try: 
             if path == "":
+                print(nom_script, f"""{short_path}/scripts/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             else:
                 # print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
+                print(nom_script, f"""{short_path}/{path}/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
             # f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
@@ -152,11 +155,15 @@ def define_env(env):
             content = 'backslash-newline'.join(split_content[i:])
         return content, MAX
 
-    def test_style(nom_script : str, element : str):
+    def test_style(nom_script : str, element : str) -> bool:
         guillemets = ["'", '"']
         ide_style = ["", "v"]
         styles = [f"""IDE{istyle}({i}{nom_script}{i}""" for i in guillemets for istyle in ide_style]
         return any([style for style in styles if style in element])
+
+    def convert_url_to_utf8(nom : str) -> str:
+        return unquote(nom, encoding='utf-8')
+        
 
     @env.macro
     def IDEv(nom_script : str = '', MAX : int = 5) -> str:
@@ -173,11 +180,11 @@ def define_env(env):
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
-        path_img = env.variables.page.abs_url.split('/')[1]
+        path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
 
-        #        path_files = '/'.join([folder for folder in env.variables.page.abs_url.split('/')[:-1] if folder != ""])
-        path_file = '/'.join(filter(lambda folder: folder != "", env.variables.page.abs_url.split('/')[2:-2]))
+        path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
         content, tc = generate_content(nom_script, path_file)
+
 
         content, max_from_file = get_max_from_file(content)
         MAX = max_from_file if MAX == 5 else MAX
@@ -196,11 +203,11 @@ def define_env(env):
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
         div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
+        
         elt_insertion = [elt for elt in env.page.markdown.split("\n") if test_style(nom_script, elt)]
         elt_insertion = elt_insertion[0] if len(elt_insertion) >=1 else ""
         spaces = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
-        if nom_script == '' : spaces = " "
-        print(tc, spaces == "", elt_insertion, len(elt_insertion) - len(elt_insertion.lstrip()))
+        if nom_script == '' : spaces = " "  # to avoid conflict with empty IDEs
         if spaces == "":
             div_edit += f'''
 {spaces}--8<--- "docs/xtra/start.md"
@@ -212,11 +219,11 @@ def define_env(env):
 {spaces}--8<--- "docs/xtra/end.md"
 '''
         return div_edit
-    
-@env.macro
-def mult_col(*text):
-    cmd = """<table style="border-color:transparent;background-color:transparent"><tr>"""
-    for column in text:
-        cmd += f"""<td><b style="font-size:1.2em">{column}</td>"""
-    cmd += f"""</tr></table>"""
-    return cmd
+        
+    @env.macro
+    def mult_col(*text):
+        cmd = """<table style="border-color:transparent;background-color:transparent"><tr>"""
+        for column in text:
+            cmd += f"""<td><b style="font-size:1.2em">{column}</td>"""
+        cmd += f"""</tr></table>"""
+        return cmd

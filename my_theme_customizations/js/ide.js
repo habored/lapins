@@ -5,7 +5,12 @@ $('[id^=editor_]').each(function() {
 
     let id_editor = "editor_" + number
     function createACE(id_editor){
-        let defineTheme = document.querySelector('label[for="__palette_2"]').hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
+        let paletteElement = document.querySelector('label[for="__palette_2"]')
+        if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
+            var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
+        } else {
+            var defineTheme = paletteElement.hidden ? 'ace/theme/tomorrow_night_bright' : "ace/theme/crimson_editor"
+        }
         ace.require("ace/ext/language_tools");
         var editor = ace.edit(id_editor, {
             theme: defineTheme,
@@ -130,18 +135,35 @@ function paintACE(theme) {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    var p = document.querySelector('label[for="__palette_2"]')
-    if (p.hidden == true) {
-        paintACE('ace/theme/crimson_editor') // bright mode
+    let paletteElement = document.querySelector('label[for="__palette_2"]')
+    if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
+        var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
     } else {
-        console.log('tmrw')
-        paintACE('ace/theme/tomorrow_night_bright')  // night mode
+        var defineTheme = paletteElement.hidden ? 'ace/theme/tomorrow_night_bright' : "ace/theme/crimson_editor"
+    }
+    if (paletteElement.hidden == true) {
+        paintACE(defineTheme) // bright mode
+    } else {
+        paintACE(defineTheme)  // night mode
     }
 });
 
 
 var p2 = document.querySelector('input[id="__palette_2"]')
-p2.addEventListener('click', () => { paintACE('ace/theme/crimson_editor') });
+p2.addEventListener('click', () => { 
+    if (p2 === "(prefers-color-scheme: dark)") {
+        paintACE('ace/theme/tomorrow_night_bright')
+    } else {
+        paintACE('ace/theme/crimson_editor')
+    }
+    
+});
 
 var p1 = document.querySelector('input[id="__palette_1"]')
-p1.addEventListener('click', () => { paintACE('ace/theme/tomorrow_night_bright') });
+p1.addEventListener('click', () => { 
+    if (p1 === "(prefers-color-scheme: light)") {
+        paintACE('ace/theme/crimson_editor')
+    } else {
+        paintACE('ace/theme/tomorrow_night_bright')
+    }
+});

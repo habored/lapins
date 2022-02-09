@@ -2,7 +2,7 @@
 
 ## Todo list
 
-:x: Caractères non-ASCII pour nom de fichier et contenu
+:x: Amélioration des performances d'affichage
 
 :x: gestion des fichiers d'initialisation (pour les codes longs)
 
@@ -15,6 +15,10 @@
 - [ ] Mode verbose pour les tests / mode simple
 - [ ] Mode infini pour les tentatives
 
+:white_check_mark: Mode sombre / Mode clair (réglage indépendant du choix de palette)
+
+:white_check_mark: Caractères non-ASCII pour nom de fichier et contenu
+
 :white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt` 
 
 - [ ] Solution en page externe pour les fichiers longs (exclue du menu de navigation avec le hack)
@@ -24,7 +28,6 @@
 
 :white_check_mark: Infobulles
 
-:white_check_mark: Mode sombre / Mode clair
 
 :white_check_mark: Chemins relatifs
 
