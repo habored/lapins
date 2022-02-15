@@ -348,7 +348,7 @@ async function executeTestAsync(id_editor, mode) {
         // pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
 
         let test_code = document.getElementById("test_term_editor_"+id_editor).textContent.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*");
-        if (!test_code.includes("assert")) {
+        if (test_code.includes("benchmark")) {
         pyodide.runPython(`
         import sys as __sys__
         import io as __io__

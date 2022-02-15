@@ -2,6 +2,8 @@
 
 ## Todo list
 
+:x: La fenêtre d’édition est réservée au code de l’élève. Les premiers tests sont dans une fenêtre collée, juste en dessous, visible mais non éditable. Ils peuvent être masqués/affichés.
+
 :x: Amélioration des performances d'affichage
 
 :x: gestion des fichiers d'initialisation (pour les codes longs)
