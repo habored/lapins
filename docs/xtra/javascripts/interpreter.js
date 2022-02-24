@@ -1,5 +1,6 @@
 var debug_mode = false;
 var dict = {};  // Global dictionnary tracking the number of clicks
+var tagHdr = "#--- HDR ---#";
 
 function sleep(s){
     return new Promise(resolve => setTimeout(resolve, s));
@@ -193,9 +194,9 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
       let executed_code = await foreignModulesFromImports(code, {'turtle': "pyo_js_turtle"}, id_editor)
       await pyodide.runPythonAsync("from __future__ import annotations\n" + executed_code);    // Running the code
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
-      $.terminal.active().echo(">>> Script exécuté !\n"+stdout); 
+      $.terminal.active().echo(">>> Script exécuté !\n" + stdout); 
     } catch(err) {
-      $.terminal.active().echo(">>> Script exécuté !\n"+err);
+      $.terminal.active().echo(">>> Script exécuté !\n" + err);
     }
   }
 
@@ -216,10 +217,22 @@ async function silent_evaluatePythonFromACE(code, id_editor, mode) {
     }
   }
 
+async function evaluateHdrFile(id_editor) {
+
+    // console.log('221', id_editor)
+    let url_pyfile = $('#content_' + id_editor).text()
+    if (url_pyfile.includes(tagHdr)) {
+        splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr));
+        if (splitHdrPyFile !== null) {
+            hdrFile = splitHdrPyFile[1].replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*");
+            pyodide.runPython(hdrFile);
+        }
+}}
 
 async function interpretACE(id_editor, mode) {
     window.console_ready = await pyterm('#term_'+id_editor, 150);
     $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
+    evaluateHdrFile(id_editor)
     var editor = ace.edit(id_editor);
     let stream = await editor.getSession().getValue();
     calcTermSize(stream, mode)

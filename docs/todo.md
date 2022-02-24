@@ -2,11 +2,13 @@
 
 ## Todo list
 
+:white_check_mark: Autocomplétion du code
+
 :x: La fenêtre d’édition est réservée au code de l’élève. Les premiers tests sont dans une fenêtre collée, juste en dessous, visible mais non éditable. Ils peuvent être masqués/affichés.
 
 :x: Amélioration des performances d'affichage
 
-:x: gestion des fichiers d'initialisation (pour les codes longs)
+:white_check_mark: gestion des fichiers d'initialisation (pour les codes longs)
 
 :x: télécharger tous les codes écrits dans les éditeurs de la page en un seul fichier
 
@@ -29,7 +31,6 @@
 :white_check_mark: Modifications des emoji par des svg classe
 
 :white_check_mark: Infobulles
-
 
 :white_check_mark: Chemins relatifs
 

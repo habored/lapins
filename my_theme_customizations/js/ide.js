@@ -1,7 +1,22 @@
+var tagHdr = "#--- HDR ---#";
+
 $('[id^=editor_]').each(function() {
     let number = this.id.split('_').pop();
     //let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
     let url_pyfile = $('#content_'+this.id).text()  // Extracting url from the div before Ace layer
+
+    if (url_pyfile.includes(tagHdr)) {
+        splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr + "(.*)"));
+        if (splitHdrPyFile === null) { pyFile = `Missing ${tagHdr} tag. Please check !\n\n` + url_pyfile } 
+        else {
+            hdrFile = splitHdrPyFile[1];
+            pyFile = splitHdrPyFile[2];
+            newline = 'backslash-newline';
+            while(pyFile.startsWith(newline)) { pyFile = pyFile.substring(newline.length); }
+        }
+    } else {
+        pyFile = url_pyfile;
+    }
 
     let id_editor = "editor_" + number
     function createACE(id_editor){
@@ -24,11 +39,11 @@ $('[id^=editor_]').each(function() {
         editor.setOptions({
             enableBasicAutocompletion: true,
             enableSnippets: true,
-            enableLiveAutocompletion: false
+            enableLiveAutocompletion: true
         });
         // Decode the backslashes into newlines for ACE editor from admonitions 
         // (<div> autocloses in an admonition) 
-        editor.getSession().setValue(url_pyfile.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*"))  
+        editor.getSession().setValue(pyFile.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*"))  
     }
     window.IDE_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
 
@@ -112,9 +127,9 @@ $('[id^=input_editor_]').each(function() {
 });
 
 function readFile (evt, id_editor) {
-    var files = evt.target.files;
-    var file = files[0];
-    var reader = new FileReader();
+    let files = evt.target.files;
+    let file = files[0];
+    let reader = new FileReader();
     var editor = ace.edit(id_editor);
     reader.onload = function(event) {
         editor.getSession().setValue(event.target.result);

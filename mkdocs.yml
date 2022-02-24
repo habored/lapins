@@ -16,6 +16,7 @@ nav:
   - "Bac à sable 🏖": exo3/python4.md
   - "Bac à sable 2 🏖": machin/exo3/python5.md
   - "E-nsi 🏖": dentiste/sujet.md
+  - "E-nsi SQL": sql/sujet.md
 
 
 theme:
