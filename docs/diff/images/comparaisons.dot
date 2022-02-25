@@ -1,0 +1,38 @@
+digraph  {
+
+  rankdir="TB";
+  1 [label="lapin VS caprin"];
+  2 [label="lapi VS capri"];
+  3 [label="lap VS capr"];
+  4 [label="la VS capr"];
+  5 [label="lap VS cap"];
+  6 [label="l VS capr"];
+  7 [label="la VS cap"];
+  8 [label="'' VS capr"];
+  9 [label="l VS cap"];
+  10 [label="'' VS cap"];
+  11 [label="l VS ca"];
+  12 [label="'' VS ca"];
+  13 [label="l VS c"];
+  14 [label="'' VS c"];
+  15 [label="l VS ''"];
+  16 [label="la VS ca"];
+  1 -> 2;
+  2 -> 3;
+  3 -> 4;
+  3 -> 5;
+  4 -> 6;
+  4 -> 7;
+  6 -> 8;
+  6 -> 9;
+  9 -> 10;
+  9 -> 11;
+  11 -> 12;
+  11 -> 13;
+  13 -> 14;
+  13 -> 15;
+  5 -> 16;
+  16 -> 13;
+  7 -> 9;
+  7 -> 16;
+}
