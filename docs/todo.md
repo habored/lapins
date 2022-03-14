@@ -2,6 +2,12 @@
 
 ## Todo list
 
+:x: Le code solution apparait dans le code source... A cacher d'une manière ou d'une autre (requete JS pour récupérer le code solution semble bien)
+
+:x: Démarrer le comptage des 5 essais avant révélation du code si les premiers tests sont passés.
+
+:white_check_mark: `#!python eval` désactivé en fonction de la présence du mot-clé `#!md EVAL = False|True` dans l'appel à {{IDE(..., EVAL = ...)}}. Veillez à utiliser les mots-clés plutôt que les positions des arguments.
+
 :white_check_mark: Autocomplétion du code
 
 :x: La fenêtre d’édition est réservée au code de l’élève. Les premiers tests sont dans une fenêtre collée, juste en dessous, visible mais non éditable. Ils peuvent être masqués/affichés.

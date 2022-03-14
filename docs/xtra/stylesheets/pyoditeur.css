@@ -1,3 +1,5 @@
+/* https://pustelto.com/blog/optimizing-css-for-faster-page-loads/ */
+
 /* Extra CSS for mkdocs-enumerate-headings-plugin */ 
 .enumerate-headings-plugin {
   filter: opacity(35%);

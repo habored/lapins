@@ -1,5 +1,6 @@
+var debug_mode = false;
 var dict = {};  // Global dictionnary tracking the number of clicks
-const nAttempts = 5;
+var tagHdr = "#--- HDR ---#";
 
 function sleep(s){
     return new Promise(resolve => setTimeout(resolve, s));
@@ -154,13 +155,96 @@ async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
 
             executedCode = `import micropip\nawait micropip.install("${moduleFakeName}")\n${importLine}\n` + executedCode
         }
-        console.log(executedCode)
+        if (debug_mode) {console.log(executedCode)}
         executedCode = removeLines(executedCode, moduleName)
-        console.log(executedCode)
+        if (debug_mode) {console.log(executedCode)}
     };
     return executedCode
 }
 
+function countParenthesis(string) {
+    var count = 0;
+    for (let letter of string) {
+        if (letter == '(') {
+            count++;
+        } else if (letter == ')') {
+            count--;
+        }
+    }
+    return count
+}
+
+function generateAssertionLog(errLineLog, code){
+    var codeTable = code.split("\n");  // get assertion test
+    errLineLog -= 1;
+    var endErrLineLog = errLineLog;
+    var countPar = 0;
+    do { // multilines assertions
+        countPar += countParenthesis(codeTable[endErrLineLog]);
+        endErrLineLog++;
+    } while (countPar !== 0)
+    return `${codeTable.slice(errLineLog, endErrLineLog).join(" ").replace("assert ", "")}`
+}
+
+function generateErrLog(errTypeLog, errLineLog, code, src = 0){
+    let dictErrType = 
+    {"AssertionError" : src == 0 ? "Erreur avec les tests publics" : "Erreur avec les tests secrets",
+     "SyntaxError" : "Erreur de syntaxe",
+     "ModuleNotFoundError" : "Erreur de chargement de module",
+     "IndexError" : "Erreur d'indice",
+     "KeyError" : "Erreur de clé",
+     "IndentationError" : "Erreur d'indentation",
+     "TypeError" : "Erreur de type",
+     "NameError" : "Erreur de nommage",
+     "IndentationError" : "Erreur d'indentation",
+     "ZeroDivisionError" : "Division par zéro",
+    }
+    // Ellipsis is triggered when ... are used
+    errTypeLog = errTypeLog + (errTypeLog.includes('Ellipsis') ? " (issue with the dots ...)" : "");
+    for (errType in dictErrType) {
+        if (errTypeLog.includes(errType)) {
+            if (errType != "AssertionError") { // All Exceptions but assertions
+                return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n------\n ${errTypeLog}`
+            } else {
+                if (errTypeLog !== "AssertionError") { // case : no Assertion description 
+                    return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n------\n ${errTypeLog}`
+                } else {
+                    errTypeLog = `${errTypeLog} : test '${generateAssertionLog(errLineLog, code)}' failed`
+                    return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n------\n ${errTypeLog}`
+                }
+            }
+        }
+    }
+}
+
+function generateLog(err, code, src = 0){
+    err = String(err).split("\n")
+    let p = -2
+    var lastLogs = err.slice(p, -1)
+    // catching relevant Exception logs
+    while (!lastLogs[0].includes("line")) {
+        lastLogs = err.slice(p, -1);
+        p--;
+    }
+    var errLineLog = lastLogs[0].split(',');
+    // catching line number of Exception
+    let i = 0;
+    while (!errLineLog[i].includes("line")) {
+        i++;
+    }
+    // When <exec> appears, an extra line is executed on Pyodide side (correct for it with -1)
+    let shift = errLineLog[0].includes("<exec>") ? -1 : 0;
+    errLineLog = Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift; // get line number
+
+    // catching multiline Exception logs (without line number)
+    var errTypeLog = lastLogs[1];
+    p = 2;
+    while (p < lastLogs.length) {
+        errTypeLog = errTypeLog + '\n' + " " + lastLogs[p];
+        p++;
+    }
+    return generateErrLog(errTypeLog, errLineLog, code, src)
+}
 
 async function evaluatePythonFromACE(code, id_editor, mode) {
     await pyodideReadyPromise;
@@ -171,6 +255,14 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
       import io as __io__
       __sys__.stdout = __io__.StringIO()
     `);
+    // let ideClasseDiv = document.getElementById("term_"+id_editor).parentElement.parentElement;
+    // let evalDisabled = (ideClasseDiv.dataset.eval == "False" ? true : false);
+
+    // if (evalDisabled) {
+    // pyodide.runPython(`
+    // del locals()['__builtins__'].eval
+    // `) 
+    // }
 
     // TODO WARNING memory leak : globals() should be cleaned. Code below is too aggressive !!  
     // pyodide.runPython(`
@@ -184,54 +276,83 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
 
     // resize terminal to the size of editor on interpreting
     if (mode === "v") {
-        console.log(187, id_editor )
+        if (debug_mode) {console.log(187, id_editor )}
         $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
     }
 
-    try {
-      console.log(code)
-      let executed_code = await foreignModulesFromImports(code, {'turtle': "pyo_js_turtle"}, id_editor)
-      await pyodide.runPythonAsync("from __future__ import annotations\n" + executed_code);    // Running the code
-      var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
-      $.terminal.active().echo(">>> Script exécuté !\n"+stdout); 
-    } catch(err) {
-      $.terminal.active().echo(">>> Script exécuté !\n"+err);
+    try 
+    {
+        if (debug_mode) {console.log(code)}
+        let executed_code = await foreignModulesFromImports(code, {'turtle': "pyo_js_turtle"}, id_editor)
+        await pyodide.runPythonAsync("from __future__ import annotations\n" + executed_code);    // Running the code
+        var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
+        $.terminal.active().echo(">>> Script exécuté !\n" + stdout); 
+    } 
+    catch(err) 
+    {
+        // generateLog does the work
+        $.terminal.active().echo(">>> Script exécuté \n------\n" + generateLog(err, code, 0) + "\n------\n");
     }
   }
 
-async function silent_evaluatePythonFromACE(code, id_editor, mode) {
-    await pyodideReadyPromise;
+// async function silent_evaluatePythonFromACE(code, id_editor, mode) {
+//     await pyodideReadyPromise;
 
-    $.terminal.active().clear();
+//     $.terminal.active().clear();
 
-    // if (mode === "vert") {
-    //     $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
-    // }
+//     // if (mode === "vert") {
+//     //     $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+//     // }
 
-    try {
-      pyodide.runPython("from __future__ import annotations\n"+code);    // Running the code OUTPUT
-    } catch(err) {
-      $.terminal.active().echo(">>> Code invalide !\n"+err);
-      return err
-    }
-  }
+//     try {
+//       pyodide.runPython("from __future__ import annotations\n"+code);    // Running the code OUTPUT
+//     } catch(err) {
+//       $.terminal.active().echo(">>> Code invalide !\n"+err);
+//       return err
+//     }
+//   }
 
+async function evaluateHdrFile(id_editor) {
 
-async function interpretACE(id_editor, mode) {
-    window.console_ready = await pyterm('#term_'+id_editor, 150);
-    $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
-    var editor = ace.edit(id_editor);
-    let stream = await editor.getSession().getValue();
-    calcTermSize(stream, mode)
-    evaluatePythonFromACE(stream, id_editor, mode);
-}
+    // console.log('221', id_editor)
+    let url_pyfile = $('#content_' + id_editor).text()
+    if (url_pyfile.includes(tagHdr)) {
+        splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr));
+        if (splitHdrPyFile !== null) {
+            hdrFile = splitHdrPyFile[1].replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*");
+            pyodide.runPython(hdrFile);
+        }
+}}
 
 async function silent_interpretACE(id_editor) {
+    let ideClasseDiv = document.getElementById("term_"+id_editor).parentElement.parentElement;
+    let evalDisabled = (ideClasseDiv.dataset.eval == "False" ? true : false);
+    pyodide.runPython(`
+    def dummy_eval(src):
+        print("""L'appel à eval est interdit :""")
+        print("""eval("instruction") renvoie "instruction".""")
+        return src
+    `)
+
     window.console_ready = await pyterm('#term_'+id_editor, 150);
     $('#term_'+id_editor).terminal().focus(true);   // gives the focus to the corresponding terminal
     var editor = ace.edit(id_editor);
     let stream = await editor.getSession().getValue();
+    if (stream.includes("eval(") && evalDisabled) {
+        stream = stream.replace(/eval\(/g, "dummy_eval(")
+    }
     return stream
+}
+
+async function interpretACE(id_editor, mode) {
+    // refactoring with silent_interpretACE...
+    // await pyodideReadyPromise;
+    let interpret_code = silent_interpretACE(id_editor)
+
+    let stream = await interpret_code;
+    evaluateHdrFile(id_editor)
+    calcTermSize(stream, mode)
+    evaluatePythonFromACE(stream, id_editor, mode);
 }
 
 async function start_term(nom_id) {
@@ -270,37 +391,46 @@ function executeTest(id_editor, mode) {
     executeTestAsync(id_editor, mode)
 }
 
+function getWrapperElement(filetype, id_editor) {
+    if (document.getElementById(filetype + id_editor) === null) {
+        let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
+        while (wrapperElement.className !== "ide_classe") {
+            wrapperElement = wrapperElement.parentNode
+        }
+    return wrapperElement;
+}}
 
 function showGUI(id_editor) {
-    if (document.getElementById("gui_"+id_editor) === null) {
-    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
-    while (wrapperElement.className !== "ide_classe") {
-        wrapperElement = wrapperElement.parentNode
-    }
+    let wrapperElement = getWrapperElement("gui_", id_editor);
     var txt = document.createElement("div");
     // txt.innerHTML='<details class="check"><summary>Fenêtre graphique</summary>\
     // <div class="highlight" id="gui_'+id_editor+'"></div></details>'
     txt.innerHTML='<details open class="check"><summary>Fenêtre graphique</summary><div class = "can_wrapper"><div id = "gui_'+id_editor+'"><canvas id = "gui_'+id_editor+'_tracer" width="700" height="400"></canvas><canvas id="gui_'+id_editor+'_pointer" width="700" height="400"></canvas></div></div></details>'
 
     wrapperElement.insertAdjacentElement('afterend', txt)
-}}
+}
 
 
 function showCorrection(id_editor) {
-    if (document.getElementById("corr_"+id_editor) === null) {
-    let wrapperElement = document.getElementById(id_editor);  /* going up the DOM to IDE+buttons */ 
-    while (wrapperElement.className !== "ide_classe") {
-        wrapperElement = wrapperElement.parentNode
-    }
+    let wrapperElement = getWrapperElement("gui_", id_editor);
+
     var txt = document.createElement("div");
+    txt.setAttribute("id", "solution_" + id_editor);
     txt.innerHTML='<details class="check"><summary>Solution</summary>\
     <div class="highlight" id="corr_'+id_editor+'"></div></details>'
 
     let url_pyfile = document.getElementById("corr_content_"+id_editor).textContent
 
+
     function createACE(id_editor){
+        let paletteElement = document.querySelector('label[for="__palette_2"]')
+        if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
+            var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
+        } else {
+            var defineTheme = paletteElement.hidden ? 'ace/theme/tomorrow_night_bright' : "ace/theme/crimson_editor"
+        }
         var editor = ace.edit(id_editor, {
-            theme: "ace/theme/tomorrow_night_bright",
+            theme: defineTheme,
             mode: "ace/mode/python",
             autoScrollEditorIntoView: true,
             maxLines: 30,
@@ -311,17 +441,26 @@ function showCorrection(id_editor) {
         });
         // Decode the backslashes into newlines for ACE editor from admonitions 
         // (<div> autocloses in an admonition) 
-        editor.getSession().setValue(url_pyfile.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*"))
+        editor.getSession().setValue(url_pyfile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))
     }
     wrapperElement.insertAdjacentElement('afterend', txt)
     window.IDE_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
-}}
+
+    // revealing the remark from Element
+    var remElement = document.getElementById("rem_content_" + id_editor)
+    remElement.style.display = "block";
+    
+    var fragment = document.createDocumentFragment();
+    fragment.appendChild(remElement);
+    document.getElementById("solution_" + id_editor).firstChild.appendChild(fragment);
+
+}
 
 async function executeTestAsync(id_editor, mode) {
     await pyodideReadyPromise;
     let interpret_code = silent_interpretACE("editor_"+id_editor, "")
 
-    let code = await interpret_code;
+    var code = await interpret_code;
     $.terminal.active().clear();
 
     try {
@@ -329,7 +468,11 @@ async function executeTestAsync(id_editor, mode) {
         await pyodide.runPythonAsync("from __future__ import annotations\n" + executed_code);    // Running the code
         // pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
 
-        let test_code = document.getElementById("test_term_editor_"+id_editor).textContent.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*");
+        let test_code = document.getElementById("test_term_editor_"+id_editor)
+            .textContent.replace(/bksl-nl/g, "\n")
+                        .replace(/py-und/g, "_")
+                        .replace(/py-str/g, "*");
+        if (test_code.includes("benchmark")) {
         pyodide.runPython(`
         import sys as __sys__
         import io as __io__
@@ -376,25 +519,63 @@ async function executeTestAsync(id_editor, mode) {
                     global_failed += 1
             return global_failed
         `);
+        var output = await pyodide.runPythonAsync(test_code + "\ntest_unitaire(benchmark)");    // Running the code OUTPUT
+        } else {
+            var prefix = "    ";
+            // Use of template litterals
+            pyodide.runPython(`
+import sys as __sys__
+import io as __io__
+import js
+__sys__.stdout = __io__.StringIO()
+global_failed = 0
+success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
+fail_smb = ['🌩','🙈','🙉','⛑','🌋','💣']
 
-        let output = await pyodide.runPythonAsync(test_code+"\ntest_unitaire(benchmark)");    // Running the code OUTPUT
+if 'test_unitaire' not in list(globals()):
+    from random import choice
+try:
+${test_code.split('\n').map(f => prefix + f).join('\n')}
+    print(f"Bravo vous avez réussi tous les tests {choice(success_smb)}")
+    global_failed = 0
+except Exception as err:
+    msg = f"Le test {err} a échoué" 
+    print(msg, ${generateLog(err, code, 1)})
+    print(f"Reprenez votre code {choice(fail_smb)}")
+    global_failed = 1
+
+def dummy_fct():
+    return global_failed
+`)
+var output = await pyodide.runPythonAsync(`dummy_fct()`) // the dummy function avoid creating an extra level of indentation in the assert line
+}
+
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
-        elementCompteur = document.getElementById("test_term_editor_"+id_editor)
-        while (elementCompteur.className !== "compteur") {
-            elementCompteur = elementCompteur.nextElementSibling
+        let elementCounter = document.getElementById("test_term_editor_"+id_editor)
+        let parentCounter = elementCounter.parentElement.dataset.max;
+        const nAttempts = parentCounter;
+
+        while (elementCounter.className !== "compteur") {
+            elementCounter = elementCounter.nextElementSibling
         }
         if (output === 0) {
             dict[id_editor] = nAttempts
         } else {
             dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0)
         }
-        elementCompteur.textContent = Math.max(0, nAttempts-dict[id_editor])+"/5"
 
-        if (dict[id_editor] === nAttempts) {
-        let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
-        if (correctionExists !== "") {
-            showCorrection('editor_'+id_editor);
-        };
+        if (nAttempts !== '\u221e') { // INFTY symbol
+            elementCounter.textContent = Math.max(0, nAttempts-dict[id_editor]) + "/" + parentCounter
+        } else {
+            elementCounter.textContent = parentCounter + "/" + parentCounter
+        }
+
+        if (dict[id_editor] == nAttempts && !document.getElementById('solution_editor_'+id_editor)) {
+            let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
+            console.log('465', correctionExists, dict[id_editor], nAttempts, document.getElementById('solution_editor_'+id_editor))
+            if (correctionExists !== "") {
+                showCorrection('editor_'+id_editor);
+            };
         }
 
         nlines = calcTermSize(stdout, mode)
@@ -407,42 +588,15 @@ async function executeTestAsync(id_editor, mode) {
             }
             editor.session.setValue(stream); // set value and reset undo history
         }
-        // resize terminal to the size of editor on interpreting
-        // console.log('bla', mode, nlines*30, document.getElementById("editor_" + id_editor).style.height, max(nlines*30, document.getElementById("editor_" + id_editor).style.height))
-        // if (mode === "v") {
-        //     console.log('bla', nlines*30, document.getElementById("editor_" + id_editor).style.height, max(nlines*30, document.getElementById("editor_" + id_editor).style.height))
-        //     $.terminal.active().resize($.terminal.active().width(), max(nlines*30, document.getElementById("editor_" + id_editor).style.height));
-        // }
 
         $.terminal.active().echo(stdout); 
 
-    } catch(err) {
+    } catch(err) { // Python not correct.
         err = err.toString().split("\n").slice(-7).join("\n");
         nlines = calcTermSize(err, mode);
-        // if (mode === "v") {
-        //     console.log('bla', nlines*30, document.getElementById("editor_" + id_editor).style.height, max(nlines*30, document.getElementById("editor_" + id_editor).style.height))
-        //     $.terminal.active().resize($.terminal.active().width(), max(nlines*30, document.getElementById("editor_" + id_editor).style.height));
-        // }
-        $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
+
+        $.terminal.active().echo(">>> Script exécuté \n------\n" + generateLog(err, code, 0) + "\n------\n");
+
+        // $.terminal.active().echo(">>> Erreur de syntaxe !\n"+err)//.split("\n").slice(~~(nlines/2)).join("\n"));   // Would be nice to display only the last lines
       }
-    } 
-
-/* <div class="admonition info">
-    <p class="admonition-title">paf</p>
-    <div class="tabbed-set" data-tabs="1:3">
-        <input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"></input>
-        <label for="__tabbed_1_1">test</label>
-        <div class="tabbed-content">blabla</div>
-
-        <input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio"></input>
-        <label for="__tabbed_1_1">test2</label>
-        <div class="tabbed-content">blabla2</div>
-    </div>
-</div> */
-
-// $(document).ready(function() {
-    // auto-load the Terminals but slows down A LOT the global loading of pyodide (not a good idea)
-    // $('[id^=cons_]').each(function() {
-    //     let number = this.id.split('_').pop();
-    //     window.console_ready = pyterm('#cons_'+number);
-    // });
+    }

@@ -7,8 +7,6 @@ On choisit ici de traiter le problème à l'aide d'une approche récursive.
 
 # Commentaires
 
-{{ py('exo_corr', 0, '# TESTS') }}
-
 La fonction `sans_dernier` ne présente pas de difficultés. On parcourt le `texte` en ajoutant au fur et à mesure les caractères dans `résultats`. On prend soin de s'arrêter avant le dernier caractères (`range(len(texte)-1)`).
 
 On aurait aussi pu utiliser une tranche et le fait que, en Python, le dernier élément d'une chaîne a aussi `-1` comme indice :

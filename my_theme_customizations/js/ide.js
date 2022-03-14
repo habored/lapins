@@ -11,7 +11,7 @@ $('[id^=editor_]').each(function() {
         else {
             hdrFile = splitHdrPyFile[1];
             pyFile = splitHdrPyFile[2];
-            newline = 'backslash-newline';
+            newline = 'bksl-nl';
             while(pyFile.startsWith(newline)) { pyFile = pyFile.substring(newline.length); }
         }
     } else {
@@ -43,7 +43,7 @@ $('[id^=editor_]').each(function() {
         });
         // Decode the backslashes into newlines for ACE editor from admonitions 
         // (<div> autocloses in an admonition) 
-        editor.getSession().setValue(pyFile.replace(/backslash-newline/g, "\n").replace(/python-underscore/g, "_").replace(/python-star/g, "*"))  
+        editor.getSession().setValue(pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))  
     }
     window.IDE_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
 

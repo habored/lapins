@@ -87,7 +87,7 @@ def define_env(env):
             content = content + "\n"
             # Hack to integrate code lines in admonitions in mkdocs
             # change backslash_newline by backslash-newline
-            return content.replace('\n','backslash-newline').replace('_','python-underscore').replace('*','python-star')
+            return content.replace('\n','bksl-nl').replace('_','py-und').replace('*','py-str')
         except :
             return
         
@@ -142,7 +142,7 @@ def define_env(env):
         return f"""<span style="indent-text:5em"> </span>"""
 
     def get_max_from_file(content : str) -> tuple:#[str, int]: # compatibilité Python antérieur 3.8
-        split_content = content.split('backslash-newline')
+        split_content = content.split('bksl-nl')
         max_var = split_content[0]
         if max_var[:4] != "#MAX":
             MAX = 5 
@@ -152,7 +152,7 @@ def define_env(env):
             i = 1
             while split_content[i] == '':
                 i += 1
-            content = 'backslash-newline'.join(split_content[i:])
+            content = 'bksl-nl'.join(split_content[i:])
         return content, MAX
 
     def test_style(nom_script : str, element : str) -> bool:
@@ -166,15 +166,15 @@ def define_env(env):
         
 
     @env.macro
-    def IDEv(nom_script : str = '', MAX : int = 5) -> str:
+    def IDEv(nom_script : str = '', MAX : int = 5, EVAL : bool = False) -> str:
         """
         Purpose : Easy macro to generate vertical IDE in Markdown mkdocs.
         Methods : Fire the IDE function with 'v' mode.
         """
-        return IDE(nom_script, mode = 'v', MAX = MAX)
+        return IDE(nom_script, mode = 'v', MAX = MAX, EVAL = EVAL)
 
     @env.macro
-    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5) -> str:
+    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5, EVAL : bool = False) -> str:
         """
         Purpose : Create an IDE (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
@@ -185,12 +185,11 @@ def define_env(env):
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
         content, tc = generate_content(nom_script, path_file)
 
-
         content, max_from_file = get_max_from_file(content)
         MAX = max_from_file if MAX == 5 else MAX
         MAX = MAX if MAX not in ['+', 1000] else INFTY_SYMBOL
         corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
-        div_edit = f'<div class="ide_classe" id={MAX}>'
+        div_edit = f'<div class="ide_classe" data-max={MAX} data-eval={EVAL}>'
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
