@@ -318,40 +318,12 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
         $.terminal.active().echo(generateLog(err, code, lineShift - 1) + "\n------\n");            
     }
 
-    // console.log('bim', err)
-    //     // try
-    //     // {
-
-    //     // }
-    //     // catch(err)
-    //     // {
-    //     //     $.terminal.active().echo(">>> Script exécuté \n------\n" + generateLog(err, code, 0) + "\n------\n");
-    //     // }
     
-
-
   }
 
-// async function silent_evaluatePythonFromACE(code, id_editor, mode) {
-//     await pyodideReadyPromise;
-
-//     $.terminal.active().clear();
-
-//     // if (mode === "vert") {
-//     //     $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
-//     // }
-
-//     try {
-//       pyodide.runPython("from __future__ import annotations\n"+code);    // Running the code OUTPUT
-//     } catch(err) {
-//       $.terminal.active().echo(">>> Code invalide !\n"+err);
-//       return err
-//     }
-//   }
 
 async function evaluateHdrFile(id_editor) {
-
-    // console.log('221', id_editor)
+    // Evaluate header code (to avoid loooooong code with classes or SQL)
     let url_pyfile = $('#content_' + id_editor).text()
     if (url_pyfile.includes(tagHdr)) {
         splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr));
@@ -461,6 +433,7 @@ function showCorrection(id_editor) {
 
     let url_pyfile = document.getElementById("corr_content_"+id_editor).textContent
 
+
     function createACE(id_editor){
         let paletteElement = document.querySelector('label[for="__palette_2"]')
         if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
@@ -561,8 +534,6 @@ async function executeTestAsync(id_editor, mode) {
         var output = await pyodide.runPythonAsync(test_code + "\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         } else {
 
-
-    var global_failed = 0;
     var testCodeTable = test_code.split('\n');  // splits test code into several lines
     var testCodeTableMulti = []; // multiple lines code joined into one line
     var line = 0;
@@ -580,7 +551,8 @@ async function executeTestAsync(id_editor, mode) {
         } while (countPar !== 0 || countBra !== 0 || contiBool)
         testCodeTableMulti.push(testCodeTable.slice(lineStart, line).join(""))
     }
-    testCodeTableMulti = testCodeTableMulti.map(x => x.replace(/\s\s/g, ""))
+    // Maybe to be put back...
+    // testCodeTableMulti = testCodeTableMulti.map(x => x.replace(/\s\s/g, ""))
 
     var nSecretTests = testCodeTableMulti.filter(x => x.includes("assert") && !x.startsWith("#")).length;
     var extVarData = testCodeTableMulti.filter(x => !x.includes("assert") && !x.startsWith("#"));
@@ -592,21 +564,73 @@ async function executeTestAsync(id_editor, mode) {
         nPassedDict[i] = 0;
     }
 
+    pyodide.runPython(`
+        import sys as __sys__
+        import io as __io__
+        import js
+        __sys__.stdout = __io__.StringIO()
+    `)
+
     var i = 0;
     var success = 0;
-    for (let test of testCodeTableMulti) {    
-        try 
-        {
-            pyodide.runPython(`${test}`)
-            if (test.includes("assert") && !test.startsWith("#")) {nPassedDict[i] = [1, test]; i++;success++;}
+    console.log('tst', testCodeTableMulti)
+    var k = 0; // line of the file
+    var stdout = "";
+    while (k < testCodeTableMulti.length) {
+        // decoration of the assert clauses to add try/except catch
+        let localTest = 'i_tot = 0\ni_failed = 0';
+        while (!testCodeTableMulti[k].includes("assert")) {
+            let test = testCodeTableMulti[k];
+            localTest = localTest + '\n' + test
+            k++;
         }
-        catch (err) 
-        {
-            nPassedDict[i] = [0, test] ;
-            i++;
-        }
+        // testCodeTableMulti[k]$
+        let indent = " ".repeat(testCodeTableMulti[k].indexOf("assert"));
+        localTest += "\n" + indent + "i_tot += 1\n"
+        localTest = localTest + testCodeTableMulti[k].replace(/(assert)/, "try: $1") 
+        localTest = localTest + "\n" + indent + "except : i_failed += 1\n" + "print(i_tot, i_failed, '" + testCodeTableMulti[k] + "')";
+        k++;
+        console.log(localTest)
+
+        pyodide.runPython(`${localTest}`)
+        stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
+        // console.log("resultat", stdout)
+        
+        // try  // test passed
+        // {
+        //     pyodide.runPython(`${localTest}`)
+        //     var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
+        //     console.log("resultat", stdout)
+            
+        //     if (localTest.includes("assert") && !localTest.startsWith("#")) 
+        //     {
+        //         nPassedDict[i] = [1, localTest]; i++;success++;  // SUCCESS CODE -> Code 1
+        //     }
+        // }
+        // catch (err) 
+        // {
+        //     nPassedDict[i] = [0, localTest] ;   // FAILED CODE -> Code 0
+        //     i++;
+        // }
+        // console.log('ici',k, testCodeTableMulti.length)
     }
-    console.log("show me who you are", extVarData, nPassedDict)
+    console.log('on se casse')
+    console.log('resultat', stdout)
+    let truc = stdout;
+    console.log("after allocation", truc)
+    console.log("after allocation and split", truc.split("\n"))
+    // for (let test of testCodeTableMulti) {    
+    //     try 
+    //     {
+    //         pyodide.runPython(`${test}`)
+    //         if (test.includes("assert") && !test.startsWith("#")) {nPassedDict[i] = [1, test]; i++;success++;}
+    //     }
+    //     catch (err) 
+    //     {
+    //         nPassedDict[i] = [0, test] ;
+    //         i++;
+    //     }
+    // }
     window.n_passed = nPassedDict;
     window.ext_var_data = extVarData;
     console.log(nPassedDict)

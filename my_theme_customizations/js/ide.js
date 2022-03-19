@@ -57,6 +57,7 @@ $('[id^=editor_]').each(function() {
     var workingNode = prevNode
     var remNode = document.createElement("div");
 
+    console.log(remNode)
     if (prevNode.parentNode.tagName === 'P') {
         
         // REM file on top level
@@ -112,11 +113,20 @@ $('[id^=editor_]').each(function() {
         
     }}
     // Should create a global div
-    console.log(prevNode)
-    prevNode.insertAdjacentElement('afterend', remNode)
-    remNode.setAttribute("id", "rem_content_" + id_editor);
-    document.getElementById("rem_content_" + id_editor).style.display = "none"
-    
+    console.log('LAAÀ',remNode, prevNode)
+    if (!remNode.innerHTML.includes('<h1'))
+    {  
+        prevNode.insertAdjacentElement('afterend', remNode)
+        remNode.setAttribute("id", "rem_content_" + id_editor);
+        document.getElementById("rem_content_" + id_editor).style.display = "none"
+    } else {
+        remNode = document.createElement("div");
+        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../exo_REM/"> ici </a>`
+        prevNode.insertAdjacentElement('afterend', remNode)
+        remNode.setAttribute("id", "rem_content_" + id_editor);
+        document.getElementById("rem_content_" + id_editor).style.display = "none"
+    }
+
 });
 
 // Javascript to upload file from customized buttons

@@ -205,17 +205,17 @@ def define_env(env):
         
         elt_insertion = [elt for elt in env.page.markdown.split("\n") if test_style(nom_script, elt)]
         elt_insertion = elt_insertion[0] if len(elt_insertion) >=1 else ""
-        spaces = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
-        if nom_script == '' : spaces = " "  # to avoid conflict with empty IDEs
-        if spaces == "":
+        indent = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
+        if nom_script == '' : indent = " "  # to avoid conflict with empty IDEs
+        if indent == "":
             div_edit += f'''
-{spaces}--8<--- "docs/xtra/start.md"
+{indent}--8<--- "docs/xtra/start.md"
 '''
         div_edit += f'''
-{spaces}--8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"'''
-        if spaces == "":
+{indent}--8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"'''
+        if indent == "":
             div_edit += f'''
-{spaces}--8<--- "docs/xtra/end.md"
+{indent}--8<--- "docs/xtra/end.md"
 '''
         return div_edit
         
