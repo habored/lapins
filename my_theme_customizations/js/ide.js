@@ -54,6 +54,7 @@ $('[id^=editor_]').each(function() {
 
     // A correction Element always exists (can be void)
     prevNode = document.getElementById("corr_content_" + id_editor)
+    var key = prevNode.dataset.strudel
     var workingNode = prevNode
     var remNode = document.createElement("div");
 
@@ -114,14 +115,19 @@ $('[id^=editor_]').each(function() {
     }}
     // Should create a global div
     console.log('LAAÀ',remNode, prevNode)
-    if (!remNode.innerHTML.includes('<h1'))
+    if (key == "")  
+    /* another possible condition is this : 
+    !remNode.innerHTML.includes('<h1'))  */
     {  
         prevNode.insertAdjacentElement('afterend', remNode)
         remNode.setAttribute("id", "rem_content_" + id_editor);
         document.getElementById("rem_content_" + id_editor).style.display = "none"
     } else {
+        // console.log("hack", key)
+        // console.log("result", md5('e-nsi' + key ))
+        let folder = md5('e-nsi+' + key)
         remNode = document.createElement("div");
-        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../exo_REM/"> ici </a>`
+        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${folder}/exo_REM/" target="_blank"> ici </a>`
         prevNode.insertAdjacentElement('afterend', remNode)
         remNode.setAttribute("id", "rem_content_" + id_editor);
         document.getElementById("rem_content_" + id_editor).style.display = "none"

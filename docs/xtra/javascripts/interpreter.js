@@ -456,11 +456,12 @@ function showCorrection(id_editor) {
 
     var txt = document.createElement("div");
     txt.setAttribute("id", "solution_" + id_editor);
-    txt.innerHTML='<details class="check"><summary>Solution</summary>\
+    txt.innerHTML='<details class="check" open><summary>Solution</summary>\
     <div class="highlight" id="corr_'+id_editor+'"></div></details>'
 
     let url_pyfile = document.getElementById("corr_content_"+id_editor).textContent
 
+    console.log('url_pyfile', url_pyfile)
     function createACE(id_editor){
         let paletteElement = document.querySelector('label[for="__palette_2"]')
         if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
@@ -483,7 +484,9 @@ function showCorrection(id_editor) {
         editor.getSession().setValue(url_pyfile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))
     }
     wrapperElement.insertAdjacentElement('afterend', txt)
+    if (document.getElementById("corr_content_" + id_editor).dataset.strudel == "") {
     window.IDE_ready = createACE('corr_'+id_editor)           // Creating Ace Editor #id_editor
+    }
 
     // revealing the remark from Element
     var remElement = document.getElementById("rem_content_" + id_editor)
@@ -491,6 +494,7 @@ function showCorrection(id_editor) {
     
     var fragment = document.createDocumentFragment();
     fragment.appendChild(remElement);
+    console.log(document.getElementById("solution_" + id_editor).firstChild)
     document.getElementById("solution_" + id_editor).firstChild.appendChild(fragment);
 
 }
@@ -642,7 +646,11 @@ else :
         return "\\n".join(T)
 
     key, log = extract_log(n_passed_dict)
-    print(f"""Échec du test n°{key} : \n\n{extract_external_var(log, ext_var_data)} \n\n{log}""")
+    if (ext_var := extract_external_var(log, ext_var_data)) != "":
+        print(f"""Échec du test n°{key} : \n\n{extract_external_var(log, ext_var_data)} \n\n{log}""")
+    else:
+        print(f"""Échec du test n°{key} : \n\n{log}""")
+
 print(f"""------""", end="")
 `)
 if (nSecretTests == success) {
@@ -672,7 +680,7 @@ if (nSecretTests == success) {
 
         if (dict[id_editor] == nAttempts && !document.getElementById('solution_editor_'+id_editor)) {
             let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
-            if (correctionExists !== "") {
+            if (correctionExists !== "" || document.getElementById("corr_content_editor_" + id_editor).dataset.strudel != "") {
                 showCorrection('editor_'+id_editor);
             };
         }
