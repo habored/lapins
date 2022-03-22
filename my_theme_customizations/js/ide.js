@@ -1,11 +1,16 @@
 var tagHdr = "#--- HDR ---#";
 
 $('[id^=editor_]').each(function() {
+    __md_scope=new URL(".",location)
+    __md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e))
+    console.log('BLAM', __md_scope)
+    console.log('localStorage', localStorage)
+    console.log('localStorage 2', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
     let number = this.id.split('_').pop();
     //let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
     let url_pyfile = $('#content_'+this.id).text()  // Extracting url from the div before Ace layer
 
-    if (url_pyfile.includes(tagHdr)) {
+    if (url_pyfile.includes(tagHdr)) { // test if a header code is present
         splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr + "(.*)"));
         if (splitHdrPyFile === null) { pyFile = `Missing ${tagHdr} tag. Please check !\n\n` + url_pyfile } 
         else {

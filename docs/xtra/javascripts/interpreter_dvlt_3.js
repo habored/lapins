@@ -148,10 +148,7 @@ async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
             } else {
                 importLine = importLine.replace(moduleName, moduleFakeName)
             }
-            if (moduleName.includes('turtle')) {
-                showGUI(id_editor)
-//                document.getElementById("gui_"+id_editor).focus();
-            }
+            if (moduleName.includes('turtle')) showGUI(id_editor);
 
             executedCode = `import micropip\nawait micropip.install("${moduleFakeName}")\n${importLine}\n` + executedCode
         }
@@ -163,17 +160,14 @@ async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
 }
 
 function countParenthesis(string, char = '(') {
-    if (char == '(') {endChar = ')'}
-    if (char == '[') {endChar = ']'}
+    if (char == '(') endChar = ')';
+    if (char == '[') endChar = ']';
     var count = 0;
     for (let letter of string) {
-        if (letter == char) {
-            count++;
-        } else if (letter == endChar) {
-            count--;
-        }
+        if (letter == char) count++;
+        else if (letter == endChar) count--;
     }
-    return count
+    return count;
 }
 
 function generateAssertionLog(errLineLog, code){
@@ -257,12 +251,20 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
       import io as __io__
       __sys__.stdout = __io__.StringIO()
     `);
+    // let ideClasseDiv = document.getElementById("term_"+id_editor).parentElement.parentElement;
+    // let evalDisabled = (ideClasseDiv.dataset.eval == "False" ? true : false);
 
-    if (mode === "v") $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+
+    // resize terminal to the size of editor on interpreting
+    if (mode === "v") {
+        if (debug_mode) {console.log(187, id_editor )}
+        $.terminal.active().resize($.terminal.active().width(), document.getElementById(id_editor).style.height);
+    }
 
     // Strategy : code delimited in 2 blocks
     // Block 1 : code
     // Block 2 : asserts
+    console.log('blam')
     let splitCode = code.replace(/#(\s*)Tests/i, "#tests").split("#tests")  // normalisation
     var mainCode = splitCode[0];
     let lineShift = mainCode.split('\n').length
@@ -278,27 +280,40 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
 
         await pyodide.runPythonAsync("from __future__ import annotations\n" + mainCode);    // Running the code
         var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
-        if (stdout !== "") $.terminal.active().echo(" " + stdout);
+        if (stdout !== "") {$.terminal.active().echo(" " + stdout);}
 
-        if (typeof assertionCode !== "undefined") 
-        {
+        if (typeof assertionCode !== "undefined") {
             await pyodide.runPythonAsync("from __future__ import annotations\n" + assertionCode);    // Running the assertions
             var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
             $.terminal.active().echo(" " + stdout + "\n------\n");
         }
+
     } 
     catch(err) 
     {
+        console.log('top', err)
+        console.log(code)
         // generateLog does the work
         $.terminal.active().echo(generateLog(err, code, lineShift - 1) + "\n------\n");            
     }
+
+    // console.log('bim', err)
+    //     // try
+    //     // {
+
+    //     // }
+    //     // catch(err)
+    //     // {
+    //     //     $.terminal.active().echo(">>> Script exécuté \n------\n" + generateLog(err, code, 0) + "\n------\n");
+    //     // }
+    
+
+
   }
 
-
 async function evaluateHdrFile(id_editor) {
-
-    // console.log('221', id_editor)
-    let url_pyfile = $('#content_' + id_editor).text()
+    // Used when a Header is defined for long files (SQL, Classes...)
+    let url_pyfile = $('#content_' + id_editor).text();
     if (url_pyfile.includes(tagHdr)) {
         splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr));
         if (splitHdrPyFile !== null) {
@@ -328,21 +343,16 @@ async function silent_interpretACE(id_editor) {
 }
 
 async function interpretACE(id_editor, mode) {
-    // refactoring with silent_interpretACE...
-    // await pyodideReadyPromise;
-    let interpret_code = silent_interpretACE(id_editor)
-
-    let stream = await interpret_code;
-    console.log("hello moon")
+    // interpret content of ACE IDE
+    // let interpret_code = silent_interpretACE(id_editor)
+    let stream = await silent_interpretACE(id_editor);
     evaluateHdrFile(id_editor)
-    console.log("hello moon 2")
     calcTermSize(stream, mode)
-    console.log("hello moon 3")
     evaluatePythonFromACE(stream, id_editor, mode);
-    console.log("hello moon 4")
 }
 
 async function start_term(nom_id) {
+    // turns an idle terminal into a terminal
     document.getElementById(nom_id).className = "terminal terminal_f";
     document.getElementById('fake_'+nom_id).className = "hide";
     window.console_ready = pyterm('#'+nom_id);
@@ -353,10 +363,8 @@ function download_file(id_editor, nom_script) {
     let data = editor.getValue();
     let splitDate = new Date().toISOString().split('T')
     let date = splitDate[0] + '-' + splitDate[1].split('.')[0].replace(/:/g, "-"); 
-    var script2download = 'script_' + date + '.py';
-    if (nom_script !== '') {
-        script2download = nom_script+'.py';
-    }
+    let script2download = 'script_' + date + '.py';
+    if (nom_script !== '') script2download = nom_script+'.py';
 
     let link = document.createElement('a');
     link.download = script2download;
@@ -612,8 +620,11 @@ if (nSecretTests == success) {
         while (elementCounter.className !== "compteur") {
             elementCounter = elementCounter.nextElementSibling
         }
-        if (output === 0) dict[id_editor] = nAttempts;
-        else dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0);
+        if (output === 0) {
+            dict[id_editor] = nAttempts
+        } else {
+            dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0)
+        }
 
         if (nAttempts !== '\u221e') { // INFTY symbol
             elementCounter.textContent = Math.max(0, nAttempts-dict[id_editor]) + "/" + parentCounter
