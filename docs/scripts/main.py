@@ -1,6 +1,7 @@
     env.variables['term_counter'] = 0
     env.variables['IDE_counter'] = 0
     INFTY_SYMBOL = '\u221e'
+    from urllib.parse import unquote
 
     @env.macro
     def terminal() -> str:
@@ -23,9 +24,11 @@
 
         try: 
             if path == "":
+                # print(nom_script, f"""{short_path}/scripts/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             else:
                 # print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
+                # print(nom_script, f"""{short_path}/{path}/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
             # f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
@@ -33,7 +36,7 @@
             content = content + "\n"
             # Hack to integrate code lines in admonitions in mkdocs
             # change backslash_newline by backslash-newline
-            return content.replace('\n','backslash-newline').replace('_','python-underscore').replace('*','python-star')
+            return content.replace('\n','bksl-nl').replace('_','py-und').replace('*','py-str')
         except :
             return
         
@@ -52,7 +55,7 @@
 
     def create_upload_button(tc : str) -> str:
         """
-        Purpose : Create upoad button for a IDE number {tc}.
+        Purpose : Create upload button for a IDE number {tc}.
         Methods : Use an HTML input to upload a file from user. The user clicks on the button to fire a JS event
         that triggers the hidden input.
         """
@@ -80,15 +83,15 @@
         else: 
             return ''
 
-
-    def blank_space() -> str:
+    def blank_space(s=0.3) -> str:
         """ 
         Purpose : Return 5em blank spaces. Use to spread the buttons evenly
         """
-        return f"""<span style="indent-text:5em"> </span>"""
+        # return f"""<span style="indent-text:{s}em"> </span>"""
+        return f"""<span style="display: inline-block; width:{s}em"></span>"""
 
     def get_max_from_file(content : str) -> tuple:#[str, int]: # compatibilité Python antérieur 3.8
-        split_content = content.split('backslash-newline')
+        split_content = content.split('bksl-nl')
         max_var = split_content[0]
         if max_var[:4] != "#MAX":
             MAX = 5 
@@ -98,66 +101,79 @@
             i = 1
             while split_content[i] == '':
                 i += 1
-            content = 'backslash-newline'.join(split_content[i:])
+            content = 'bksl-nl'.join(split_content[i:])
         return content, MAX
 
-    def test_style(nom_script : str, element : str):
+    def test_style(nom_script : str, element : str) -> bool:
         guillemets = ["'", '"']
         ide_style = ["", "v"]
         styles = [f"""IDE{istyle}({i}{nom_script}{i}""" for i in guillemets for istyle in ide_style]
         return any([style for style in styles if style in element])
 
+    def convert_url_to_utf8(nom : str) -> str:
+        return unquote(nom, encoding='utf-8')
+        
+
     @env.macro
-    def IDEv(nom_script : str = '', MAX : int = 5) -> str:
+    def IDEv(nom_script : str = '', MAX : int = 5, SANS : str = "") -> str:
         """
         Purpose : Easy macro to generate vertical IDE in Markdown mkdocs.
         Methods : Fire the IDE function with 'v' mode.
         """
-        return IDE(nom_script, mode = 'v', MAX = MAX)
+        return IDE(nom_script, mode = 'v', MAX = MAX, SANS = SANS)
 
     @env.macro
-    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5) -> str:
+    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5, SANS : str = "") -> str:
         """
         Purpose : Create an IDE (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
-        path_img = env.variables.page.abs_url.split('/')[1]
+        path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
 
-        #        path_files = '/'.join([folder for folder in env.variables.page.abs_url.split('/')[:-1] if folder != ""])
-        path_file = '/'.join(filter(lambda folder: folder != "", env.variables.page.abs_url.split('/')[2:-2]))
+        path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
         content, tc = generate_content(nom_script, path_file)
+
+        try:
+            f = open(f"docs/{path_file}/clef.txt", "r", encoding="utf8")
+            clef = f.read()            
+        except: 
+            clef = "" # base case -> no clef.txt file
 
         content, max_from_file = get_max_from_file(content)
         MAX = max_from_file if MAX == 5 else MAX
         MAX = MAX if MAX not in ['+', 1000] else INFTY_SYMBOL
         corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
-        div_edit = f'<div class="ide_classe" id={MAX}>'
+        div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"".join(SANS.split(" "))+"eval,exec"} >'
+
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
             div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
+
         div_edit += f"""<button class="tooltip" onclick='interpretACE("editor_{tc}","{mode}")'><img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span></button>"""
-        div_edit += f"""{blank_space()}<button class="tooltip" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
-        div_edit += create_upload_button(tc)
-        div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX)
+        div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) 
+        div_edit += f"""{blank_space(1)}<button class="tooltip" onclick=\'downloadFile("editor_{tc}","{nom_script}")\'><img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
+        div_edit += create_upload_button(tc) 
+        div_edit += f"""{blank_space(1)}<button class="tooltip" onclick=\'reload("{tc}","content")\'><img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span></button>{blank_space()}"""
+        div_edit += f"""<button class="tooltip" onclick=\'saveEditor("{tc}","content")\'><img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span></button>"""
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
-        div_edit += f"""<span id="corr_content_editor_{tc}" class="hide">{corr_content}</span>"""
+        div_edit += f"""<span id="corr_content_editor_{tc}" class="hide" data-strudel="{str(clef)}">{corr_content}</span>"""
+        
         elt_insertion = [elt for elt in env.page.markdown.split("\n") if test_style(nom_script, elt)]
         elt_insertion = elt_insertion[0] if len(elt_insertion) >=1 else ""
-        spaces = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
-        if nom_script == '' : spaces = " "
-        print(tc, spaces == "", elt_insertion, len(elt_insertion) - len(elt_insertion.lstrip()))
-        if spaces == "":
+        indent = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
+        if nom_script == '' : indent = " "  # to avoid conflict with empty IDEs
+        if indent == "":
             div_edit += f'''
-{spaces}--8<--- "docs/xtra/start.md"
+{indent}--8<--- "docs/xtra/start_REM.md"
 '''
         div_edit += f'''
-{spaces}--8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"'''
-        if spaces == "":
+{indent}--8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"''' if clef == "" else f""
+        if indent == "":
             div_edit += f'''
-{spaces}--8<--- "docs/xtra/end.md"
+{indent}--8<--- "docs/xtra/end_REM.md"
 '''
         return div_edit

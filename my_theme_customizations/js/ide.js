@@ -1,14 +1,13 @@
 var tagHdr = "#--- HDR ---#";
 
+function createTheme() { // dark? XOR hidden? -> crimson
+    let palElt = document.querySelector('label[for="__palette_2"]');
+    let palStyle = palElt.previousElementSibling.dataset.mdColorMedia;
+    return "ace/theme/" + (palStyle === "(prefers-color-scheme: dark)" == palElt.hidden  ? "crimson_editor" : 'tomorrow_night_bright');
+};
+
 $('[id^=editor_]').each(function() {
-    __md_scope=new URL(".",location)
-    __md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e))
-    console.log('BLAM', __md_scope)
-    console.log('localStorage', localStorage)
-    console.log('localStorage 2', __md_scope.pathname+"."+"__palette")
-    console.log('localStorage 3', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
     let number = this.id.split('_').pop();
-    //let url_pyfile = $('#'+this.id).text()  // Extracting url from the div before Ace layer
     let url_pyfile = $('#content_'+this.id).text()  // Extracting url from the div before Ace layer
 
     if (url_pyfile.includes(tagHdr)) { // test if a header code is present
@@ -24,17 +23,11 @@ $('[id^=editor_]').each(function() {
         pyFile = url_pyfile;
     }
 
-    let id_editor = "editor_" + number
-    function createACE(id_editor){
-        let paletteElement = document.querySelector('label[for="__palette_2"]')
-        if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
-            var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
-        } else {
-            var defineTheme = paletteElement.hidden ? 'ace/theme/tomorrow_night_bright' : "ace/theme/crimson_editor"
-        }
+    let idEditor = "editor_" + number
+    function createACE(idEditor){
         ace.require("ace/ext/language_tools");
-        var editor = ace.edit(id_editor, {
-            theme: defineTheme,
+        var editor = ace.edit(idEditor, {
+            theme: createTheme(),
             mode: "ace/mode/python",
             autoScrollEditorIntoView: true,
             maxLines: 30,
@@ -43,32 +36,39 @@ $('[id^=editor_]').each(function() {
             printMargin: false   // hide ugly margins...
         });
         editor.setOptions({
+            //            https://github.com/ajaxorg/ace/blob/092b70c9e35f1b7aeb927925d89cb0264480d409/lib/ace/autocomplete.js#L545
             enableBasicAutocompletion: true,
             enableSnippets: true,
-            enableLiveAutocompletion: true
+            enableLiveAutocompletion: false,
         });
-        // Decode the backslashes into newlines for ACE editor from admonitions 
-        // (<div> autocloses in an admonition) 
         editor.getSession().setValue(pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))  
     }
-    window.IDE_ready = createACE(id_editor)           // Creating Ace Editor #id_editor
+    window.IDE_ready = createACE(idEditor) // Creating Ace Editor #idEditor
 
-    if (url_pyfile === '') { 
-        let editor = ace.edit(id_editor)
-        editor.getSession().setValue('\n\n\n\n\n');  // Creates 6 empty lines for UX
-    }
+    var nChange = 0;
+    let editor = ace.edit(idEditor);
+    editor.getSession().on('change', function() {
+        nChange += 1;
+        if (nChange % 25 == 0) localStorage.setItem("editor_" + idEditor, editor.getSession().getValue())
+    });
+
+
+    let storedCode = localStorage.getItem(idEditor);
+    if (storedCode !== null) ace.edit(idEditor).getSession().setValue(storedCode)
+    
+    // Create 6 empty lines
+    if (url_pyfile === '') ace.edit(idEditor).getSession().setValue('\n'.repeat(6));  
 
     // A correction Element always exists (can be void)
-    prevNode = document.getElementById("corr_content_" + id_editor)
+    prevNode = document.getElementById("corr_content_" + idEditor)
     var key = prevNode.dataset.strudel
     var workingNode = prevNode
     var remNode = document.createElement("div");
 
-    console.log(remNode)
     if (prevNode.parentNode.tagName === 'P') {
         
         // REM file on top level
-        // console.log('51',id_editor,workingNode, workingNode.parentNode.innerHTML.includes('<strong>A</strong>'))
+        // console.log('51',idEditor,workingNode, workingNode.parentNode.innerHTML.includes('<strong>A</strong>'))
         workingNode = prevNode.parentNode.nextElementSibling //'<strong>A</strong>'
         // if (workingNode.nex)
 
@@ -76,8 +76,9 @@ $('[id^=editor_]').each(function() {
             remNode.innerHTML = 'Pas de remarque particulière.';
             workingNode.nextElementSibling.remove()
             workingNode.remove()
-
-        } else {
+        }
+        else 
+        {
         workingNode.remove()
         workingNode = prevNode.parentNode.nextElementSibling
 
@@ -88,10 +89,8 @@ $('[id^=editor_]').each(function() {
         }
         workingNode.remove()
 
-        for (let i = 0; i < tableElements.length; i++ ){
-            remNode.append(tableElements[i])
+        for (let i = 0; i < tableElements.length; i++) remNode.append(tableElements[i])
         }
-    }
 
     } else {
         // Search for the rem DIV.
@@ -99,108 +98,70 @@ $('[id^=editor_]').each(function() {
         // console.log(prevNode, workingNode)
         // If workingNode is a <p> (admonition), we continue
         // else, we are outside an admonition
-        if (workingNode !== null) {
-            workingNode = workingNode.nextElementSibling
-        }
-    // }
-    // No remark file. Creates standard sentence.
-    if (workingNode === null) {
-        remNode.innerHTML = 'Pas de remarque particulière.';
-    } else {
+        if (workingNode !== null) workingNode = workingNode.nextElementSibling
+
+        // No remark file. Creates standard sentence.
+        if (workingNode === null) remNode.innerHTML = 'Pas de remarque particulière.';
+        else 
+        {
 
         var tableElements = [];
         while (workingNode !== null) {
-            tableElements.push(workingNode)
+            tableElements.push(workingNode);
             workingNode = workingNode.nextElementSibling;
         }
 
-        for (let i = 0; i < tableElements.length; i++ ){
-            remNode.append(tableElements[i])
-        }
+        for (let i = 0; i < tableElements.length; i++) remNode.append(tableElements[i])
         
-    }}
-    // Should create a global div
-    console.log('LAAÀ',remNode, prevNode)
-    if (key == "")  
+        }}
+
+    if (key != "")  
     /* another possible condition is this : 
     !remNode.innerHTML.includes('<h1'))  */
     {  
-        prevNode.insertAdjacentElement('afterend', remNode)
-        remNode.setAttribute("id", "rem_content_" + id_editor);
-        document.getElementById("rem_content_" + id_editor).style.display = "none"
-    } else {
-        // console.log("hack", key)
-        // console.log("result", md5('e-nsi' + key ))
-        let folder = md5('e-nsi+' + key)
         remNode = document.createElement("div");
-        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${folder}/exo_REM/" target="_blank"> ici </a>`
-        prevNode.insertAdjacentElement('afterend', remNode)
-        remNode.setAttribute("id", "rem_content_" + id_editor);
-        document.getElementById("rem_content_" + id_editor).style.display = "none"
+        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5('e-nsi+' + key)}/exo_REM/" target="_blank"> ici </a>`
     }
+
+    prevNode.insertAdjacentElement('afterend', remNode)
+    remNode.setAttribute("id", "rem_content_" + idEditor);
+    document.getElementById("rem_content_" + idEditor).style.display = "none"
 
 });
 
 // Javascript to upload file from customized buttons
 $('[id^=input_editor_]').each(function() {
     let number = this.id.split('_').pop();
-    let id_editor = "editor_" + number
-    document.getElementById('input_'+id_editor).addEventListener('change', function(e) {readFile(e, id_editor)}, false);
+    let idEditor = "editor_" + number
+    document.getElementById('input_'+idEditor).addEventListener('change', function(e) {readFile(e, idEditor)}, false);
 });
 
-function readFile (evt, id_editor) {
-    let files = evt.target.files;
-    let file = files[0];
+function readFile(evt, idEditor) {
+    let file = evt.target.files[0];
     let reader = new FileReader();
-    var editor = ace.edit(id_editor);
+    var editor = ace.edit(idEditor);
     reader.onload = function(event) {
         editor.getSession().setValue(event.target.result);
     }
     reader.readAsText(file)
 };
 
-// turn off copy paste of code... A bit aggressive but necessary
-$(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
-
 // Following blocks paint the IDE according to the mkdocs light/dark mode 
 function paintACE(theme) {
-    for (var editeur of document.querySelectorAll('div[id^="editor_"], div[id^="corr_editor_"]')) {
+    for (let editeur of document.querySelectorAll('div[id^="editor_"], div[id^="corr_editor_"]')) {
         let editor = ace.edit(editeur.id);
         editor.setTheme(theme);
-        editor.getSession().setMode("ace/mode/python");
+        editor.getSession().setMode("ace/mode/python"); // USEFUL ????
     };
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    let paletteElement = document.querySelector('label[for="__palette_2"]')
-    if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
-        var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
-    } else {
-        var defineTheme = paletteElement.hidden ? 'ace/theme/tomorrow_night_bright' : "ace/theme/crimson_editor"
-    }
-    if (paletteElement.hidden == true) {
-        paintACE(defineTheme) // bright mode
-    } else {
-        paintACE(defineTheme)  // night mode
-    }
-});
-
+window.addEventListener('DOMContentLoaded', () => paintACE(createTheme()));
 
 var p2 = document.querySelector('input[id="__palette_2"]')
-p2.addEventListener('click', () => { 
-    if (p2 === "(prefers-color-scheme: dark)") {
-        paintACE('ace/theme/tomorrow_night_bright')
-    } else {
-        paintACE('ace/theme/crimson_editor')
-    }
-    
-});
+p2.addEventListener('click', () => paintACE('ace/theme/' + (p2 === "(prefers-color-scheme: dark)" ? 'tomorrow_night_bright' : 'crimson_editor')));
 
 var p1 = document.querySelector('input[id="__palette_1"]')
-p1.addEventListener('click', () => { 
-    if (p1 === "(prefers-color-scheme: light)") {
-        paintACE('ace/theme/crimson_editor')
-    } else {
-        paintACE('ace/theme/tomorrow_night_bright')
-    }
-});
+p1.addEventListener('click', () => paintACE('ace/theme/' + (p1 === "(prefers-color-scheme: light)" ? 'crimson_editor' : 'tomorrow_night_bright')));
+
+// turn off copy paste of code... A bit aggressive but necessary
+$(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });

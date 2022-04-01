@@ -76,11 +76,11 @@ def define_env(env):
 
         try: 
             if path == "":
-                print(nom_script, f"""{short_path}/scripts/{nom_script}.{filetype}""")
+                # print(nom_script, f"""{short_path}/scripts/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             else:
                 # print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
-                print(nom_script, f"""{short_path}/{path}/{nom_script}.{filetype}""")
+                # print(nom_script, f"""{short_path}/{path}/{nom_script}.{filetype}""")
                 f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
             # f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
@@ -107,7 +107,7 @@ def define_env(env):
 
     def create_upload_button(tc : str) -> str:
         """
-        Purpose : Create upoad button for a IDE number {tc}.
+        Purpose : Create upload button for a IDE number {tc}.
         Methods : Use an HTML input to upload a file from user. The user clicks on the button to fire a JS event
         that triggers the hidden input.
         """
@@ -135,12 +135,12 @@ def define_env(env):
         else: 
             return ''
 
-
-    def blank_space() -> str:
+    def blank_space(s=0.3) -> str:
         """ 
         Purpose : Return 5em blank spaces. Use to spread the buttons evenly
         """
-        return f"""<span style="indent-text:5em"> </span>"""
+        # return f"""<span style="indent-text:{s}em"> </span>"""
+        return f"""<span style="display: inline-block; width:{s}em"></span>"""
 
     def get_max_from_file(content : str) -> tuple:#[str, int]: # compatibilité Python antérieur 3.8
         split_content = content.split('bksl-nl')
@@ -167,15 +167,15 @@ def define_env(env):
         
 
     @env.macro
-    def IDEv(nom_script : str = '', MAX : int = 5, EVAL : bool = False) -> str:
+    def IDEv(nom_script : str = '', MAX : int = 5, SANS : str = "") -> str:
         """
         Purpose : Easy macro to generate vertical IDE in Markdown mkdocs.
         Methods : Fire the IDE function with 'v' mode.
         """
-        return IDE(nom_script, mode = 'v', MAX = MAX, EVAL = EVAL)
+        return IDE(nom_script, mode = 'v', MAX = MAX, SANS = SANS)
 
     @env.macro
-    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5, EVAL : bool = False) -> str:
+    def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5, SANS : str = "") -> str:
         """
         Purpose : Create an IDE (Editor+Terminal) on a Mkdocs document. {nom_script}.py is loaded on the editor if present. 
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
@@ -192,13 +192,11 @@ def define_env(env):
         except: 
             clef = "" # base case -> no clef.txt file
 
-        print("CLEF", clef)
-
         content, max_from_file = get_max_from_file(content)
         MAX = max_from_file if MAX == 5 else MAX
         MAX = MAX if MAX not in ['+', 1000] else INFTY_SYMBOL
         corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
-        div_edit = f'<div class="ide_classe" data-max={MAX} data-eval={EVAL} >'
+        div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"".join(SANS.split(" "))+"eval,exec"} >'
 
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
@@ -206,8 +204,11 @@ def define_env(env):
             div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
 
         div_edit += f"""<button class="tooltip" onclick='interpretACE("editor_{tc}","{mode}")'><img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span></button>"""
-        div_edit += f"""{blank_space()}<button class="tooltip" onclick=\'download_file("editor_{tc}","{nom_script}")\'><img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
-        div_edit = div_edit + create_upload_button(tc) + create_unittest_button(tc, nom_script, path_file, mode, MAX)
+        div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) 
+        div_edit += f"""{blank_space(1)}<button class="tooltip" onclick=\'downloadFile("editor_{tc}","{nom_script}")\'><img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
+        div_edit += create_upload_button(tc) 
+        div_edit += f"""{blank_space(1)}<button class="tooltip" onclick=\'reload("{tc}","content")\'><img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span></button>{blank_space()}"""
+        div_edit += f"""<button class="tooltip" onclick=\'saveEditor("{tc}","content")\'><img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span></button>"""
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
@@ -219,13 +220,13 @@ def define_env(env):
         if nom_script == '' : indent = " "  # to avoid conflict with empty IDEs
         if indent == "":
             div_edit += f'''
-{indent}--8<--- "docs/xtra/start.md"
+{indent}--8<--- "docs/xtra/start_REM.md"
 '''
         div_edit += f'''
 {indent}--8<--- "docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"''' if clef == "" else f""
         if indent == "":
             div_edit += f'''
-{indent}--8<--- "docs/xtra/end.md"
+{indent}--8<--- "docs/xtra/end_REM.md"
 '''
         return div_edit
         

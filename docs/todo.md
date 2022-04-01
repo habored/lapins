@@ -2,28 +2,31 @@
 
 ## Todo list
 
-:x: Le code solution apparait dans le code source... A cacher d'une manière ou d'une autre (requete JS pour récupérer le code solution semble bien)
 
 :x: Démarrer le comptage des 5 essais avant révélation du code si les premiers tests sont passés.
 
-:white_check_mark: `#!python eval` désactivé en fonction de la présence du mot-clé `#!md EVAL = False|True` dans l'appel à {{IDE(..., EVAL = ...)}}. Veillez à utiliser les mots-clés plutôt que les positions des arguments.
-
-:white_check_mark: Autocomplétion du code
+:x: Autocomplétion du code avec une touche simple (pas de Live autocomplétion -_-)
 
 :x: La fenêtre d’édition est réservée au code de l’élève. Les premiers tests sont dans une fenêtre collée, juste en dessous, visible mais non éditable. Ils peuvent être masqués/affichés.
 
 :x: Amélioration des performances d'affichage
 
-:white_check_mark: gestion des fichiers d'initialisation (pour les codes longs)
-
 :x: télécharger tous les codes écrits dans les éditeurs de la page en un seul fichier
 
 :x: Doctests
 
-:x: Erreur d'assertions et gestion de crash de code
+:white_check_mark: `#!python eval` désactivé en fonction de la présence du mot-clé `#!md SANS = 'eval,max'` dans l'appel à `#!md IDE(..., SANS = ...)`. Prendre en compte les erreurs du créateur `#!md SANS = 'eval, MaX  ,   min'`.
 
-- [ ] Mode verbose pour les tests / mode simple
-- [ ] Mode infini pour les tentatives
+:white_check_mark: Erreur d'assertions et gestion de crash de code
+
+- [x] Mode verbose pour les tests / mode simple
+- [x] Mode infini pour les tentatives
+
+:white_check_mark: sauvegarde des codes lors d'un rechargement de la page (oui!!!!)
+
+:white_check_mark: gestion des fichiers d'initialisation (pour les codes longs)
+
+:white_check_mark: Le code solution apparait dans le code source... A cacher d'une manière ou d'une autre
 
 :white_check_mark: Mode sombre / Mode clair (réglage indépendant du choix de palette)
 
@@ -31,7 +34,7 @@
 
 :white_check_mark: Fichier de remarque, `<nom_du_truc>_rem.txt` 
 
-- [ ] Solution en page externe pour les fichiers longs (exclue du menu de navigation avec le hack)
+- [x] Solution en page externe pour les fichiers longs (exclue du menu de navigation avec le hack)
 - [x] Solution en menu déroulant pour les fichiers courts
 
 :white_check_mark: Modifications des emoji par des svg classe
@@ -118,3 +121,13 @@
     ~~Ma solution est un peu sale mais a-t-on vraiment le choix avec l'inclusion de balise HTML ?~~
 
     J'ai choisi de diviser le problème en sous-fonctions. Cela semble plus lisible à présent avec : lecture de fichier avec `#!python def read_ext_file()` et `#!python def generate_content()`, une seule macro IDE avec deux modes ('v' et 'h' par défaut).
+
+!!! warning "Palette Ideas"
+
+    // __md_scope=new URL(".",location)
+    // __md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e))
+    // console.log('BLAM', __md_scope)
+    // console.log('localStorage', localStorage)
+    // console.log('localStorage 2', __md_scope.pathname+"."+"__palette")
+    // console.log('localStorage 3', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
+    // console.log('localStorage 4', __md_get("__palette").index, __md_get("__palette").color.scheme)
