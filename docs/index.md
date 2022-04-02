@@ -83,7 +83,7 @@ Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/p
 
 ### Fichiers `start_REM.md` et `end_REM.md`
 
-Pour la bonne gestion des fichiers de remarque, il faut également ajouter deux fichiers standardisés au format markdown : [`start_REM.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/start.md "start_REM.md sur Gitlab ") et [`end_REM.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/end.md "end_REM.md sur Gitlab ")
+Pour la bonne gestion des fichiers de remarque, il faut également ajouter deux fichiers standardisés au format markdown : [`start_REM.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/start_REM.md "start_REM.md sur Gitlab ") et [`end_REM.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/end_REM.md "end_REM.md sur Gitlab ")
 
 ### Images des boutons
 
