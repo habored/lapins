@@ -27,4 +27,4 @@ Les résultats aux évaluations d'un élève sont regroupés dans une liste non 
     12.5
     ```
 
-{{ IDE('exo') }}
+{{ IDE('exo', SANS='max,min,math') }}

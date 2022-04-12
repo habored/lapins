@@ -120,7 +120,7 @@ $('[id^=editor_]').each(function() {
     !remNode.innerHTML.includes('<h1'))  */
     {  
         remNode = document.createElement("div");
-        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5('e-nsi+' + key)}/exo_REM/" target="_blank"> ici </a>`
+        remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5('e-nsi+' + key)}/exo_REM/" target="_blank"> en cliquant ici </a>`
     }
 
     prevNode.insertAdjacentElement('afterend', remNode)

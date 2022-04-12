@@ -3,7 +3,7 @@
 
 ## Introduction
 
-`Mkdocs-Pyodide` est une solution permettant de créer un cours interactif à partir d'un site généré par Mkdocs. 
+`Pyodide-Mkdocs` est une solution technique permettant de créer un cours interactif à partir d'un site généré par Mkdocs. 
 
 Il permet d'intégrer, dans le navigateur, côté client :
 
@@ -15,6 +15,7 @@ Garantie :
 
 - [x] sans cookie
 - [x] sans inscription
+- [x] créé par un enseignant pour les enseignants
 
 ??? info "Solution"
     La technologie permettant ce tour de force s'appelle [Pyodide](https://pyodide.org/en/stable/ "Pyodide, Python with the scientific stack, compiled to WebAssembly").
@@ -28,7 +29,7 @@ Garantie :
 
 ## Installation
 
-On part d'une installation comme indiqué sur https://ens-fr.gitlab.io/mkdocs/ avec le **plugin macro**, préalablement installé.
+On part d'une installation comme indiqué sur [https://ens-fr.gitlab.io/mkdocs/] avec le **plugin macro**, préalablement installé.
 
 L'installation demande de rajouter à cette configuration les éléments suivants.
 

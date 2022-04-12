@@ -18,7 +18,8 @@ nav:
   # - "Bac à sable 🏖": dentiste/sujet.md
   # - "E-nsi DIFF": N3/diff/sujet.md
   # - "Bac à sable 🏖": N2/jeu_arbre/sujet.md
-  # - "Bac à sable 2 🏖": N1/421-moy_ponderee/sujet.md
+  #  - "Bac à sable 🏖": N1/140-multiplication/sujet.md
+  #  - "Bac à sable 2 🏖": sql/sujet.md
   # - "Fichier caché": sandbox.md
   # - "E-nsi REDIM2": redimensionner/sujet.md
 
@@ -108,7 +109,7 @@ extra:
           name: L'encyclopédie libre que chacun peut améliorer
 
         - icon: fontawesome/solid/paper-plane
-          link: mailto:vincent.bouillot@ac-lyon.fr
+          link: mailto:prof-bouillot@protonmail.com
           name: Écrire à l'auteur
     site_url: https://bouillotvincent.gitlab.io/pyodide_mkdocs/
 
