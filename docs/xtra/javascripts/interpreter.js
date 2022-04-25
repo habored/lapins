@@ -169,7 +169,7 @@ async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
 }
 
 function countParenthesis(string, char = '(') {
-    const END = {'(' : ')', '[': ']'};
+    const END = {'(' : ')', '[': ']', '{': '}'};
     let countChar = (str, c) => str.split(c).length - 1;
     return countChar(string, char) - countChar(string, END[char]);
 }
@@ -267,13 +267,12 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
 
     // Strategy : code delimited in 2 blocks
     // Block 1 : code
-    // Block 2 : asserts
-    let splitCode = code.replace(/#(\s*)Tests/i, "#tests").split("#tests")  // normalisation
+    // Block 2 : asserts delimited by first "# TestsWHATEVER" tag (case insensitive)
+    let splitCode = code.replace(/#(\s*)Test(s?)[^\n]*/i, "#tests").split("#tests")  // normalisation
     var mainCode = splitCode[0], assertionCode = splitCode[1];
+    console.log(splitCode, mainCode)
     let lineShift = mainCode.split('\n').length
     
-    console.log("mainCode", mainCode)
-
     $.terminal.active().echo(">>> Script exécuté : \n------"); 
 
     try 
@@ -342,6 +341,7 @@ async function silentInterpretACE(id_editor) {
     
     localStorage.setItem(id_editor, stream)
 
+    console.log(ideClasseDiv.dataset.exclude)
     if (ideClasseDiv.dataset.exclude != "") {
         for (let instruction of ideClasseDiv.dataset.exclude.split(",")) {
         pyodide.runPython(`
@@ -490,6 +490,7 @@ async function executeTestAsync(id_editor, mode) {
     try 
     {
         var testDummy = code.includes('dummy_')
+        console.log(code, testDummy)
         if (testDummy)
         { 
             var splitJoin = (txt, e) => txt.split(e).join('')
@@ -575,6 +576,7 @@ async function executeTestAsync(id_editor, mode) {
     while (line < testCodeTable.length) {
         let countPar = 0;
         let countBra = 0;
+        let countCur = 0;
         let contiBool = false;
         let lineStart = line;
         
@@ -585,10 +587,12 @@ async function executeTestAsync(id_editor, mode) {
         do { // multilines assertions
             countPar += countParenthesis(testCodeTable[line], "(");
             countBra += countParenthesis(testCodeTable[line], "[");
+            countCur += countParenthesis(testCodeTable[line], "{");
             contiBool = testCodeTable[line].endsWith("\\")
             testCodeTable[line] = testCodeTable[line].replace("\\", "").replace("'''","").replace('"""',"")
             line++;
-        } while (countPar !== 0 || countBra !== 0 || contiBool)
+        // } while (countPar !== 0 || countBra !== 0 || contiBool)
+        } while (countPar !== 0 || countBra !== 0 || countCur !== 0 || contiBool)
         testCodeTableMulti.push(testCodeTable.slice(lineStart, line).join(""))
     } 
     else line++;

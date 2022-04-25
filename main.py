@@ -199,7 +199,8 @@ def define_env(env):
         MAX = max_from_file if MAX == 5 else MAX
         MAX = MAX if MAX not in ['+', 1000] else INFTY_SYMBOL
 
-        div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"eval,exec,"+"".join(SANS.split(" "))} >'
+        SANS_formatted = ","+"".join(SANS.split(" ")) if len(SANS)>0 else ""
+        div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"eval,exec" + SANS_formatted} >'
 
         if mode == 'v':
             div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
