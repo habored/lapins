@@ -28,7 +28,7 @@ while assertion:
 Un exemple ci-dessous...
 
 
-{{ IDE('code_NSI_2_7_Boucle_non_bornée_Tant_que_1', MAX = 5) }}
+{{ IDE('code_NSI_2_7_Boucle_non_bornee_Tant_que_1', MAX = 5) }}
 
 On voit bien dans le programme précédent qu'il est impossible de prédire combien de fois le bloc d'instructions inclus dans la boucle doit être exécuté. La boucle non bornée *Tant_que* est parfaitement adaptée dans ce cas.
 
@@ -53,7 +53,7 @@ On voit bien dans le programme précédent qu'il est impossible de prédire comb
 Un exemple de compteur ci-dessous...
 
 
-{{ IDE('code_NSI_2_7_Boucle_non_bornée_Tant_que_2', MAX = 5) }}
+{{ IDE('code_NSI_2_7_Boucle_non_bornee_Tant_que_2', MAX = 5) }}
 
 ## Sortir d'une boucle prématurément avec `break`
 
@@ -64,7 +64,7 @@ L'instruction `break` est une instruction spéciale qui ne peut être écrite qu
 En voici un exemple extrême...
 
 
-{{ IDE('code_NSI_2_7_Boucle_non_bornée_Tant_que_3', MAX = 5) }}
+{{ IDE('code_NSI_2_7_Boucle_non_bornee_Tant_que_3', MAX = 5) }}
 
 !!! warning "Cours"
      __Remarque :__ dans le même esprit, on peut noter l'existence de l'instruction `continue` qui termine également l'itération courante mais reste dans la boucle (contrairement à `break` qui sort de la boucle).
@@ -76,7 +76,7 @@ Le programme doit redemander une saisie à l'utilisateur tant qu'il n'a pas trou
 Un message de félicitations sera affiché en cas de victoire.
 
 
-{{ IDE('code_NSI_2_7_Boucle_non_bornée_Tant_que_4', MAX = 5) }}
+{{ IDE('code_NSI_2_7_Boucle_non_bornee_Tant_que_4', MAX = 5) }}
 
 ## Que retenir ?
 ### À minima...
