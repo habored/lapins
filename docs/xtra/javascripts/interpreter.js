@@ -175,6 +175,7 @@ function countParenthesis(string, char = '(') {
 }
 
 function generateAssertionLog(errLineLog, code){
+    // PROBLEME s'il y a des parenthèses non correctement parenthésées dans l'expression à parser !
     var codeTable = code.split("\n");  // get assertion test
     console.log('generateAsssertionLog', codeTable)
     errLineLog -= 1;
@@ -183,7 +184,7 @@ function generateAssertionLog(errLineLog, code){
     do { // multilines assertions
         countPar += countParenthesis(codeTable[endErrLineLog]);
         endErrLineLog++;
-    } while (countPar !== 0)
+    } while (countPar !== 0 && !/^(\s*assert)/.test(codeTable[endErrLineLog]))
     return `${codeTable.slice(errLineLog, endErrLineLog).join(" ").replace("assert ", "")}`
 }
 
@@ -203,7 +204,8 @@ function generateErrLog(errTypeLog, errLineLog, code, src = 0){
      "MemoryError" : "Dépassement mémoire",
      "OverflowError" : "Taille maximale de flottant dépassée",
      "TabError" : "Mélange d'indentations et d'espaces",
-     "RecursionError" : "Erreur de récursion"
+     "RecursionError" : "Erreur de récursion",
+     "UnboundLocalError": "Variable non définie"
     }
     // Ellipsis is triggered when dots (...) are used
     errTypeLog = errTypeLog + (errTypeLog.includes('Ellipsis') ? " (issue with the dots ...)" : "");
@@ -212,10 +214,11 @@ function generateErrLog(errTypeLog, errLineLog, code, src = 0){
             if (errType != "AssertionError") { // All Exceptions but assertions
                 return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n ---\n ${errTypeLog}`
             } else {
+                console.log('double', src, errLineLog)
                 if (errTypeLog !== "AssertionError") { // case : no Assertion description 
-                    return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n ---\n ${errTypeLog}`
+                    return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog + src}\n ---\n ${errTypeLog}`
                 } else {  // Assertion with description
-                    errTypeLog = `${errTypeLog} : test '${generateAssertionLog(errLineLog, code)}' failed`
+                    errTypeLog = `${errTypeLog} : test '${generateAssertionLog(errLineLog + src, code)}' failed`
                     return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog + src}\n ---\n ${errTypeLog}`
                 }
             }
@@ -224,7 +227,7 @@ function generateErrLog(errTypeLog, errLineLog, code, src = 0){
 }
 
 function generateLog(err, code, src = 0){
-    console.log(err)
+    console.log('err 229', err)
     err = String(err).split("\n")
     let p = -2
     var lastLogs = err.slice(p, -1)
@@ -239,7 +242,7 @@ function generateLog(err, code, src = 0){
     while (!errLineLog[i].includes("line")) i++;
     // When <exec> appears, an extra line is executed on Pyodide side (correct for it with -1)
     let shift = errLineLog[0].includes("<exec>") ? -1 : 0;
-    errLineLog = Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift + src; // get line number
+    errLineLog = Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift //+ src; // get line number
 
     // catching multiline Exception logs (without line number)
     var errTypeLog = lastLogs[1];
@@ -248,6 +251,8 @@ function generateLog(err, code, src = 0){
         errTypeLog = errTypeLog + '\n' + " " + lastLogs[p];
         p++;
     }
+    console.log(errTypeLog, errLineLog, code)
+    console.log(src)
     return generateErrLog(errTypeLog, errLineLog, code, src)
 }
 
@@ -306,7 +311,7 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
 
         if (stdout !== "") $.terminal.active().echo(" " + stdout);
 
-        if (typeof assertionCode !== "undefined") 
+        if (assertionCode !== undefined) 
         {
             await pyodide.runPythonAsync("from __future__ import annotations\n" + assertionCode);    // Running the assertions
             var stdout = pyodide.runPython("__sys__.stdout.getvalue()")  // Catching and redirecting the output
@@ -316,10 +321,11 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     }
     catch(err) 
     {
+        console.log('err',err)
         // generateLog does the work
         // TODO : why was lineShift useful ?
-        // if (!testDummy) $.terminal.active().echo(generateLog(err, code, lineShift - 1) + "\n------\n");            
-        if (!testDummy) $.terminal.active().echo(generateLog(err, code, 0) + "\n------\n");            
+        if (!testDummy) $.terminal.active().echo(generateLog(err, code, lineShift - 1) + "\n------\n");            
+        // if (!testDummy) $.terminal.active().echo(generateLog(err, code, 0) + "\n------\n");            
     }
   }
 
@@ -348,10 +354,15 @@ async function silentInterpretACE(id_editor) {
         def dummy_${instruction}(src):
             return src
         `)
-        stream = stream.replace(` ${instruction}(`, ` dummy_${instruction}(`)
+
+        let re = new RegExp(`([^A-Za-z0-9_]|^)(${instruction}\\()`, 'g')
+
+        stream = stream.replace(re, `$1dummy_$2`)
                        .replace(`import ${instruction}`, `#import dummy_lib_${instruction}`)
+
         }
     }
+    // console.log(stream)
     return stream
 }
 
@@ -567,12 +578,14 @@ async function executeTestAsync(id_editor, mode) {
         var output = await pyodide.runPythonAsync(test_code + "\ntest_unitaire(benchmark)");    // Running the code OUTPUT
         } else {
 
+    console.log('declaration', test_code)
     var global_failed = 0;
     var testCodeTable = test_code.split('\n');  // splits test code into several lines
     testCodeTable = testCodeTable.filter((e)=>e!='')  // get rid of blank lines
     var testCodeTableMulti = []; // multiple lines code joined into one line
     var line = 0;
     let comment = false;
+    console.log('587')
     while (line < testCodeTable.length) {
         let countPar = 0;
         let countBra = 0;
@@ -592,7 +605,9 @@ async function executeTestAsync(id_editor, mode) {
             testCodeTable[line] = testCodeTable[line].replace("\\", "").replace("'''","").replace('"""',"")
             line++;
         // } while (countPar !== 0 || countBra !== 0 || contiBool)
-        } while (countPar !== 0 || countBra !== 0 || countCur !== 0 || contiBool)
+        // console.log(line, testCodeTable[line], !testCodeTable[line].includes('assert'))
+        } while (line < testCodeTable.length && !/^(\s*assert)/.test(testCodeTable[line]) && 
+                    (countPar !== 0 || countBra !== 0 || countCur !== 0 || contiBool))
         testCodeTableMulti.push(testCodeTable.slice(lineStart, line).join(""))
     } 
     else line++;

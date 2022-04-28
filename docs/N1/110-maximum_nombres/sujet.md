@@ -1,8 +1,8 @@
 ---
-author: BNS2022-24.1, puis Nicolas Revéret
+author: Nicolas Revéret
 title: Maximum
 tags:
-  - boucle
+  - 1-boucle
 ---
 
 # Maximum
@@ -11,6 +11,8 @@ tags:
 
 - prenant en paramètre une liste **non vide** de nombres : `nombres`
 - renvoyant le plus grand élément de cette liste.
+
+Chacun des nombres utilisés est de type `int` ou `float`.
 
 > :warning: On interdit ici d'utiliser `max`, ainsi que `sort` ou `sorted`.
 
@@ -23,4 +25,4 @@ tags:
     24
     ```
 
-{{ IDE('exo', SANS = "min,max") }}
+{{ IDE('exo', SANS = "max, sorted, sort") }}
