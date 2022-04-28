@@ -58,7 +58,7 @@ async function interpreter(command, id = null) {  /// reads the commands
     for( var c of command.split('\n') ) {
         if (id != null) {
         let exclude = document.getElementById(id.slice(1)).parentElement.parentElement.dataset.exclude;
-        if (exclude != "") {
+        if (exclude != "" && exclude != undefined) {
             for (let noImports of exclude.split(",")) {
                 if (c.includes(noImports)) c = "#" + c
             }
