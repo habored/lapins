@@ -1,3 +1,30 @@
+def define_env(env):
+    "Hook function"
+
+    env.variables['compteur_exo'] = 0
+    @env.macro
+    def exercice(var = True, prem = None):
+        """ Crée des numérotations d'exercices automatiques :
+        indiquer exercice(..., 0) pour le premier exercice d'une page puis
+        exercice(....) pour les suivants (numéroation auto)
+        var == True, exercice en dehors d'une superfence.
+        var == False, exercice dans une superfence
+        """
+        if prem is not None : env.variables['compteur_exo'] = prem
+        env.variables['compteur_exo'] += 1
+        root = f"Exercice { env.variables['compteur_exo']}"
+        return f"""exo \"{root}\"""" if var else '\"'+root+'\"'
+
+    @env.macro
+    def cours():
+        """ raccourci et formatage auto balise cours
+        """
+        return f'done "Cours"'
+
+    @env.macro
+    def ext():
+        return f'ext "Pour aller plus loin"'
+
     env.variables['term_counter'] = 0
     env.variables['IDE_counter'] = 0
     INFTY_SYMBOL = '\u221e'
