@@ -1,24 +1,28 @@
 /* https://pustelto.com/blog/optimizing-css-for-faster-page-loads/ */
+:root{
+  --main-color : 87,147,240;
+  --main-theme : rgb(var(--main-color));
+  --gutter-theme : rgba(46,48,63,0);
+  --background-theme : rgba(0,35,48,0); 
+  --red : rgb(250, 0, 0);
+}
+
 
 /* Extra CSS for mkdocs-enumerate-headings-plugin */ 
 .enumerate-headings-plugin {
   filter: opacity(35%);
 }
 
-/* :root {
---main-bg-color: blue;
-} */
-
 .wrapper_h {
   border: solid 1px;
   border-radius: 6px;
-  border-color: rgba(87,147,240);
+  border-color: var(--main-theme);
 }
 
 .wrapper {
 border: solid 1px;
 border-radius: 6px;
-border-color: rgba(87,147,240);
+border-color: var(--main-theme);
 display: flex;
 flex-wrap: wrap;
 flex: 1 1 auto;
@@ -29,31 +33,31 @@ flex: 1 1 300px;
 }
 
 .interior_wrapper {
-border-right: 1px solid rgba(87,147,240);
+border-right: 1px solid ;
 width:50%;
 }
 
 .line{
-border-bottom : 1px solid rgba(87,147,240);
+border-bottom : 1px solid var(--main-theme);
 }
 
 .ace_editor {
 font-size:1em;
 margin: 4px 4px;
 height: 200px;
-background: rgba(34,35,48,0);
+background: var(--background-theme);
 }
 
 .term_editor {
---color:rgba(87,147,240);
---background: rgba(50,51,64,0);
+--color:var(--main-theme);
+--background: var(--gutter-theme);
 --size : 1.4;
 height: 205px;
 }
 
 .term_editor_h {
---color:rgba(87,147,240);
---background: rgba(50,51,64,0);
+--color:var(--main-theme);
+--background: var(--gutter-theme);
 --size : 1.4;
 height: 150px;
 }
@@ -65,20 +69,20 @@ width: 50%;
 
 /* Then change width to 100% */
 .terminal_f {
---color:rgba(87,147,240);
---background: rgba(50,51,64,0);
+--color:var(--main-theme);
+--background: var(--gutter-theme);
 --size : 1.4;
 border: solid 1px;
 border-radius: 6px;
-border-color: rgba(87,147,240);
+border-color: var(--main-theme);
 height: 205px; 
 width: 100%;
 }
 
 /* Test to decide which REPL is best */
 .terminal_f_h {
---color:rgba(87,147,240);
---background: rgba(50,51,64,0);
+--color:var(--main-theme);
+--background: var(--gutter-theme);
 --size : 1.4;
 height: 150px; 
 width: 100%;
@@ -101,7 +105,7 @@ display:none;
 .blinking {
 width: 8px;
 height: 20.84375px;
-background-color: rgba(87,147,240);
+background-color: var(--main-theme);
 animation-name: blinking;
 animation-duration: 1s;
 animation-iteration-count: infinite;
@@ -114,38 +118,37 @@ z-index: 1; /* might be a bit drastic */
 }
 
 .ace_gutter > .ace_layer {
-color: rgba(87,147,240);
-background-color: rgba(46,48,63,0);
-border-right: solid 1px rgba(87,147,240); 
+color: var(--main-theme);
+background-color: var(--gutter-theme);
+border-right: solid 1px var(--main-theme); 
 }
 
 /* modification of ace-tomorrow-night-bright theme */
 .ace-tomorrow-night-bright .ace_gutter {
-background-color: rgba(46,48,63,0);
+background-color: var(--gutter-theme);
 color: #DEDEDE;
 }
 
 .ace-crimson-editor .ace_gutter {
-background-color: rgba(46,48,63,0);
+background-color: var(--gutter-theme);
 color: #DEDEDE;
 }
 
 
-
 .compteur {
 float: right;
-color: rgba(87,147,240);
+color: var(--main-theme);
 font-size : 1.2em
 }
 
 .compteur::before {
 content: "Evaluations restantes : ";
-color: rgba(87,147,240);
+color: var(--main-theme);
 font-size : 0.8em
 }
 
 .if>rect {
-/*fill: rgba(87,147,240) !important;*/
+/*fill: var(--main-theme) !important;*/
 stroke: #ff3838 !important;
 stroke-width: 1.5px !important;
 }
@@ -176,7 +179,7 @@ left: 0;
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 90px;
-  background-color: rgba(87,147,240);
+  background-color: var(--main-theme);
   color: #fff;
   text-align: center;
   padding: 5px 0;
@@ -197,7 +200,7 @@ left: 0;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: transparent transparent rgba(87,147,240) transparent;
+  border-color: transparent transparent var(--main-theme) transparent;
 }
 
 .tooltip:hover .tooltiptext {
@@ -209,8 +212,8 @@ left: 0;
   border: 1px solid rgba(85,119,196);
   padding: 3px;
   border-radius: 9px;
-  box-shadow: 2px 2px rgba(87,147,240);
-  background-image: linear-gradient(to bottom, rgb(191, 255, 255), 15%, rgba(87,119,200));
+  box-shadow: 2px 2px var(--main-theme);
+  background-image: linear-gradient(to bottom, rgb(191, 255, 255), 15%, rgba(var(--main-color),0.8));
 }
 
 .tooltip:hover > img {
@@ -222,3 +225,8 @@ left: 0;
   font-size : 2em;
   box-shadow: 0px 0px rgba(87,147,240,0);
 }
+/* 
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: var(--red);
+} */
