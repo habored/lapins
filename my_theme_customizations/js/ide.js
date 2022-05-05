@@ -41,17 +41,23 @@ $('[id^=editor_]').each(function() {
             enableSnippets: true,
             enableLiveAutocompletion: false,
         });
+        editor.commands.bindKey({win: 'Alt-Tab', mac: 'Alt-Tab'}, 'startAutocomplete')
         editor.getSession().setValue(pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))  
+
     }
     window.IDE_ready = createACE(idEditor) // Creating Ace Editor #idEditor
 
+    // console.log('la', editor.commands)
+    // console.log('la', editor.commands, editor.commands['startAutocomplete'])
+    // var Autocomplete = require("../autocomplete").Autocomplete
+    // console.log(Autocomplete)
+    
     var nChange = 0;
     let editor = ace.edit(idEditor);
-    editor.getSession().on('change', function() {
+    editor.addEventListener('input', function() {
+        if (nChange % 25 == 0) {localStorage.setItem(idEditor, editor.getSession().getValue());console.log('mouchard', localStorage.getItem(idEditor))}
         nChange += 1;
-        if (nChange % 25 == 0) localStorage.setItem("editor_" + idEditor, editor.getSession().getValue())
     });
-
 
     let storedCode = localStorage.getItem(idEditor);
     if (storedCode !== null) ace.edit(idEditor).getSession().setValue(storedCode)
