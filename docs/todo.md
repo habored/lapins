@@ -2,6 +2,16 @@
 
 ## Todo list
 
+
+<!-- The price of the product is {{ price }}.
+
+See [more information on the website]({{ company.website }}).
+
+See <a href="{{ company.website }}">more information on the website</a>.
+
+{{ macros_info() }} -->
+
+
 :x: QCM intégré à Mkdocs
 
 :x: intégration de drawSVG

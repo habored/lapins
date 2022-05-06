@@ -1,8 +1,11 @@
 var tagHdr = "#--- HDR ---#";
+var ace_style = {"light":"crimson_editor" , "dark": 'tomorrow_night_bright'}
 
 function createTheme() { // dark? XOR hidden? -> crimson
     let palElt = document.querySelector('label[for="__palette_2"]');
     let palStyle = palElt.previousElementSibling.dataset.mdColorMedia;
+    console.log('localStorage 4', __md_get("__palette").color["scheme"], ace_style[__md_get("__palette").color["scheme"]])
+    "crimson"
     return "ace/theme/" + (palStyle === "(prefers-color-scheme: dark)" == palElt.hidden  ? "crimson_editor" : 'tomorrow_night_bright');
 };
 
@@ -36,12 +39,13 @@ $('[id^=editor_]').each(function() {
             printMargin: false   // hide ugly margins...
         });
         editor.setOptions({
-            //            https://github.com/ajaxorg/ace/blob/092b70c9e35f1b7aeb927925d89cb0264480d409/lib/ace/autocomplete.js#L545
+            // https://github.com/ajaxorg/ace/blob/092b70c9e35f1b7aeb927925d89cb0264480d409/lib/ace/autocomplete.js#L545
             enableBasicAutocompletion: true,
             enableSnippets: true,
             enableLiveAutocompletion: false,
         });
         editor.commands.bindKey({win: 'Alt-Tab', mac: 'Alt-Tab'}, 'startAutocomplete')
+
         editor.getSession().setValue(pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))  
 
     }
@@ -169,5 +173,12 @@ p2.addEventListener('click', () => paintACE('ace/theme/' + (p2 === "(prefers-col
 var p1 = document.querySelector('input[id="__palette_1"]')
 p1.addEventListener('click', () => paintACE('ace/theme/' + (p1 === "(prefers-color-scheme: light)" ? 'crimson_editor' : 'tomorrow_night_bright')));
 
+
+
 // turn off copy paste of code... A bit aggressive but necessary
 $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
+
+
+
+// var p =JSON.parse(localStorage.getItem('/pyodide-mkdocs/.__palette'));
+// p.color

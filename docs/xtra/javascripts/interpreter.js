@@ -450,9 +450,11 @@ function showCorrection(id_editor) {
     // console.log('localStorage', localStorage)
     // console.log('localStorage 2', __md_scope.pathname+"."+"__palette")
     // console.log('localStorage 3', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
-    // console.log('localStorage 4', __md_get("__palette").index)
+    // console.log('localStorage 4', __md_get("__palette").scheme)
 
     function createACE(id_editor){
+        console.log('localStorage 4', __md_get("__palette").scheme)
+        // if(__md_get("__palette"))
         let paletteElement = document.querySelector('label[for="__palette_2"]')
         if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
             var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'

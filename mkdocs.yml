@@ -113,7 +113,14 @@ extra:
           link: mailto:prof-bouillot@protonmail.com
           name: Écrire à l'auteur
     site_url: https://bouillotvincent.gitlab.io/pyodide_mkdocs/
-
+    price: 12.50
+    company:
+        name: Acme
+        address: ....
+        website: www.acme.com
+    ace_style: # https://ace.c9.io/build/kitchen-sink.html for customization
+        light: crimson_editor
+        dark: tomorrow_night_bright
 
 plugins:
   - search
