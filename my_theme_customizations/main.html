@@ -1,9 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-    {{super()}}
-    <script src="{{ base_url }}/js/ide.js"></script> 
-    <!-- <script> var theme = {} </script> -->
+{{super()}}
+<script src="{{ base_url }}/js/ide.js"></script> 
+{% endblock %}
+
+{% block extrahead %}
+<!-- 
+    IDE Theme from mkdocs.yml if provided
+    Defaults - dark : tomorrow_night_bright / light : crimson_editor
+-->
+{% if config.extra.ace_style %}
+{% if config.extra.ace_style['slate'] and config.extra.ace_style['default'] %}
+<input id="ace_palette" autocomplete="off" class="md-toggle" data-ace-dark-mode="{{config.extra.ace_style['slate']}}" data-ace-light-mode="{{config.extra.ace_style['default']}}" type="checkbox"></input>
+{% elif config.extra.ace_style['slate'] %}
+<input id="ace_palette" autocomplete="off" class="md-toggle" data-ace-dark-mode="{{config.extra.ace_style['slate']}}" data-ace-light-mode="crimson_editor" type="checkbox"></input>
+{% elif config.extra.ace_style['default'] %}
+<input id="ace_palette" autocomplete="off" class="md-toggle" data-ace-dark-mode="tomorrow_night_bright" data-ace-light-mode="{{config.extra.ace_style['default']}}" type="checkbox"></input>
+{% endif %}
+{% else %}
+<input id="ace_palette" autocomplete="off" class="md-toggle" data-ace-dark-mode="tomorrow_night_bright" data-ace-light-mode="crimson_editor" type="checkbox"></input>
+{% endif %}
 {% endblock %}
 
 {% block libs %}
@@ -22,4 +39,5 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery.terminal@2.23.0/js/jquery.terminal.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/jquery.terminal@2.23.0/css/jquery.terminal.min.css" rel="stylesheet">
+    <!-- <script>var splitContent</script> -->
 {% endblock %}

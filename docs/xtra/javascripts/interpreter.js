@@ -214,7 +214,6 @@ function generateErrLog(errTypeLog, errLineLog, code, src = 0){
             if (errType != "AssertionError") { // All Exceptions but assertions
                 return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n ---\n ${errTypeLog}`
             } else {
-                console.log('double', src, errLineLog)
                 if (errTypeLog !== "AssertionError") { // case : no Assertion description 
                     return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog + src}\n ---\n ${errTypeLog}`
                 } else {  // Assertion with description
@@ -452,17 +451,24 @@ function showCorrection(id_editor) {
     // console.log('localStorage 3', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
     // console.log('localStorage 4', __md_get("__palette").scheme)
 
+    var _slate = document.getElementById("ace_palette").dataset.aceDarkMode
+    var _default = document.getElementById("ace_palette").dataset.aceLightMode
+    
+    function createTheme() { 
+        let customLightTheme = _default.split('|')[1] === undefined ? 'default' : _default.split('|')[1]
+        let customDarkTheme = _slate.split('|')[1] === undefined ? 'slate' : _slate.split('|')[1]
+        // Correspondance between the custom and the classic palettes
+        let customTheme =  {[customLightTheme] : 'default', [customDarkTheme]: 'slate'}
+        // Get ACE style
+        var ace_style = {"default": _default.split('|')[0] , "slate": _slate.split('|')[0]}
+        // automatically load current palette
+        let curPalette = __md_get("__palette").color["scheme"] 
+        return  "ace/theme/" + ace_style[customTheme[curPalette]]
+    };
+
     function createACE(id_editor){
-        console.log('localStorage 4', __md_get("__palette").scheme)
-        // if(__md_get("__palette"))
-        let paletteElement = document.querySelector('label[for="__palette_2"]')
-        if (paletteElement.previousElementSibling.dataset.mdColorMedia === "(prefers-color-scheme: dark)") {
-            var defineTheme = paletteElement.hidden ? "ace/theme/crimson_editor" : 'ace/theme/tomorrow_night_bright'
-        } else {
-            var defineTheme = paletteElement.hidden ? 'ace/theme/tomorrow_night_bright' : "ace/theme/crimson_editor"
-        }
         var editor = ace.edit(id_editor, {
-            theme: defineTheme,
+            theme: createTheme(),
             mode: "ace/mode/python",
             autoScrollEditorIntoView: true,
             maxLines: 30,

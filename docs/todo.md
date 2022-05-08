@@ -2,16 +2,6 @@
 
 ## Todo list
 
-
-<!-- The price of the product is {{ price }}.
-
-See [more information on the website]({{ company.website }}).
-
-See <a href="{{ company.website }}">more information on the website</a>.
-
-{{ macros_info() }} -->
-
-
 :x: QCM intégré à Mkdocs
 
 :x: intégration de drawSVG
@@ -20,17 +10,15 @@ See <a href="{{ company.website }}">more information on the website</a>.
 
 :x: Rendre la couleur de l'IDE plus robuste aux changements de palette
 
+:x: Toggle tests on/off
+
 :x: Colorisation automatique de l'IDE
 
 :x: Bug plusieurs onglets: [voir](https://mooc-forums.inria.fr/moocnsi/t/re-pyodide-mkdocs/5715/4)
 
 :x: Démarrer le comptage des 5 essais avant révélation du code si les premiers tests sont passés.
 
-:hourglass: Autocomplétion du code avec une touche simple (pas de Live autocomplétion -_-)
-```js
-let editor = ace.edit(idEditor);
-// console.log('ici',editor,'keyBinding')
-```
+:white_check_mark: Autocomplétion du code avec une touche simple (pas de Live autocomplétion -_-)
 
 :x: La fenêtre d’édition est réservée au code de l’élève. Les premiers tests sont dans une fenêtre collée, juste en dessous, visible mais non éditable. Ils peuvent être masqués/affichés.
 

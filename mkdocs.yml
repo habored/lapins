@@ -31,14 +31,14 @@ theme:
     font: false                     # RGPD ; pas de fonte Google
     language: fr                    # français
     palette:                        # Palettes de couleurs jour/nuit
-      - media: "(prefers-color-scheme: dark)"
+      - media: "(prefers-color-scheme: light)"
         scheme: slate
         primary: blue
         accent: blue
         toggle:
             icon: material/weather-night
             name: Passer au mode jour
-      - media: "(prefers-color-scheme: light)"
+      - media: "(prefers-color-scheme: dark)"
         scheme: default
         primary: indigo
         accent: indigo
@@ -113,14 +113,10 @@ extra:
           link: mailto:prof-bouillot@protonmail.com
           name: Écrire à l'auteur
     site_url: https://bouillotvincent.gitlab.io/pyodide_mkdocs/
-    price: 12.50
-    company:
-        name: Acme
-        address: ....
-        website: www.acme.com
     ace_style: # https://ace.c9.io/build/kitchen-sink.html for customization
-        light: crimson_editor
-        dark: tomorrow_night_bright
+        default: crimson_editor
+        slate: tomorrow_night_bright
+        # slate: tomorrow_night_bright|youtube if your dark mode is youtube
 
 plugins:
   - search

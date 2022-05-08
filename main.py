@@ -86,7 +86,7 @@ def define_env(env):
             # change backslash_newline by backslash-newline
             return content.replace('\n','bksl-nl').replace('_','py-und').replace('*','py-str')
         except :
-            return
+            return ""
         
     def generate_content(nom_script : str, path : str, filetype : str = 'py') -> str:
         """
@@ -97,9 +97,11 @@ def define_env(env):
 
         content = read_ext_file(nom_script, path, filetype)
 
-        if content is not None :
-            return content, tc
-        else : return "", tc
+        # if content is not None :
+        #     return content, tc
+        # else : return "", tc
+        return content, tc
+
 
     def create_upload_button(tc : str) -> str:
         """
@@ -120,7 +122,8 @@ def define_env(env):
         relative_path = '/'.join(nom_script.split('/')[:-1])
         nom_script = f"{relative_path}/{stripped_nom_script}_test"
         content = read_ext_file(nom_script, path)
-        if content is not None: 
+        # print(nom_script, path, content, content == "")
+        if content != "":
             path_img = env.variables.page.abs_url.split('/')[1]
             return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span>\
                 <button class="tooltip" onclick=\'executeTest("{tc}","{mode}")\'>\
@@ -189,7 +192,7 @@ def define_env(env):
         """
         path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
-        
+
         clef = generate_key(path_file)
 
         content, tc = generate_content(nom_script, path_file)

@@ -1,10 +1,9 @@
 /* https://pustelto.com/blog/optimizing-css-for-faster-page-loads/ */
 :root{
-  --main-color : 87,147,240;
+  --main-color : 87, 147, 240;
   --main-theme : rgb(var(--main-color));
   --gutter-theme : transparent;
   --background-theme : transparent; 
-  --red : rgb(250, 0, 0);
 }
 
 
