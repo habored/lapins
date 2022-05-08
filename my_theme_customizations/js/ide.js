@@ -1,9 +1,31 @@
 var tagHdr = "#--- HDR ---#";
 
-function createTheme() { // dark? XOR hidden? -> crimson
-    let palElt = document.querySelector('label[for="__palette_2"]');
-    let palStyle = palElt.previousElementSibling.dataset.mdColorMedia;
-    return "ace/theme/" + (palStyle === "(prefers-color-scheme: dark)" == palElt.hidden  ? "crimson_editor" : 'tomorrow_night_bright');
+var _slate = document.getElementById("ace_palette").dataset.aceDarkMode
+var _default = document.getElementById("ace_palette").dataset.aceLightMode
+
+function initAceColor() {
+    var bodyStyles = window.getComputedStyle(document.body);
+    var primaryColor = bodyStyles.getPropertyValue('--md-primary-fg-color');
+    var getRGBChannels = (e) => [parseInt(e.slice(1,3),16), parseInt(e.slice(3,5),16), parseInt(e.slice(5,7),16)]
+    document.documentElement.style.setProperty('--main-color', getRGBChannels(primaryColor));  
+}
+
+function createTheme() { 
+    initAceColor()
+    var bodyStyles = window.getComputedStyle(document.body);
+    var primaryColor = bodyStyles.getPropertyValue('--md-primary-fg-color');
+    var getRGBChannels = (e) => [parseInt(e.slice(1,3),16), parseInt(e.slice(3,5),16), parseInt(e.slice(5,7),16)]
+    document.documentElement.style.setProperty('--main-color', getRGBChannels(primaryColor));
+    
+    let customLightTheme = _default.split('|')[1] === undefined ? 'default' : _default.split('|')[1]
+    let customDarkTheme = _slate.split('|')[1] === undefined ? 'slate' : _slate.split('|')[1]
+    // Correspondance between the custom and the classic palettes
+    let customTheme =  {[customLightTheme] : 'default', [customDarkTheme]: 'slate'}
+    // Get ACE style
+    var ace_style = {"default": _default.split('|')[0] , "slate": _slate.split('|')[0]}
+    // automatically load current palette
+    let curPalette = __md_get("__palette").color["scheme"] 
+    return  "ace/theme/" + ace_style[customTheme[curPalette]]
 };
 
 $('[id^=editor_]').each(function() {
@@ -36,7 +58,7 @@ $('[id^=editor_]').each(function() {
             printMargin: false   // hide ugly margins...
         });
         editor.setOptions({
-            //            https://github.com/ajaxorg/ace/blob/092b70c9e35f1b7aeb927925d89cb0264480d409/lib/ace/autocomplete.js#L545
+            // https://github.com/ajaxorg/ace/blob/092b70c9e35f1b7aeb927925d89cb0264480d409/lib/ace/autocomplete.js#L545
             enableBasicAutocompletion: true,
             enableSnippets: true,
             enableLiveAutocompletion: false,
@@ -47,10 +69,6 @@ $('[id^=editor_]').each(function() {
     }
     window.IDE_ready = createACE(idEditor) // Creating Ace Editor #idEditor
 
-    // console.log('la', editor.commands)
-    // console.log('la', editor.commands, editor.commands['startAutocomplete'])
-    // var Autocomplete = require("../autocomplete").Autocomplete
-    // console.log(Autocomplete)
     
     var nChange = 0;
     let editor = ace.edit(idEditor);
@@ -71,11 +89,13 @@ $('[id^=editor_]').each(function() {
     var workingNode = prevNode
     var remNode = document.createElement("div");
 
+    if (prevNode.innerHTML !== '') {
     if (prevNode.parentNode.tagName === 'P') {
-        
         // REM file on top level
         // console.log('51',idEditor,workingNode, workingNode.parentNode.innerHTML.includes('<strong>A</strong>'))
         workingNode = prevNode.parentNode.nextElementSibling //'<strong>A</strong>'
+        console.log('bef')
+        console.log(prevNode.parentNode.nextElementSibling, workingNode.innerHTML)
         // if (workingNode.nex)
 
         if (workingNode.innerHTML.includes('<strong>A</strong>') && workingNode.nextElementSibling.innerHTML.includes('<strong>Z</strong>')) {
@@ -87,6 +107,7 @@ $('[id^=editor_]').each(function() {
         {
         workingNode.remove()
         workingNode = prevNode.parentNode.nextElementSibling
+        console.log(prevNode.parentNode)
 
         var tableElements = [];
         while (!workingNode.innerHTML.includes('<strong>Z</strong>')) {
@@ -119,7 +140,8 @@ $('[id^=editor_]').each(function() {
 
         for (let i = 0; i < tableElements.length; i++) remNode.append(tableElements[i])
         
-        }}
+        }
+    }
 
     if (key != "")  
     /* another possible condition is this : 
@@ -132,6 +154,7 @@ $('[id^=editor_]').each(function() {
     prevNode.insertAdjacentElement('afterend', remNode)
     remNode.setAttribute("id", "rem_content_" + idEditor);
     document.getElementById("rem_content_" + idEditor).style.display = "none"
+    }
 
 });
 
@@ -163,11 +186,7 @@ function paintACE(theme) {
 
 window.addEventListener('DOMContentLoaded', () => paintACE(createTheme()));
 
-var p2 = document.querySelector('input[id="__palette_2"]')
-p2.addEventListener('click', () => paintACE('ace/theme/' + (p2 === "(prefers-color-scheme: dark)" ? 'tomorrow_night_bright' : 'crimson_editor')));
-
-var p1 = document.querySelector('input[id="__palette_1"]')
-p1.addEventListener('click', () => paintACE('ace/theme/' + (p1 === "(prefers-color-scheme: light)" ? 'crimson_editor' : 'tomorrow_night_bright')));
+document.querySelector('[data-md-color-scheme]').addEventListener('change', () => paintACE(createTheme()))
 
 // turn off copy paste of code... A bit aggressive but necessary
 $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });

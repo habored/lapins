@@ -7,10 +7,16 @@ tags:
 
 # Maximum
 
+{{ IDE('exo', SANS = "max, sorted, sort") }}
+
 Écrire une fonction `maximum` :
 
 - prenant en paramètre une liste **non vide** de nombres : `nombres`
 - renvoyant le plus grand élément de cette liste.
+
+Blabla:
+
+{{ IDE() }}
 
 Chacun des nombres utilisés est de type `int` ou `float`.
 
