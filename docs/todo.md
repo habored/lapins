@@ -4,15 +4,17 @@
 
 :x: QCM intégré à Mkdocs
 
+:x: Adaptable size tooltip
+
 :x: intégration de drawSVG
 
 :x: variable dans le mkdocs.yml pour positionner le fichier REM à l'endroit où on le souhaite
 
-:x: Rendre la couleur de l'IDE plus robuste aux changements de palette
+:white_check_mark: Rendre la couleur de l'IDE plus robuste aux changements de palette
 
 :x: Toggle tests on/off
 
-:x: Colorisation automatique de l'IDE
+:white_check_mark: Colorisation automatique de l'IDE
 
 :x: Bug plusieurs onglets: [voir](https://mooc-forums.inria.fr/moocnsi/t/re-pyodide-mkdocs/5715/4)
 
