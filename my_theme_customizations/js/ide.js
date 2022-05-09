@@ -176,7 +176,8 @@ function readFile(evt, idEditor) {
 };
 
 // Following blocks paint the IDE according to the mkdocs light/dark mode 
-function paintACE(theme) {
+function paintACE() {
+    let theme = createTheme()
     for (let editeur of document.querySelectorAll('div[id^="editor_"], div[id^="corr_editor_"]')) {
         let editor = ace.edit(editeur.id);
         editor.setTheme(theme);
@@ -184,9 +185,9 @@ function paintACE(theme) {
     };
 }
 
-window.addEventListener('DOMContentLoaded', () => paintACE(createTheme()));
+window.addEventListener('DOMContentLoaded', () => paintACE());
 
-document.querySelector('[data-md-color-scheme]').addEventListener('change', () => paintACE(createTheme()))
+document.querySelector('[data-md-color-scheme]').addEventListener('change', () => paintACE())
 
 // turn off copy paste of code... A bit aggressive but necessary
 $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
