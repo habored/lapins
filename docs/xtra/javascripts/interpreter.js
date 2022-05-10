@@ -492,7 +492,6 @@ function showCorrection(id_editor) {
     fragment.appendChild(remElement);
     // console.log(document.getElementById("solution_" + id_editor).firstChild)
     document.getElementById("solution_" + id_editor).firstChild.appendChild(fragment);
-
 }
 
 function executeTest(id_editor, mode) {    

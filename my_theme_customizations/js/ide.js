@@ -10,6 +10,21 @@ function initAceColor() {
     document.documentElement.style.setProperty('--main-color', getRGBChannels(primaryColor));  
 }
 
+function toggleComments(editor) {
+    let code = editor.getSession().getValue()  
+    let commentedCode = []
+    let inTestsBlock = false
+    for (let line of code.split('\n')) {
+        if (inTestsBlock == true && line !== "") {
+            line.slice(0,2) === '# ' ? commentedCode.push(`${line.slice(2)}`)
+                                        : commentedCode.push(`# ${line}`)
+        }
+        else commentedCode.push(`${line}`)
+        if (/#(\s*)Test(s?)[^\n]*/i.test(line)) inTestsBlock = true;
+    }
+    editor.getSession().setValue(commentedCode.join('\n'))
+}
+
 function createTheme() { 
     initAceColor()
     var bodyStyles = window.getComputedStyle(document.body);
@@ -65,13 +80,26 @@ $('[id^=editor_]').each(function() {
         });
         editor.commands.bindKey({win: 'Alt-Tab', mac: 'Alt-Tab'}, 'startAutocomplete')
         editor.getSession().setValue(pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))  
-
+        editor.commands.addCommand({
+            name: 'commentTests',
+            bindKey: {win: "Ctrl-I", mac: "Cmd-I"},
+            exec: (editor) => toggleComments(editor)
+        });
     }
     window.IDE_ready = createACE(idEditor) // Creating Ace Editor #idEditor
-
+    
+    // console.log(editor.getSession().getValue())
+    // console.log(/#(\s*)Test(s?)[^\n]*/i.test(editor.getSession().getValue()))
     
     var nChange = 0;
     let editor = ace.edit(idEditor);
+    if (/#(\s*)Test(s?)[^\n]*/i.test(editor.getSession().getValue()) == false) {
+        let commentButton = document.getElementById('comment_' + idEditor)
+        commentButton.parentNode.removeChild(commentButton)
+    } else {
+        console.log(editor)
+        document.getElementById('comment_'+idEditor).addEventListener('click', () => toggleComments(editor))
+    }
     editor.addEventListener('input', function() {
         if (nChange % 25 == 0) {localStorage.setItem(idEditor, editor.getSession().getValue());console.log('mouchard', localStorage.getItem(idEditor))}
         nChange += 1;

@@ -206,9 +206,9 @@ def define_env(env):
         div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"eval,exec" + SANS_formatted} >'
 
         if mode == 'v':
-            div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
+            div_edit += f'<div class="wrapper"><span id="comment_editor_{tc}" class="comment">###</span><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
-            div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
+            div_edit += f'<div class="wrapper_h"><span id="comment_editor_{tc}" class="comment">###</span><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
 
         div_edit += tooltip_button(f"""'interpretACE("editor_{tc}","{mode}")'""", f"""<img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span>""")
         div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) + blank_space(1)
