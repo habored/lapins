@@ -215,7 +215,7 @@ def define_env(env):
         div_edit += tooltip_button(f"""\'downloadFile("editor_{tc}","{nom_script}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span>""")+ blank_space()
         div_edit += create_upload_button(tc) + blank_space(1)
         div_edit += tooltip_button(f"""\'reload("{tc}","content")\'""", f"""<img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span>""") + blank_space()
-        div_edit += tooltip_button(f"""\'saveEditor("{tc}","content")\'""", f"""<img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span>""")
+        div_edit += tooltip_button(f"""\'saveEditor("{tc}","content")\'""", f"""<img src="/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span>""")
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
