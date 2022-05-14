@@ -16,12 +16,18 @@
   border: solid 1px;
   border-radius: 6px;
   border-color: var(--main-theme);
+  position: relative;
 }
+
+/* .wrapper_h::after {
+  content: "ici";
+} */
 
 .wrapper {
 border: solid 1px;
 border-radius: 6px;
 border-color: var(--main-theme);
+position: relative;
 display: flex;
 flex-wrap: wrap;
 flex: 1 1 auto;
@@ -32,7 +38,7 @@ flex: 1 1 300px;
 }
 
 .interior_wrapper {
-border-right: 1px solid ;
+border-right: 1px solid var(--main-theme);
 width:50%;
 }
 
@@ -122,17 +128,11 @@ background-color: var(--gutter-theme);
 border-right: solid 1px var(--main-theme); 
 }
 
-/* modification of ace-tomorrow-night-bright theme */
-.ace-tomorrow-night-bright .ace_gutter {
-background-color: var(--gutter-theme);
-color: #DEDEDE;
+/* global modification of gutters for ace theme */
+div[class*='ace-'] .ace_gutter {
+  background-color: var(--gutter-theme);
+  color: #DEDEDE;
 }
-
-.ace-crimson-editor .ace_gutter {
-background-color: var(--gutter-theme);
-color: #DEDEDE;
-}
-
 
 .compteur {
 float: right;
@@ -177,17 +177,16 @@ left: 0;
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 90px;
   background-color: var(--main-theme);
   color: #fff;
   text-align: center;
-  padding: 5px 0;
+  padding: 5px 10px;
   border-radius: 6px;
   position: absolute;
   z-index: 1;
   top: 110%;
   left: 50%;
-  margin-left: -45px; /* Use half of the width (120/2 = 60), to center the tooltip */
+  transform: translate(-50%, 0);
   font-size: 0.9em;
 }
 
@@ -229,3 +228,25 @@ left: 0;
 [data-md-color-scheme="slate"] {
   --md-primary-fg-color: var(--red);
 } */
+
+.comment {
+  display: inline-block;
+  font-size: 1em;
+  margin-top: 2px;
+  margin-right: 8px;
+  position:absolute;
+  top:0px;
+  right:0px;
+  z-index: 9;
+}
+.comment:hover {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  margin-top: 2px;
+  margin-right: 8px;
+  position:absolute;
+  top:1px;
+  right:-1px;
+  z-index: 9;
+}

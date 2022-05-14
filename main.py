@@ -1,5 +1,8 @@
 import os
 import hashlib
+from math import log10
+
+MAX_EMPTY_IDE = 10**8
 
 # print(env.variables.config['theme']['palette']) # access palette color. Automatic toggle of color ?
 
@@ -92,15 +95,15 @@ def define_env(env):
         """
         Purpose : Return content and current number IDE {tc}.
         """
-        tc = env.variables['IDE_counter']
-        env.variables['IDE_counter'] += 1
-
         content = read_ext_file(nom_script, path, filetype)
 
-        # if content is not None :
-        #     return content, tc
-        # else : return "", tc
-        return content, tc
+        if content not in [None, ""]:
+            tc = hashlib.sha1(content.encode('utf-8')).hexdigest()
+        else : # non-existent file, empty file
+            tc = env.variables['IDE_counter']
+            env.variables['IDE_counter'] += 1
+
+        return content, str(tc).zfill(int(log10(MAX_EMPTY_IDE)))
 
 
     def create_upload_button(tc : str) -> str:
@@ -196,7 +199,7 @@ def define_env(env):
         clef = generate_key(path_file)
 
         content, tc = generate_content(nom_script, path_file)
-        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
+        corr_content, _ = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
 
         content, max_from_file = get_max_from_file(content)
         MAX = max_from_file if MAX == 5 else MAX
@@ -206,9 +209,9 @@ def define_env(env):
         div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"eval,exec" + SANS_formatted} >'
 
         if mode == 'v':
-            div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
+            div_edit += f'<div class="wrapper"><span id="comment_editor_{tc}" class="comment">###</span><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
-            div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
+            div_edit += f'<div class="wrapper_h"><span id="comment_editor_{tc}" class="comment">###</span><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
 
         div_edit += tooltip_button(f"""'interpretACE("editor_{tc}","{mode}")'""", f"""<img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span>""")
         div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) + blank_space(1)
@@ -225,6 +228,7 @@ def define_env(env):
         elt_insertion = elt_insertion[0] if len(elt_insertion) >=1 else ""
         indent = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
         if nom_script == '' : indent = " "  # to avoid conflict with empty IDEs
+        print(tc, nom_script, path_file, f'''"docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"''' if clef == "" else f"")
         if indent == "":
             div_edit += f'''
 {indent}--8<--- "docs/xtra/start_REM.md"
