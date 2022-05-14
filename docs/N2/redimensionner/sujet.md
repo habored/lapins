@@ -94,5 +94,3 @@ Cette fonction renverra un nouveau tableau redimensionné sous forme d'une liste
     ```
 
 {{ IDE('exo') }}
-
-??? done "Solution"

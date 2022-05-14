@@ -442,6 +442,7 @@ function showCorrection(id_editor) {
 
     let corrElt = document.getElementById(`corr_content_${id_editor}`)
     let url_pyfile = corrElt.textContent
+    console.log('url',corrElt)
 
     // __md_scope=new URL(".",location)
     // __md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e))
@@ -492,6 +493,7 @@ function showCorrection(id_editor) {
     fragment.appendChild(remElement);
     // console.log(document.getElementById("solution_" + id_editor).firstChild)
     document.getElementById("solution_" + id_editor).firstChild.appendChild(fragment);
+
 }
 
 function executeTest(id_editor, mode) {    
@@ -730,6 +732,7 @@ print(f"""------""", end="")
         let elementCounter = document.getElementById("test_term_editor_"+id_editor)
         let parentCounter = elementCounter.parentElement.dataset.max;
         const nAttempts = parentCounter;
+        console.log('730', 'all passed')
 
         while (elementCounter.className !== "compteur") {
             elementCounter = elementCounter.nextElementSibling
@@ -742,6 +745,7 @@ print(f"""------""", end="")
         } else {
             elementCounter.textContent = parentCounter + "/" + parentCounter
         }
+        console.log('747', 'all passed')
 
         if (dict[id_editor] == nAttempts && !document.getElementById('solution_editor_'+id_editor)) {
             let correctionExists = $('#corr_content_editor_'+id_editor).text()  // Extracting url from the div before Ace layer
@@ -750,6 +754,7 @@ print(f"""------""", end="")
             };
         }
 
+        console.log('756', 'Correction should be shown')
         nlines = calcTermSize(stdout, mode)
         let editor = ace.edit("editor_"+id_editor);
         let stream = await editor.getSession().getValue();
@@ -760,6 +765,7 @@ print(f"""------""", end="")
             }
             editor.session.setValue(stream); // set value and reset undo history
         }
+        console.log('767', 'Done, all good')
     }
         $.terminal.active().echo(stdout); 
 

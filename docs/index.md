@@ -26,7 +26,6 @@ Garantie :
 
 {{IDE('dentiste/exo', MAX = 5)}}
 
-
 ## Installation
 
 On part d'une installation comme indiqué sur [https://ens-fr.gitlab.io/mkdocs/] avec le **plugin macro**, préalablement installé.

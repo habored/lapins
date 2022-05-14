@@ -39,7 +39,9 @@ function createTheme() {
     // Get ACE style
     var ace_style = {"default": _default.split('|')[0] , "slate": _slate.split('|')[0]}
     // automatically load current palette
-    let curPalette = __md_get("__palette").color["scheme"] 
+    let curPalette = __md_get("__palette") !== null ?   // first load tester
+                __md_get("__palette").color["scheme"] :
+                customLightTheme
     return  "ace/theme/" + ace_style[customTheme[curPalette]]
 };
 
@@ -49,16 +51,18 @@ $('[id^=editor_]').each(function() {
 
     if (url_pyfile.includes(tagHdr)) { // test if a header code is present
         splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr + "(.*)"));
-        if (splitHdrPyFile === null) { pyFile = `Missing ${tagHdr} tag. Please check !\n\n` + url_pyfile } 
+        if (splitHdrPyFile === null) { var pyFile = `Missing ${tagHdr} tag. Please check !\n\n` + url_pyfile } 
         else {
             hdrFile = splitHdrPyFile[1];
-            pyFile = splitHdrPyFile[2];
+            var pyFile = splitHdrPyFile[2];
             newline = 'bksl-nl';
             while(pyFile.startsWith(newline)) { pyFile = pyFile.substring(newline.length); }
         }
     } else {
-        pyFile = url_pyfile;
+        var pyFile = url_pyfile;
     }
+
+    pyFile = pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*")
 
     let idEditor = "editor_" + number
     function createACE(idEditor){
@@ -79,7 +83,7 @@ $('[id^=editor_]').each(function() {
             enableLiveAutocompletion: false,
         });
         editor.commands.bindKey({win: 'Alt-Tab', mac: 'Alt-Tab'}, 'startAutocomplete')
-        editor.getSession().setValue(pyFile.replace(/bksl-nl/g, "\n").replace(/py-und/g, "_").replace(/py-str/g, "*"))  
+        editor.getSession().setValue(pyFile)  
         editor.commands.addCommand({
             name: 'commentTests',
             bindKey: {win: "Ctrl-I", mac: "Cmd-I"},
@@ -97,17 +101,17 @@ $('[id^=editor_]').each(function() {
         let commentButton = document.getElementById('comment_' + idEditor)
         commentButton.parentNode.removeChild(commentButton)
     } else {
-        console.log(editor)
         document.getElementById('comment_'+idEditor).addEventListener('click', () => toggleComments(editor))
     }
+
     editor.addEventListener('input', function() {
-        if (nChange % 25 == 0) {localStorage.setItem(idEditor, editor.getSession().getValue());console.log('mouchard', localStorage.getItem(idEditor))}
-        nChange += 1;
+    if (nChange % 25 == 0) localStorage.setItem(idEditor, editor.getSession().getValue())
+    nChange += 1;
     });
 
     let storedCode = localStorage.getItem(idEditor);
     if (storedCode !== null) ace.edit(idEditor).getSession().setValue(storedCode)
-    
+
     // Create 6 empty lines
     if (url_pyfile === '') ace.edit(idEditor).getSession().setValue('\n'.repeat(6));  
 
@@ -117,13 +121,20 @@ $('[id^=editor_]').each(function() {
     var workingNode = prevNode
     var remNode = document.createElement("div");
 
-    if (prevNode.innerHTML !== '') {
+    console.log('la1', idEditor, key)
+    console.log('la2', prevNode)
+    console.log('la3', prevNode.innerHTML)
+
+    // console.log('la4', prevNode.innerHTML)
+    if (prevNode.innerHTML !== '' || key !== "") {
+        // soit y a pas de correction, soit la clé SHA256 n'est pas vide
     if (prevNode.parentNode.tagName === 'P') {
         // REM file on top level
-        // console.log('51',idEditor,workingNode, workingNode.parentNode.innerHTML.includes('<strong>A</strong>'))
         workingNode = prevNode.parentNode.nextElementSibling //'<strong>A</strong>'
-        console.log('bef')
-        console.log(prevNode.parentNode.nextElementSibling, workingNode.innerHTML)
+        // console.log('bef', idEditor)
+        // console.log(workingNode.innerHTML) 
+        // console.log(workingNode.nextElementSibling.innerHTML) 
+        // console.log(prevNode.parentNode.nextElementSibling, workingNode.innerHTML)
         // if (workingNode.nex)
 
         if (workingNode.innerHTML.includes('<strong>A</strong>') && workingNode.nextElementSibling.innerHTML.includes('<strong>Z</strong>')) {
@@ -135,7 +146,7 @@ $('[id^=editor_]').each(function() {
         {
         workingNode.remove()
         workingNode = prevNode.parentNode.nextElementSibling
-        console.log(prevNode.parentNode)
+        // console.log(prevNode.parentNode)
 
         var tableElements = [];
         while (!workingNode.innerHTML.includes('<strong>Z</strong>')) {
@@ -182,9 +193,18 @@ $('[id^=editor_]').each(function() {
     prevNode.insertAdjacentElement('afterend', remNode)
     remNode.setAttribute("id", "rem_content_" + idEditor);
     document.getElementById("rem_content_" + idEditor).style.display = "none"
+    } else {
+        console.log('on est là ICIIII!')
+        workingNode = prevNode.parentNode.nextElementSibling
+        if (workingNode.innerHTML.includes('<strong>A</strong>') && workingNode.nextElementSibling.innerHTML.includes('<strong>Z</strong>')) {
+            workingNode.nextElementSibling.remove()
+            workingNode.remove()
+        }
     }
 
-});
+}
+
+);
 
 // Javascript to upload file from customized buttons
 $('[id^=input_editor_]').each(function() {

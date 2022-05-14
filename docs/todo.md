@@ -1,26 +1,36 @@
 # Des questions techniques et métaphysiques
 
+## Versions
+
+???+ warning "0.13"
+
+    === "Ajouts majeurs"
+        - Correctif majeur du système de sauvegarde des travaux élèves évitant le problème de doublons et IDE avec les mauvais énoncés : <span style="color:red">sur le navigateur, cliquer sur outils de développement puis dans la console javascript, écrivez : <code>localStorage.clear()</code>.</span>
+        - Ajout d'un nouveau système de gestion des palettes de couleur et des modes jour/nuit. La palette de couleur utilisé par Pyodide-Mkdocs est automatiquement la couleur primaire utilisé par le site sous Mkdocs. 
+        Il est possible de spécifier les themes de coloration de l'éditeur ACE via le `mkdocs.yml` comme dans l'exemple ci-dessous :
+        ```yml
+        extra:
+            ace_style: # https://ace.c9.io/build/kitchen-sink.html pour avoir plus de themes
+                default: crimson_editor  # mode jour
+                slate: tomorrow_night_bright   # mode nuit
+                # slate: tomorrow_night_bright|youtube (if your dark mode is youtube for example)
+        ```
+        - Ajout d'un système d'activation/désactivation des tests publics. 
+
+    === "Correctifs mineurs"
+        - Raccourci clavier pour autocomplétion modifié : ++alt+tab++ ;
+        - Correction affichage des tooltip pour les boutons ;
+        - Correction bug existant avec IDE vide et disparition de ligne.
+
 ## Todo list
 
 :x: QCM intégré à Mkdocs
-
-:x: Adaptable size tooltip
 
 :x: intégration de drawSVG
 
 :x: variable dans le mkdocs.yml pour positionner le fichier REM à l'endroit où on le souhaite
 
-:white_check_mark: Rendre la couleur de l'IDE plus robuste aux changements de palette
-
-:x: Toggle tests on/off
-
-:white_check_mark: Colorisation automatique de l'IDE
-
-:x: Bug plusieurs onglets: [voir](https://mooc-forums.inria.fr/moocnsi/t/re-pyodide-mkdocs/5715/4)
-
 :x: Démarrer le comptage des 5 essais avant révélation du code si les premiers tests sont passés.
-
-:white_check_mark: Autocomplétion du code avec une touche simple (pas de Live autocomplétion -_-)
 
 :x: La fenêtre d’édition est réservée au code de l’élève. Les premiers tests sont dans une fenêtre collée, juste en dessous, visible mais non éditable. Ils peuvent être masqués/affichés.
 
@@ -29,6 +39,18 @@
 :x: télécharger tous les codes écrits dans les éditeurs de la page en un seul fichier
 
 :x: Doctests
+
+:white_check_mark: Rendre la couleur de l'IDE plus robuste aux changements de palette
+
+:white_check_mark: Adaptable size tooltip
+
+:white_check_mark: Toggle tests on/off
+
+:white_check_mark: Colorisation automatique de l'IDE
+
+:white_check_mark: Bug plusieurs onglets: [voir](https://mooc-forums.inria.fr/moocnsi/t/re-pyodide-mkdocs/5715/4)
+
+:white_check_mark: Autocomplétion du code avec une touche simple (pas de Live autocomplétion -_-)
 
 :white_check_mark: `#!python eval` désactivé en fonction de la présence du mot-clé `#!md SANS = 'eval,max'` dans l'appel à `#!md IDE(..., SANS = ...)`. Prendre en compte les erreurs du créateur `#!md SANS = 'eval, MaX  ,   min'`.
 

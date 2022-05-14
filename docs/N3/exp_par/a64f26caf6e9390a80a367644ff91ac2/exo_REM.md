@@ -1,3 +1,3 @@
 ## Commentaires
 
-{{ IDE('exo_corr') }}
+{{ IDE('exo') }}

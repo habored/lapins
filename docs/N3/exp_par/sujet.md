@@ -53,21 +53,3 @@ On pourra compléter le code donné qui utilise un dictionnaire `ouverture` qui 
 ```
 
 {{ IDE('exo', MAX=1000) }}
-
-??? tip "Indice 1"
-    On utilisera une pile qui empile les ouvrants, dépile un ouvrant dès qu'un fermant est rencontré en vérifiant la correspondance, et qui ignore les autres caractères.
-
-??? tip "Indice 2"
-    On pourra compléter le code
-
-    ```python
-    def est_bien_parenthesee(expression):
-        pile = ...
-        for c in ...:
-            if c in ...:
-                pile.append(...)
-            elif c in fermant:
-                if ... or ... != ouverture[c]:
-                    return False
-        return pile == ...
-    ```
