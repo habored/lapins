@@ -228,7 +228,6 @@ def define_env(env):
         elt_insertion = elt_insertion[0] if len(elt_insertion) >=1 else ""
         indent = " "*(len(elt_insertion) - len(elt_insertion.lstrip()))
         if nom_script == '' : indent = " "  # to avoid conflict with empty IDEs
-        print(tc, nom_script, path_file, f'''"docs/{path_file if path_file != "" else 'scripts'}/{nom_script}_REM.md"''' if clef == "" else f"")
         if indent == "":
             div_edit += f'''
 {indent}--8<--- "docs/xtra/start_REM.md"
