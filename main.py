@@ -194,6 +194,7 @@ def define_env(env):
         Last span hides the code content of the IDE if loaded.
         """
         path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
+        print(path_img)
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
 
         clef = generate_key(path_file)
@@ -217,8 +218,8 @@ def define_env(env):
         div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) + blank_space(1)
         div_edit += tooltip_button(f"""\'downloadFile("editor_{tc}","{nom_script}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span>""")+ blank_space()
         div_edit += create_upload_button(tc) + blank_space(1)
-        div_edit += tooltip_button(f"""\'reload("{tc}","content")\'""", f"""<img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span>""") + blank_space()
-        div_edit += tooltip_button(f"""\'saveEditor("{tc}","content")\'""", f"""<img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span>""")
+        div_edit += tooltip_button(f"""\'reload("{tc}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span>""") + blank_space()
+        div_edit += tooltip_button(f"""\'saveEditor("{tc}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span>""")
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
