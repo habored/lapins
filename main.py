@@ -112,7 +112,7 @@ def define_env(env):
         Methods : Use an HTML input to upload a file from user. The user clicks on the button to fire a JS event
         that triggers the hidden input.
         """
-        path_img = convert_url_to_utf8(env.variables.site_url).split('/')[-2]
+        path_img = env.variables.page.abs_url.split('/')[1]
         return f"""<button class="tooltip" onclick="document.getElementById('input_editor_{tc}').click()"><img src="/{path_img}/images/buttons/icons8-upload-64.png"><span class="tooltiptext">Téléverser</span></button>\
                 <input type="file" id="input_editor_{tc}" name="file" enctype="multipart/form-data" class="hide"/>"""
 
@@ -127,7 +127,7 @@ def define_env(env):
         content = read_ext_file(nom_script, path)
         # print(nom_script, path, content, content == "")
         if content != "":
-            path_img = convert_url_to_utf8(env.variables.site_url).split('/')[-2]
+            path_img = env.variables.page.abs_url.split('/')[1]
             return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span>\
                 <button class="tooltip" onclick=\'executeTest("{tc}","{mode}")\'>\
                 <img src="/{path_img}/images/buttons/icons8-check-64.png">\
@@ -193,7 +193,8 @@ def define_env(env):
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
-        path_img = convert_url_to_utf8(env.variables.site_url).split('/')[-2]
+        path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
+        print(path_img)
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
 
         clef = generate_key(path_file)
