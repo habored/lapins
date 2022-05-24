@@ -239,3 +239,22 @@ document.querySelector('[data-md-color-scheme]').addEventListener('change', () =
 
 // turn off copy paste of code... A bit aggressive but necessary
 $(".highlight").bind('copy paste',function(e) { e.preventDefault(); return false; });
+
+// $('[id^=qcm_]').each(function() {
+//     console.log(this.id)
+//     let number = this.id.split('_').pop();
+//     // let url_pyfile = $('#qcm_'+this.id) // Extracting url from the div before Ace layer
+//     console.log(number)
+// });
+
+// document.querySelector('#qcm_0').addEventListener('click', ()=> {console.log('lick')})
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('pre code.qcm').forEach((el) => {
+      hljs.highlightElement(el);
+    });
+  });
+
+document.querySelectorAll("[id^=qcm_]").forEach((el) => {
+    for (let element of el.children) element.firstChild.addEventListener('click', () => element.firstChild.disabled = true)
+});

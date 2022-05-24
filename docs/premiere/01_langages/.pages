@@ -1,0 +1,8 @@
+title: S1-Langages et programmation
+nav:
+    - index.md
+    - 0. Installer Python: python_IDE.md
+    - 1_bases
+    - 2_specif
+    - 3. Diversité et unité des langages de programmation: langages.md
+    - Quiz: langages_quiz.md

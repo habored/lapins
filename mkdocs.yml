@@ -9,10 +9,11 @@ docs_dir: docs
 
 nav:
   - "Terminal ▶️ et IDE 🖥 dans MkDocs": index.md
-  - "Guide du Terminal 🐍": install_term.md
+  - "Guide du Terminal ⌨️": install_term.md
   - "Guide de l'IDE 🐍" : install_ide.md
+  - "QCM en Mkdocs ✅❌": qcm.md
   - "En développement 🧪": todo.md
-  # - "Bac à sable 🏖": N1/110-maximum_nombres/sujet.md
+  # - "Bac à sable 🏖": premiere/01_langages/2_specif/specif_tests.md
   # - "Bac à sable 🏖": sandbox.md
   # - "Bac à sable 🏖": exo3/python4.md
   # - "Bac à sable 🏖": exo3/python4.md
@@ -134,4 +135,5 @@ extra_javascript:
 
 extra_css:
   - xtra/stylesheets/pyoditeur.css
+  - xtra/stylesheets/qcm.css
   - xtra/stylesheets/ajustements.css                      # ajustements
