@@ -3,8 +3,6 @@ import os
 import hashlib
 from math import log10
 import random
-
-from sklearn.utils import shuffle
     
 MAX_EMPTY_IDE = 10**8
 
