@@ -4,7 +4,7 @@
 
     Quelle est la réponse à la question universelle ?
 
-    {{ qcm(["$6\\times 7$", "Ça : $\\int_0^42 1 dx$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+    {{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 dx$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
 
     !!! warning "Code source"
         
