@@ -82,6 +82,7 @@ $('[id^=editor_]').each(function() {
             enableSnippets: true,
             enableLiveAutocompletion: false,
         });
+        // editor.commands.bindKey({win: 'Tab', mac: 'Tab'}, 'startAutocomplete')
         editor.commands.bindKey({win: 'Alt-Tab', mac: 'Alt-Tab'}, 'startAutocomplete')
         editor.getSession().setValue(pyFile)  
         editor.commands.addCommand({
@@ -256,5 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 document.querySelectorAll("[id^=qcm_]").forEach((el) => {
-    for (let element of el.children) element.firstChild.addEventListener('click', () => element.firstChild.disabled = true)
+    for (let element of el.children) {
+        element.addEventListener('click', () => {
+            element.firstChild.disabled = true
+            element.firstChild.checked = true
+        })
+    }
 });
