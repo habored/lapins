@@ -1,5 +1,6 @@
 # Des QCM en Mkdocs
 
+
 !!! help "Des QCM en Mkdocs"
 
     Quelle est la réponse à la question universelle ?
@@ -68,13 +69,18 @@
                 hljs.highlightElement(el);
                 });
             });
-
+            
             document.querySelectorAll("[id^=qcm_]").forEach((el) => {
+                let qcmAns = el.childNodes;
+                if (el.dataset.shuffle == 1) {
+                for (let i = qcmAns.length - 1; i >= 0; i--) el.appendChild(qcmAns[Math.floor(Math.random() * i)])
+                }
+                
                 for (let element of el.children) {
-                    element.addEventListener('click', () => {
-                        element.firstChild.disabled = true
-                        element.firstChild.checked = true
-                    })
+                element.addEventListener('click', () => {
+                    element.firstChild.disabled = true
+                    element.firstChild.checked = true
+                })
                 }
             });
         ```

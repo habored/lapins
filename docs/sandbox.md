@@ -1,5 +1,22 @@
 # Bac à sable
 
+
+<div id = "setQCM">
+Question 1:
+
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+
+Question 2:
+
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+
+Question 3:
+
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+<span id="score"></span>
+<span id="valider">Valider</span>
+</div>
+
 <!-- {{IDE()}}
 {{IDE()}} -->
 
@@ -8,7 +25,7 @@
 <canvas id="pointer" width="500" height="300"></canvas>
 </div> -->
 
-<script type="text/javascript">
+<!-- <script type="text/javascript">
 // // jQuery cross domain ajax
 // $.get("http://www.example.org/ajax.php").done(function (data) {
 //     console.log(data);
@@ -37,4 +54,4 @@ fetch("https://gitlab.com/bouillotvincent/tests-avec-mkdocs/-/blob/main/main.py"
     const objectURL = URL.createObjectURL(myBlob);
     console.log(objectURL);
     });
-</script>
+</script> -->

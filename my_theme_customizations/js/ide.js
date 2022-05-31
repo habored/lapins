@@ -257,10 +257,52 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 document.querySelectorAll("[id^=qcm_]").forEach((el) => {
+    let qcmAns = el.childNodes;
+    if (el.dataset.shuffle == 1) {
+        for (let i = qcmAns.length - 1; i >= 0; i--) el.appendChild(qcmAns[Math.floor(Math.random() * i)])
+    }
+
     for (let element of el.children) {
         element.addEventListener('click', () => {
-            element.firstChild.disabled = true
-            element.firstChild.checked = true
-        })
+        // element.firstChild.disabled = true
+        if (!element.firstChild.disabled) element.firstChild.checked = !(element.firstChild.checked)
+    })
     }
 });
+
+function nTotalAnswers(el) {
+    let somme = 0;
+    for (let question of el.children) {
+        if (question.className == "wrapper_qcm") {
+            somme += parseInt(question.dataset.nCorrect)
+            console.log(somme) 
+        }
+    }
+    return somme
+}
+
+function maxAnswerReached() {}
+
+function nRightAnswers(el) {
+    let somme = 0;
+    for (let question of el.children) {
+        if (question.className == "wrapper_qcm") {
+            for (let answer of question.children) {
+                if (answer.firstChild.checked) {
+                    if (answer.firstChild.classList.contains("correct")) somme += 1;
+                    answer.firstChild.classList.add("reveal");
+                }
+                answer.firstChild.disabled = true;
+            }
+        }
+    }
+    return somme
+}
+
+document.getElementById("valider").addEventListener("click", () => {
+    let elScore = document.getElementById("score");
+    console.log(document.getElementById("valider").parentElement.children)
+    let totalScore = nTotalAnswers(elScore.parentElement);
+    let studentScore = nRightAnswers(elScore.parentElement);
+    elScore.innerHTML = `Score : ${studentScore} / ${totalScore}`;
+})

@@ -1,5 +1,3 @@
-import random
-
 @env.macro
 def qcm(list_answers, list_correct, shuffle = True):
     alphabet = [chr(ord('a') + i) for i in range(26)]
@@ -18,6 +16,7 @@ def qcm(list_answers, list_correct, shuffle = True):
         """$ might not be the first character :
         blabla $1+1$
         """
+
         if answer.count('$') - answer.count('\$') >= 2: #regex begin ___$ and end $____ and $ not preceded by \
             string = ''
             start_dollar = True
@@ -42,13 +41,13 @@ def qcm(list_answers, list_correct, shuffle = True):
         return answer
 
     indices = [i for i in range(len(list_answers))]
-    if shuffle: random.shuffle(indices)
+    # if shuffle: random.shuffle(indices)
 
     dict_correspondance = {indices[i] : i for i in range(len(list_answers))}
     inv_dict_correspondance = {i : indices[i] for i in range(len(list_answers))}
     
     id = generate_id()
-    html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)}>"""
+    html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)} data-shuffle = {1 if shuffle else 0}>"""
     for i in range(len(list_answers)):
         answer = list_answers[inv_dict_correspondance[i]]
         if type(answer) != str : 

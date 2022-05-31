@@ -77,13 +77,13 @@ def define_env(env):
         Methods : The content of the file is hidden in the webpage. Replacing \n by a string makes it possible
         to integrate the content in mkdocs admonitions.
         """
-        short_path = f"""docs/"""
+        docs_path = f"""docs/"""
 
         try: 
             if path == "":
-                f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
+                f = open(f"""{docs_path}/scripts/{nom_script}.{filetype}""")
             else:
-                f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
+                f = open(f"""{docs_path}/{path}/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
             f.close()
             content = content + "\n"
@@ -199,6 +199,8 @@ def define_env(env):
         path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
         print(path_img)
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
+        print('P1','/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.url).split('/')[:-2])))
+        print('P2','/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2])))
 
         clef = generate_key(path_file)
 
@@ -295,13 +297,13 @@ def define_env(env):
             return answer
 
         indices = [i for i in range(len(list_answers))]
-        if shuffle: random.shuffle(indices)
+        # if shuffle: random.shuffle(indices)
 
         dict_correspondance = {indices[i] : i for i in range(len(list_answers))}
         inv_dict_correspondance = {i : indices[i] for i in range(len(list_answers))}
         
         id = generate_id()
-        html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)}>"""
+        html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)} data-shuffle = {1 if shuffle else 0}>"""
         for i in range(len(list_answers)):
             answer = list_answers[inv_dict_correspondance[i]]
             if type(answer) != str : 
