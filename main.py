@@ -195,6 +195,7 @@ def define_env(env):
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
+        print("docs_dirs", env.conf['docs_dir'])
         path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
         print(path_img)
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
