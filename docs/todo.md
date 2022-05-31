@@ -1,34 +1,6 @@
 # Des questions techniques et métaphysiques
 
-!!! help "Des QCM en Mkdocs"
-
-    Quelle est la réponse à la question universelle ?
-
-    {{ qcm(["$6\\times 7$", "Ça : $\\int_0^42 1 dx$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
-
-    !!! warning "Code source"
-        
-        === "Utilisation"
-
-            ```markdown 
-            {% raw %}
-            {{ qcm(["$6\\times 7$", "$\\int_0^{42} 1 dx$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
-            {% endraw %}
-            ```
-            
-            - Argument 1: Tableau de strings contenant vos réponses.
-
-            - Argument 2: Entier ou tableau d'entiers indiquant les bonnes réponses. L'indexation naturelle (1 à N) est choisie.
-
-            - Argument 3: True pour une génération aléatoire à chaque push du site web. False sinon. 
-        
-        === "Limitations"
-
-            - Toute instruction Latex nécessitant un backslash `\` doit être échappé avec un second backslash `\`.
-            
-            - Les codes (e.g. instructions Python) doivent tenir sur une ligne (à améliorer dans le futur).
-            
-            - La génération aléatoire n'est faite qu'une seule fois (à la génération du site statique).
+{{ macros_info() }}
 
 ## Versions
 
