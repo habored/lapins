@@ -4,15 +4,15 @@
 <div id = "setQCM">
 Question 1:
 
-{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
 
 Question 2:
 
-{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
 
 Question 3:
 
-{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
 
 <div class="buttonWrapper">
 <span class = "validationButton" id = "valider">Valider</span>

@@ -1,6 +1,5 @@
 # Terminal et IDE dans Mkdocs
 
-
 ## Introduction
 
 `Pyodide-Mkdocs` est une solution technique permettant de créer un cours interactif à partir d'un site généré par Mkdocs. 
@@ -25,6 +24,12 @@ Garantie :
 ## Aperçu
 
 {{IDE('dentiste/exo', MAX = 5)}}
+
+## Démarrage rapide
+
+Vous ne connaissez rien à Mkdocs et vous souhaitez vous y mettre ? Des mots comme `yaml`, `javascript`, `Pyodide` ou templates `Jinja` vous font peur ? 
+
+Commencez en douceur en partant d'un repo Mkdocs aux dernières normes en vigueur : Clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !
 
 ## Installation
 

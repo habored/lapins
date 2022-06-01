@@ -309,6 +309,8 @@ function nRightAnswers(el) {
     return somme
 }
 
+
+
 document.getElementById("valider").addEventListener("click", () => {
     let elScore = document.getElementById("score");
     let totalScore = nTotalAnswers(elScore.parentElement);

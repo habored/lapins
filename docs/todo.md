@@ -1,6 +1,6 @@
 # Des questions techniques et métaphysiques
 
-{{ macros_info() }}
+<!-- {{ macros_info() }} -->
 
 ## Versions
 
