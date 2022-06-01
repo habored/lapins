@@ -1,3 +1,7 @@
+:root{
+  --main-color : 87, 147, 240;
+  --main-theme : rgb(var(--main-color));
+}
 
 .wrapper_qcm {
   display: flex;
@@ -54,6 +58,35 @@ input[type='checkbox'].qcm-checkbox:hover ~ .check-toggle {
 
 .check-toggle {
   margin-right: 3px; 
+}
+
+.buttonWrapper {
+  text-align: center;
+  padding-top: 14px;
+}
+
+.validationButton {
+  position: relative;
+  border: 2px solid var(--main-theme);
+  /* background-color: var(--main-theme); */
+  cursor: pointer;
+  border-radius: 0%;
+  padding : 4px 15px 4px 15px;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+/* .validationButton.inactive {
+  background-color: #ebebeb;
+} */
+
+.showScore {
+  position: relative;
+  /* border: 2px solid var(--main-theme); */
+  /* background-color: var(--main-theme); */
+  margin: auto;
+  margin-top: 10px;
+  text-align: center;
 }
 
 /* Styles for the checked state of the custom checkbox */

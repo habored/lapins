@@ -13,8 +13,12 @@ Question 2:
 Question 3:
 
 {{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 d \\textrm{x}$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
-<span id="score"></span>
-<span id="valider">Valider</span>
+
+<div class="buttonWrapper">
+<span class = "validationButton" id = "valider">Valider</span>
+<span class = "validationButton" id = "recharger">Recharger</span>
+</div>
+<div class = "showScore" id="score"></div>
 </div>
 
 <!-- {{IDE()}}

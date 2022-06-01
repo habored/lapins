@@ -256,17 +256,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-document.querySelectorAll("[id^=qcm_]").forEach((el) => {
+function randomizeQCM(el) {
     let qcmAns = el.childNodes;
     if (el.dataset.shuffle == 1) {
         for (let i = qcmAns.length - 1; i >= 0; i--) el.appendChild(qcmAns[Math.floor(Math.random() * i)])
     }
+}
+
+document.querySelectorAll("[id^=qcm_]").forEach((el) => {
+    randomizeQCM(el)
 
     for (let element of el.children) {
         element.addEventListener('click', () => {
         // element.firstChild.disabled = true
-        if (!element.firstChild.disabled) element.firstChild.checked = !(element.firstChild.checked)
-    })
+        if (!element.firstChild.disabled) {
+            if (!maxAnswerReached(el)) element.firstChild.checked = !(element.firstChild.checked)
+            else if (element.firstChild.checked) element.firstChild.checked = !(element.firstChild.checked)
+    }})
     }
 });
 
@@ -281,7 +287,11 @@ function nTotalAnswers(el) {
     return somme
 }
 
-function maxAnswerReached() {}
+function maxAnswerReached(el) {
+    let somme = 0;
+    for (let answer of el.children) if (answer.firstChild.checked) somme += 1;
+    return somme >= parseInt(el.dataset.nCorrect)
+}
 
 function nRightAnswers(el) {
     let somme = 0;
@@ -301,8 +311,30 @@ function nRightAnswers(el) {
 
 document.getElementById("valider").addEventListener("click", () => {
     let elScore = document.getElementById("score");
-    console.log(document.getElementById("valider").parentElement.children)
     let totalScore = nTotalAnswers(elScore.parentElement);
     let studentScore = nRightAnswers(elScore.parentElement);
-    elScore.innerHTML = `Score : ${studentScore} / ${totalScore}`;
+    if (studentScore/totalScore > 0.5) {
+        elScore.innerHTML = `Bon travail ! Score : ${studentScore} / ${totalScore}`;
+    } else {
+        elScore.innerHTML = `Cours à reprendre. Score : ${studentScore} / ${totalScore}`;
+    }
+})
+
+document.getElementById("recharger").addEventListener("click", () => {
+    let elScore = document.getElementById("score")
+    elScore.innerHTML = "";
+    for (let question of elScore.parentElement.children) {
+        if (question.className == "wrapper_qcm") {
+            for (let answer of question.children) {
+                answer.firstChild.classList.remove("reveal")
+                answer.firstChild.disabled = false;
+                answer.firstChild.checked = false;
+            }
+            randomizeQCM(question)
+        }
+    }
+})
+
+document.querySelectorAll("[id^=validerQCM_]").forEach((el) => {
+
 })
