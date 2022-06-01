@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function randomizeQCM(el) {
     let qcmAns = el.childNodes;
     if (el.dataset.shuffle == 1) {
-        for (let i = qcmAns.length - 1; i >= 0; i--) el.appendChild(qcmAns[Math.floor(Math.random() * i)])
+        for (let i = qcmAns.length; i >= 0; i--) el.appendChild(qcmAns[Math.floor(Math.random() * i)])
     }
 }
 
