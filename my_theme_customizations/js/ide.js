@@ -311,32 +311,81 @@ function nRightAnswers(el) {
 
 
 
-document.getElementById("valider").addEventListener("click", () => {
-    let elScore = document.getElementById("score");
-    let totalScore = nTotalAnswers(elScore.parentElement);
-    let studentScore = nRightAnswers(elScore.parentElement);
-    if (studentScore/totalScore > 0.5) {
-        elScore.innerHTML = `Bon travail ! Score : ${studentScore} / ${totalScore}`;
-    } else {
-        elScore.innerHTML = `Cours à reprendre. Score : ${studentScore} / ${totalScore}`;
-    }
-})
+// document.getElementById("valider").addEventListener("click", () => {
+//     let elScore = document.getElementById("score");
+//     let totalScore = nTotalAnswers(elScore.parentElement);
+//     let studentScore = nRightAnswers(elScore.parentElement);
+//     if (studentScore/totalScore > 0.5) {
+//         elScore.innerHTML = `Bon travail ! Score : ${studentScore} / ${totalScore}`;
+//     } else {
+//         elScore.innerHTML = `Cours à reprendre. Score : ${studentScore} / ${totalScore}`;
+//     }
+// })
 
-document.getElementById("recharger").addEventListener("click", () => {
-    let elScore = document.getElementById("score")
-    elScore.innerHTML = "";
-    for (let question of elScore.parentElement.children) {
-        if (question.className == "wrapper_qcm") {
-            for (let answer of question.children) {
-                answer.firstChild.classList.remove("reveal")
-                answer.firstChild.disabled = false;
-                answer.firstChild.checked = false;
-            }
-            randomizeQCM(question)
+// document.getElementById("recharger").addEventListener("click", () => {
+//     let elScore = document.getElementById("score")
+//     elScore.innerHTML = "";
+//     for (let question of elScore.parentElement.children) {
+//         if (question.className == "wrapper_qcm") {
+//             for (let answer of question.children) {
+//                 answer.firstChild.classList.remove("reveal")
+//                 answer.firstChild.disabled = false;
+//                 answer.firstChild.checked = false;
+//             }
+//             randomizeQCM(question)
+//         }
+//     }
+// })
+
+document.querySelectorAll("[id^=valider_]").forEach((el) => {
+    let number = el.id.split('_').pop();
+    console.log(number)
+    el.addEventListener("click", () => {
+        let elScore = document.getElementById(`score_${number}`);
+        let totalScore = nTotalAnswers(elScore.parentElement);
+        let studentScore = nRightAnswers(elScore.parentElement);
+        if (studentScore/totalScore > 0.5) {
+            elScore.innerHTML = `Bon travail ! Score : ${studentScore} / ${totalScore}`;
+        } else {
+            elScore.innerHTML = `Cours à reprendre. Score : ${studentScore} / ${totalScore}`;
         }
-    }
-})
+        // let blabla = document.createElement('DIV');
+        // blabla.setAttribute("id", "Div1");
+        // let truc = document.createTextNode('$\\frac{1}{2}$')
+        // blabla.appendChild(truc)
+        // var curre = document.getElementById(`score_${number}`).parentElement
+        // curre.insertAdjacentElement("afterend", blabla)
+        // // window.MathJax.
+        window.MathJax.startup.document.clear();
+        window.MathJax.startup.document.updateDocument();
+})})
 
-document.querySelectorAll("[id^=validerQCM_]").forEach((el) => {
+document.querySelectorAll("[id^=recharger_]").forEach((el) => {
+    let number = el.id.split('_').pop();
+    el.addEventListener("click", () => {
+        let elScore = document.getElementById(`score_${number}`)
+        elScore.innerHTML = "";
+        for (let question of elScore.parentElement.children) {
+            if (question.className == "wrapper_qcm") {
+                for (let answer of question.children) {
+                    answer.firstChild.classList.remove("reveal")
+                    answer.firstChild.disabled = false;
+                    answer.firstChild.checked = false;
+                }
+                randomizeQCM(question)
+            }
+        }
+    })})
 
-})
+
+
+// const node = document.getElementsByClassName('arithmatex');
+// console.log("arithmatex", node)
+// window.MathJax.typesetClear(node[2]);
+// window.MathJax.startup.document.clear();
+// window.MathJax.startup.document.updateDocument();
+
+// // node.innerHTML = new_html;
+// // MathJax.typesetPromise([node]).then(() => {
+// //   // the new content is has been typeset
+// // });

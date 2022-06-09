@@ -89,6 +89,10 @@ input[type='checkbox'].qcm-checkbox:hover ~ .check-toggle {
   text-align: center;
 }
 
+.questionQCM {
+  margin: 8px 0px 8px 0px;
+}
+
 /* Styles for the checked state of the custom checkbox */
 input[type='checkbox'].qcm-checkbox:checked ~ .check-toggle {
   border-color: transparent;

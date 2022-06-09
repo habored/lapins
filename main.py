@@ -1,8 +1,8 @@
-from itertools import starmap
 import os
 import hashlib
 from math import log10
 import random
+import re
     
 MAX_EMPTY_IDE = 10**8
 
@@ -254,19 +254,20 @@ def define_env(env):
         cmd += f"""</tr></table>"""
         return cmd
 
-    @env.macro
-    def qcm(list_answers, list_correct, shuffle = True):
+    def generate_id():
         alphabet = [chr(ord('a') + i) for i in range(26)]
+        return "".join(random.choices(alphabet, k = 6))
+
+    @env.macro
+    def qcm(list_answers, list_correct, shuffle = True, single = True):
         if type(list_correct) == int : list_correct = [list_correct]
         list_correct = list(map(lambda x : x - 1, list_correct))  # back to 0 to n-1 indexing
         def spanify(html_tag):
             return f"""<span>{html_tag}</span>"""
         
-        def generate_id():
-            return "".join(random.choices(alphabet, k = 6))
-
         def buttonify(answer, id, correct):
-            return f"""<input type="checkbox" id="{id}" class="qcm-checkbox {correct}"><span class="check-toggle"></span><label for="{id}" class="qcm-item arithmatex">{answer}</label>"""
+            reveal = "reveal" if single else ""
+            return f"""<input type="checkbox" id="{id}" class="qcm-checkbox {correct} {reveal}"><span class="check-toggle"></span><label for="{id}" class="qcm-item arithmatex">{answer}</label>"""
 
         def latexify(answer):
             """$ might not be the first character :
@@ -293,7 +294,7 @@ def define_env(env):
             if answer[0:3] == "`#!":
                 sep = answer.index(" ")
                 language = answer[3:sep]
-                return f"""<pre style="display: inline;"><code style="display: inline;" class="language-python qcm">{answer[sep:-1]}</code></pre>"""
+                return f"""<pre style="display: inline;"><code style="display: inline;" class="language-{language} qcm">{answer[sep:-1]}</code></pre>"""
             return answer
 
         indices = [i for i in range(len(list_answers))]
@@ -318,3 +319,100 @@ def define_env(env):
         html_element += "</div>"
 
         return html_element
+
+    def extract_csv_file(input_file):
+        # extract info from external file
+        docs_path = f"""docs/"""
+        path = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
+
+        try: 
+            if path == "":
+                f = open(f"""{docs_path}/scripts/{input_file}""")
+            else:
+                f = open(f"""{docs_path}/{path}/{input_file}""")
+            content = ''.join(f.readlines())
+            f.close()
+            content = content + "\n"
+            # Hack to integrate code lines in admonitions in mkdocs
+            # change backslash_newline by backslash-newline
+        except :
+            return ""        
+
+    def get_variables_state(string, sep = '{}'):
+        var_pos = {}
+        for inter in re.finditer(fr"{sep[0]}\w+{sep[1]}", string):
+            # print(inter.start(), inter.end(), inter.group(0)[1:-1])
+            if var_name := inter.group(0)[1:-1] not in var_pos:
+                var_pos[var_name] = [inter.span()]
+            else:
+                var_pos[var_name].append(inter.span())
+        return var_pos
+
+
+    @env.macro
+    def multi_qcm(*input, shuffle = True):
+        liste_QCM = []
+        if type(input) == str: 
+            question, liste_bonne_reponse, liste_reponse = extract_csv_file(input)
+            liste_QCM.append({"question" : question, "reponse": [rep for rep in liste_reponse], "bonne_reponse": [bonne_rep for bonne_rep in liste_bonne_reponse]})
+        else:
+            for i in range(len(input)):
+                question = input[i][0]
+                list_answers = input[i][1]
+                list_correct = input[i][2]
+                if len(input[i]) == 4:
+                    dictionnaire_var = input[i][3]
+                    # dictionnaire_var = get_variables_state(input[i][4])
+                liste_QCM.append({"question" : question, "reponse": list_answers, "bonne_reponse": list_correct})
+
+        id_qcm = generate_id()
+        html_element = "<div></div>"#f"""<span id = "setQCM_{id_qcm}">"""
+        # print(html_element)
+        for i in range(len(input)):
+            question = input[i][0]
+            list_answers = input[i][1]
+            list_correct = input[i][2]
+            if len(input[i]) == 4:
+                dictionnaire_var = input[i][3]  # {'x' : [2,3,4], 'n' : [3,1,2]}
+            html_element += f"<span class = 'questionQCM arithmatex'>Question {i+1} : {question}</span>"
+            html_element += qcm(list_answers, list_correct, shuffle = shuffle, single = False)
+        html_element += f"""<div class="buttonWrapper"><span class = "validationButton" id = "valider_{id_qcm}">Valider</span><span class = "validationButton" id = "recharger_{id_qcm}">Recharger</span></div><div class = "showScore" id="score_{id_qcm}"></div>"""
+        print(html_element)
+        return html_element
+
+    # @env.macro
+    # def multi_qcm(*input, shuffle = True):
+    #     liste_QCM = []
+    #     if type(input) == str: 
+    #         question, liste_bonne_reponse, liste_reponse = extract_csv_file(input)
+    #         liste_QCM.append({"question" : question, "reponse": [rep for rep in liste_reponse], "bonne_reponse": [bonne_rep for bonne_rep in liste_bonne_reponse]})
+    #     else:
+    #         for i in range(len(input)):
+    #             question = input[i][0]
+    #             list_answers = input[i][1]
+    #             list_correct = input[i][2]
+    #             if len(input[i]) == 4:
+    #                 dictionnaire_var = input[i][3]
+    #                 # dictionnaire_var = get_variables_state(input[i][4])
+    #             liste_QCM.append({"question" : question, "reponse": list_answers, "bonne_reponse": list_correct})
+
+    #     id_qcm = generate_id()
+    #     html_element = "<div></div>"#f"""<span id = "setQCM_{id_qcm}">"""
+    #     # print(html_element)
+    #     for i in range(len(input)):
+    #         question = input[i][0]
+    #         list_answers = input[i][1]
+    #         list_correct = input[i][2]
+    #         if len(input[i]) == 4:
+    #             dictionnaire_var = input[i][3]  # {'x' : [2,3,4], 'n' : [3,1,2]}
+    #             var_state = get_variables_state(question)
+    #             for clé in dictionnaire_var:
+    #                 value_in_use = random.choice()
+    #                 question.replace(f"\{{clé}\}", )
+    #             random.choice()
+    #         html_element += f"<span class = 'questionQCM arithmatex'>Question {i+1} : {question}</span>"
+    #         html_element += qcm(list_answers, list_correct, shuffle = shuffle, single = False)
+    #     html_element += f"""<div class="buttonWrapper"><span class = "validationButton" id = "valider_{id_qcm}">Valider</span><span class = "validationButton" id = "recharger_{id_qcm}">Recharger</span></div><div class = "showScore" id="score_{id_qcm}"></div>"""
+    #     print(html_element)
+    #     return html_element
+

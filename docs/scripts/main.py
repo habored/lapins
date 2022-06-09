@@ -47,17 +47,13 @@ def define_env(env):
         Methods : The content of the file is hidden in the webpage. Replacing \n by a string makes it possible
         to integrate the content in mkdocs admonitions.
         """
-        short_path = f"""docs/"""
+        docs_path = f"""docs/"""
 
         try: 
             if path == "":
-                # print(nom_script, f"""{short_path}/scripts/{nom_script}.{filetype}""")
-                f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
+                f = open(f"""{docs_path}/scripts/{nom_script}.{filetype}""")
             else:
-                # print('relp', f"""{short_path}/{path}/{nom_script}.{filetype}""")
-                # print(nom_script, f"""{short_path}/{path}/{nom_script}.{filetype}""")
-                f = open(f"""{short_path}/{path}/{nom_script}.{filetype}""")
-            # f = open(f"""{short_path}/scripts/{nom_script}.{filetype}""")
+                f = open(f"""{docs_path}/{path}/{nom_script}.{filetype}""")
             content = ''.join(f.readlines())
             f.close()
             content = content + "\n"
@@ -65,20 +61,22 @@ def define_env(env):
             # change backslash_newline by backslash-newline
             return content.replace('\n','bksl-nl').replace('_','py-und').replace('*','py-str')
         except :
-            return
+            return ""
         
     def generate_content(nom_script : str, path : str, filetype : str = 'py') -> str:
         """
         Purpose : Return content and current number IDE {tc}.
         """
-        tc = env.variables['IDE_counter']
-        env.variables['IDE_counter'] += 1
-
         content = read_ext_file(nom_script, path, filetype)
 
-        if content is not None :
-            return content, tc
-        else : return "", tc
+        if content not in [None, ""]:
+            tc = hashlib.sha1(content.encode('utf-8')).hexdigest()
+        else : # non-existent file, empty file
+            tc = env.variables['IDE_counter']
+            env.variables['IDE_counter'] += 1
+
+        return content, str(tc).zfill(int(log10(MAX_EMPTY_IDE)))
+
 
     def create_upload_button(tc : str) -> str:
         """
@@ -99,7 +97,8 @@ def define_env(env):
         relative_path = '/'.join(nom_script.split('/')[:-1])
         nom_script = f"{relative_path}/{stripped_nom_script}_test"
         content = read_ext_file(nom_script, path)
-        if content is not None: 
+        # print(nom_script, path, content, content == "")
+        if content != "":
             path_img = env.variables.page.abs_url.split('/')[1]
             return f"""<span id="test_term_editor_{tc}" class="hide">{content}</span>\
                 <button class="tooltip" onclick=\'executeTest("{tc}","{mode}")\'>\
@@ -114,7 +113,6 @@ def define_env(env):
         """ 
         Purpose : Return 5em blank spaces. Use to spread the buttons evenly
         """
-        # return f"""<span style="indent-text:{s}em"> </span>"""
         return f"""<span style="display: inline-block; width:{s}em"></span>"""
 
     def get_max_from_file(content : str) -> tuple:#[str, int]: # compatibilité Python antérieur 3.8
@@ -149,6 +147,17 @@ def define_env(env):
         """
         return IDE(nom_script, mode = 'v', MAX = MAX, SANS = SANS)
 
+    def generate_key(path_file: str):
+        try:
+            f = open(f"docs/{path_file}/clef.txt", "r", encoding="utf8")
+            clef = f.read()            
+        except: 
+            clef = "" # base case -> no clef.txt file
+        return clef
+
+    def tooltip_button(onclick_action : str, button_style : str):
+        return f"""<button class="tooltip" onclick={onclick_action}>{button_style}</button>"""
+
     @env.macro
     def IDE(nom_script : str = '', mode : str = 'h', MAX : int = 5, SANS : str = "") -> str:
         """
@@ -156,34 +165,36 @@ def define_env(env):
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
+        print("docs_dirs", env.conf['docs_dir'])
         path_img = convert_url_to_utf8(env.variables.page.abs_url).split('/')[1]
-
+        print(path_img)
         path_file = '/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2]))
-        content, tc = generate_content(nom_script, path_file)
+        print('P1','/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.url).split('/')[:-2])))
+        print('P2','/'.join(filter(lambda folder: folder != "", convert_url_to_utf8(env.variables.page.abs_url).split('/')[2:-2])))
 
-        try:
-            f = open(f"docs/{path_file}/clef.txt", "r", encoding="utf8")
-            clef = f.read()            
-        except: 
-            clef = "" # base case -> no clef.txt file
+        clef = generate_key(path_file)
+
+        content, tc = generate_content(nom_script, path_file)
+        corr_content, _ = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
 
         content, max_from_file = get_max_from_file(content)
         MAX = max_from_file if MAX == 5 else MAX
         MAX = MAX if MAX not in ['+', 1000] else INFTY_SYMBOL
-        corr_content, tc = generate_content(f"""{'/'.join(nom_script.split('/')[:-1])}/{nom_script.split('/')[-1]}_corr""", path_file)
-        div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"".join(SANS.split(" "))+"eval,exec"} >'
+
+        SANS_formatted = ","+"".join(SANS.split(" ")) if len(SANS)>0 else ""
+        div_edit = f'<div class="ide_classe" data-max={MAX} data-exclude={"eval,exec" + SANS_formatted} >'
 
         if mode == 'v':
-            div_edit += f'<div class="wrapper"><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
+            div_edit += f'<div class="wrapper"><span id="comment_editor_{tc}" class="comment">###</span><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
-            div_edit += f'<div class="wrapper_h"><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
+            div_edit += f'<div class="wrapper_h"><span id="comment_editor_{tc}" class="comment">###</span><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
 
-        div_edit += f"""<button class="tooltip" onclick='interpretACE("editor_{tc}","{mode}")'><img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span></button>"""
-        div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) 
-        div_edit += f"""{blank_space(1)}<button class="tooltip" onclick=\'downloadFile("editor_{tc}","{nom_script}")\'><img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span></button>{blank_space()}"""
-        div_edit += create_upload_button(tc) 
-        div_edit += f"""{blank_space(1)}<button class="tooltip" onclick=\'reload("{tc}","content")\'><img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span></button>{blank_space()}"""
-        div_edit += f"""<button class="tooltip" onclick=\'saveEditor("{tc}","content")\'><img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span></button>"""
+        div_edit += tooltip_button(f"""'interpretACE("editor_{tc}","{mode}")'""", f"""<img src="/{path_img}/images/buttons/icons8-play-64.png"><span class="tooltiptext">Lancer</span>""")
+        div_edit += create_unittest_button(tc, nom_script, path_file, mode, MAX) + blank_space(1)
+        div_edit += tooltip_button(f"""\'downloadFile("editor_{tc}","{nom_script}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-download-64.png"><span class="tooltiptext">Télécharger</span>""")+ blank_space()
+        div_edit += create_upload_button(tc) + blank_space(1)
+        div_edit += tooltip_button(f"""\'reload("{tc}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-restart-64.png"><span class="tooltiptext">Recharger</span>""") + blank_space()
+        div_edit += tooltip_button(f"""\'saveEditor("{tc}")\'""", f"""<img src="/{path_img}/images/buttons/icons8-save-64.png"><span class="tooltiptext">Sauvegarder</span>""")
         div_edit += '</div>'
 
         div_edit += f"""<span id="content_editor_{tc}" class="hide">{content}</span>"""
