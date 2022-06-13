@@ -12,7 +12,7 @@ nav:
   - "Guide du Terminal ⌨️": install_term.md
   - "Guide de l'IDE 🐍" : install_ide.md
   - "QCM en Mkdocs ✅❌": qcm.md
-  # - "En développement 🧪": todo.md
+  - "En développement 🧪": todo.md
   # - "Bac à sable 🏖": premiere/01_langages/2_specif/specif_tests.md
   # - "Bac à sable 🏖": sandbox.md
   # - "Bac à sable 🏖": exo3/python4.md
