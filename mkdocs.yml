@@ -12,7 +12,7 @@ nav:
   - "Guide du Terminal ⌨️": install_term.md
   - "Guide de l'IDE 🐍" : install_ide.md
   - "QCM en Mkdocs ✅❌": qcm.md
-  - "En développement 🧪": todo.md
+  # - "En développement 🧪": todo.md
   # - "Bac à sable 🏖": premiere/01_langages/2_specif/specif_tests.md
   # - "Bac à sable 🏖": sandbox.md
   # - "Bac à sable 🏖": exo3/python4.md
@@ -22,7 +22,7 @@ nav:
   # - "E-nsi DIFF": N3/diff/sujet.md
   # - "Bac à sable 🏖": N2/redimensionner/sujet.md
   #  - "Bac à sable 2 🏖": sql/sujet.md
-  - "Bac à sable": sandbox.md
+  # - "Bac à sable": sandbox.md
   # - "E-nsi REDIM2": redimensionner/sujet.md
 
 
@@ -51,10 +51,11 @@ theme:
         - navigation.tabs
         - navigation.tabs.sticky
         - navigation.sections
-        - navigation.expand
+        # - navigation.expand
+        - navigation.tracking
         - navigation.top
-        - toc.integrate
-        - header.autohide
+        # - toc.integrate
+        # - header.autohide
 
 
 markdown_extensions:
@@ -102,14 +103,6 @@ extra:
           link: https://mooc-forums.inria.fr/moocnsi/
           name: Le forum des enseignants de NSI
 
-        - icon: fontawesome/brands/linux
-          link: https://linuxfr.org/
-          name: Promouvoir les Logiciels libres
-
-        - icon: fontawesome/brands/wikipedia-w
-          link: https://fr.wikipedia.org
-          name: L'encyclopédie libre que chacun peut améliorer
-
         - icon: fontawesome/solid/paper-plane
           link: mailto:prof-bouillot@protonmail.com
           name: Écrire à l'auteur
@@ -122,7 +115,7 @@ extra:
 plugins:
   - search
   - macros
-  - enumerate-headings
+  # - enumerate-headings
 
 extra_javascript:
   - xtra/javascripts/mathjax-config.js                    # MathJax

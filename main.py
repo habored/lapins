@@ -259,7 +259,9 @@ def define_env(env):
         return "".join(random.choices(alphabet, k = 6))
 
     @env.macro
-    def qcm(list_answers, list_correct, shuffle = True, single = True):
+    def qcm(list_answers, list_correct, opts = None, shuffle = True, single = True):
+        # single -> une seule question de QCM
+        print('opts', opts)
         if type(list_correct) == int : list_correct = [list_correct]
         list_correct = list(map(lambda x : x - 1, list_correct))  # back to 0 to n-1 indexing
         def spanify(html_tag):
@@ -304,7 +306,14 @@ def define_env(env):
         inv_dict_correspondance = {i : indices[i] for i in range(len(list_answers))}
         
         id = generate_id()
-        html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)} data-shuffle = {1 if shuffle else 0}>"""
+
+        prefix = "data-var-"
+        variable_part = ""
+        if opts != None:
+            for clé in opts : 
+                variable_part += f"{prefix}{clé} = '{opts[clé]}' "
+        html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)} data-shuffle = {1 if shuffle else 0} {variable_part}>"""
+
         for i in range(len(list_answers)):
             answer = list_answers[inv_dict_correspondance[i]]
             if type(answer) != str : 
@@ -360,8 +369,7 @@ def define_env(env):
                 question = input[i][0]
                 list_answers = input[i][1]
                 list_correct = input[i][2]
-                if len(input[i]) == 4:
-                    dictionnaire_var = input[i][3]
+                dictionnaire_var = input[i][3] if len(input[i]) == 4 else None
                     # dictionnaire_var = get_variables_state(input[i][4])
                 liste_QCM.append({"question" : question, "reponse": list_answers, "bonne_reponse": list_correct})
 
@@ -372,13 +380,23 @@ def define_env(env):
             question = input[i][0]
             list_answers = input[i][1]
             list_correct = input[i][2]
-            if len(input[i]) == 4:
-                dictionnaire_var = input[i][3]  # {'x' : [2,3,4], 'n' : [3,1,2]}
+            dictionnaire_var = input[i][3] if len(input[i]) == 4 else None
+                  # {'x' : [2,3,4], 'n' : [3,1,2]}
+                # dictionnaire_var = {'x' : [2,3,4], 'n' : [3,1,2]}
             html_element += f"<span class = 'questionQCM arithmatex'>Question {i+1} : {question}</span>"
-            html_element += qcm(list_answers, list_correct, shuffle = shuffle, single = False)
+            print('dic', dictionnaire_var)
+            html_element += qcm(list_answers, list_correct, opts = dictionnaire_var, shuffle = shuffle, single = False)
         html_element += f"""<div class="buttonWrapper"><span class = "validationButton" id = "valider_{id_qcm}">Valider</span><span class = "validationButton" id = "recharger_{id_qcm}">Recharger</span></div><div class = "showScore" id="score_{id_qcm}"></div>"""
         print(html_element)
         return html_element
+
+
+
+
+
+
+
+
 
     # @env.macro
     # def multi_qcm(*input, shuffle = True):

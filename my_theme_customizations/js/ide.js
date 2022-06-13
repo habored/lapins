@@ -356,9 +356,46 @@ document.querySelectorAll("[id^=valider_]").forEach((el) => {
         // var curre = document.getElementById(`score_${number}`).parentElement
         // curre.insertAdjacentElement("afterend", blabla)
         // // window.MathJax.
-        window.MathJax.startup.document.clear();
-        window.MathJax.startup.document.updateDocument();
+        // window.MathJax.startup.document.clear();
+        // window.MathJax.startup.document.updateDocument();
 })})
+
+function normalize_var(html_attribute) {return html_attribute.slice(3).toLowerCase()}
+
+function create_dictionnary(dataset) {
+    let var_dictionnary = {};
+    for (let html_attr in dataset) {
+        if (html_attr.startsWith("var")) {
+            var_name = normalize_var(html_attr) // pas de majuscule dans les noms de variables.
+            var_dictionnary[var_name] = dataset[html_attr].startsWith("[") ? JSON.parse(dataset[html_attr]) : JSON.parse("["+dataset[html_attr]+"]")
+        }
+    }
+    return var_dictionnary
+}
+
+let pick_rnd_value = (list_values) => list_values[Math.floor(Math.random()*list_values.length)]
+
+function pick_rnd_values(var_dict) { 
+    let picked_var_dict = {}
+    for (let var_name in var_dict) picked_var_dict[var_name] = pick_rnd_value(var_dict[var_name])
+    return picked_var_dict
+}
+
+function process_rnd_formula(htmlElement, var_dict) {
+    if (var_dict !== {}) { // there is variable parts
+        if (MathJax.startup.document.getMathItemsWithin(htmlElement)[0]) {  // there is a math formula
+            // console.log(htmlElement, htmlElement.htmlFor)
+            let formula = MathJax.startup.document.getMathItemsWithin(htmlElement)[0].math;
+            for (let var_name in var_dict) {
+                if (formula.includes(`{${var_name}}`)) sessionStorage.setItem(`${htmlElement.htmlFor}`, formula);
+                else formula = sessionStorage.getItem(`${htmlElement.htmlFor}`)
+            }
+            for (let var_name in var_dict) formula = formula.replace(`{${var_name}}`, var_dict[var_name])
+            console.log(formula)
+            htmlElement.innerHTML = `\\(${formula}\\)`
+        }
+    }
+}
 
 document.querySelectorAll("[id^=recharger_]").forEach((el) => {
     let number = el.id.split('_').pop();
@@ -367,11 +404,19 @@ document.querySelectorAll("[id^=recharger_]").forEach((el) => {
         elScore.innerHTML = "";
         for (let question of elScore.parentElement.children) {
             if (question.className == "wrapper_qcm") {
+                let var_dictionnary = create_dictionnary(question.dataset)
+                var picked_var_dict = pick_rnd_values(var_dictionnary)
+
                 for (let answer of question.children) {
                     answer.firstChild.classList.remove("reveal")
                     answer.firstChild.disabled = false;
                     answer.firstChild.checked = false;
+                    // answer.lastChild.innerHTML = 
+                    process_rnd_formula(answer.lastChild, picked_var_dict)
                 }
+                MathJax.typeset()
+                
+                // for (let i in var_dictionnary['p']) console.log(i)
                 randomizeQCM(question)
             }
         }

@@ -1,7 +1,5 @@
 # Bac à sable
 
-{{IDE("algo_glouton")}}
-
 <p id="formule" class="arithmatex">
 \(x=3\)
 </p>
@@ -32,8 +30,7 @@ function MAJ_formule() {
   let valeur = Math.floor(Math.random() * 10)
   console.log(valeur)
   document.getElementById("formule").innerHTML = "\\( x = \\sqrt{" + valeur + "}\\)"
-	MathJax.typeset()
-}
+	MathJax.typeset()}
 </script>
 
 
@@ -41,7 +38,7 @@ function MAJ_formule() {
 {{multi_qcm(
   ["Age du capitaine ?", ["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D", '42'], [1,2, 5]],
   ["1+1=?", ["$12$", "2", "Je sais pas", "L'age du capitaine"], [2]],
-  ["${x}^{p} = ?$", ["{x}**{p}", "{x}+{p}", "Je sais pas", "L'age du capitaine"], [1], {'x' : 2, 'p' : 7} ]
+  ["${x}^{p} = ?$", ["${x}^{p}$", "${x}+{p}$", "Je sais pas", "L'age du capitaine"], [1], {'x' : [8, 2], 'p' : 7} ]
 )}}
 
 <!-- <span id="truc_m">$x^p$</span>
@@ -121,18 +118,18 @@ As MathML:
   </script> -->
 
 
-<!-- <div id = "setQCM">
-Question 1:
+ <!-- <div id = "setQCM"> -->
+<!-- Question 1:
 
-{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
-
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2]) }} -->
+<!-- 
 Question 2:
 
-{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2]) }}
 
 Question 3:
 
-{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], True) }}
+{{ qcm(["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2]) }}
 
 <div class="buttonWrapper">
 <span class = "validationButton" id = "valider">Valider</span>
