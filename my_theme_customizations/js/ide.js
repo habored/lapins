@@ -373,7 +373,9 @@ function create_dictionnary(dataset) {
     return var_dictionnary
 }
 
-let pick_rnd_value = (list_values) => list_values[Math.floor(Math.random()*list_values.length)]
+function pick_rnd_value(list_values) { 
+    return list_values[Math.floor(Math.random()*list_values.length)]
+}
 
 function pick_rnd_values(var_dict) { 
     let picked_var_dict = {}
