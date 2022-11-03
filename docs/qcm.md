@@ -1,7 +1,7 @@
-# Des QCM en Mkdocs
+# Des QCM en MkDocs
 
 
-!!! help "Des QCM en Mkdocs"
+!!! help "Des QCM en MkDocs"
 
     Quelle est la réponse à la question universelle ?
 
@@ -39,7 +39,7 @@
 
     Prérequis : 
     
-    - plugin macros de Mkdocs
+    - plugin macros de MkDocs
     - MathJax 3.0
 
     === "mkdocs.yml"

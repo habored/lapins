@@ -1,8 +1,8 @@
-# Terminal et IDE dans Mkdocs
+# Pyodide-MkDocs 0.8 : Terminal et IDE dans MkDocs
 
 ## Introduction
 
-`Pyodide-Mkdocs` est une solution technique permettant de créer un cours interactif à partir d'un site généré par Mkdocs. 
+`Pyodide-MkDocs` est une solution technique permettant de créer un cours interactif à partir d'un site généré par MkDocs. 
 
 Il permet d'intégrer, dans le navigateur, côté client :
 
@@ -27,9 +27,9 @@ Garantie :
 
 ## Démarrage rapide
 
-Vous ne connaissez rien à Mkdocs et vous souhaitez vous y mettre ? Des mots comme `yaml`, `javascript`, `Pyodide` ou templates `Jinja` vous font peur ? 
+Vous ne connaissez rien à MkDocs et vous souhaitez vous y mettre ? Des mots comme `yaml`, `javascript`, `Pyodide` ou templates `Jinja` vous font peur ? 
 
-Commencez en douceur en partant d'un repo Mkdocs aux dernières normes en vigueur : Clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !
+Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueur : Clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !
 
 ## Installation
 
@@ -44,7 +44,7 @@ __Modification__ :
 
 __Ajout__ :
 
-- un dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs ;
+- un dossier `#!bash my_theme_customizations/` à la racine du projet MkDocs ;
 - un template HTML `#!bash my_theme_customizations/main.html` ;
 - un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
 - deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/ide.js` ;
@@ -65,7 +65,7 @@ Ajoutez les lignes surlignées dans votre fichier mkdocs.yml .
 
 ### Création du dossier `custom_dir`
 
-**N'oubliez pas de créer le dossier `#!bash my_theme_customizations/` à la racine du projet Mkdocs**.
+**N'oubliez pas de créer le dossier `#!bash my_theme_customizations/` à la racine du projet MkDocs**.
 
 Dans ce dossier, ajoutez le template Jinja `#!bash main.html` :
 
