@@ -1,32 +1,30 @@
 # Des questions techniques et métaphysiques
 
-<!-- {{ macros_info() }} -->
-
 ## Versions
 
-???+ warning "0.13"
+???+ warning "0.8"
 
     === "Ajouts majeurs"
         - Correctif majeur du système de sauvegarde des travaux élèves évitant le problème de doublons et IDE avec les mauvais énoncés : <span style="color:red">sur le navigateur, cliquer sur outils de développement puis dans la console javascript, écrivez : <code>localStorage.clear()</code>.</span>
-        - Ajout d'un nouveau système de gestion des palettes de couleur et des modes jour/nuit. La palette de couleur utilisé par Pyodide-Mkdocs est automatiquement la couleur primaire utilisé par le site sous Mkdocs. 
+        - Ajout d'un nouveau système de gestion des palettes de couleur et des modes jour/nuit. La palette de couleur utilisé par Pyodide-MkDocs est automatiquement la couleur primaire utilisé par le site sous MkDocs. 
         Il est possible de spécifier les themes de coloration de l'éditeur ACE via le `mkdocs.yml` comme dans l'exemple ci-dessous :
         ```yml
         extra:
             ace_style: # https://ace.c9.io/build/kitchen-sink.html pour avoir plus de themes
                 default: crimson_editor  # mode jour
                 slate: tomorrow_night_bright   # mode nuit
-                # slate: tomorrow_night_bright|youtube (if your dark mode is youtube for example)
+                # slate: tomorrow_night_bright|youtube (si votre mode sombre est youtube par exemple)
         ```
         - Ajout d'un système d'activation/désactivation des tests publics. 
 
-    === "Correctifs mineurs"
+    === "Ajouts mineurs"
         - Raccourci clavier pour autocomplétion modifié : ++alt+tab++ ;
         - Correction affichage des tooltip pour les boutons ;
         - Correction bug existant avec IDE vide et disparition de ligne.
 
 ## Todo list
 
-:x: QCM intégré à Mkdocs
+:x: QCM intégré à MkDocs
 
 :x: intégration de drawSVG
 

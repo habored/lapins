@@ -6,6 +6,6 @@ https://bouillotvincent.gitlab.io/pyodide-mkdocs/
 
 This project is mainly for computer science teachers.
 
-It aims at integrating Python REPLs in static Mkdocs websites. 
+It aims at integrating Python REPLs in static MkDocs websites. 
 
 It gives the possibility to create Python exercises, auto-corrections and remarks without too much hassle.
