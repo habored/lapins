@@ -1,4 +1,4 @@
-const debug_mode = false;
+var debug_mode = false;
 var dict = {}; // Global dictionnary tracking the number of clicks
 var tagHdr = "#--- HDR ---#";
 
@@ -187,10 +187,14 @@ function removeLines(data, moduleName) {
     .join("\n");
 }
 
-async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
+async function foreignModulesFromImports(
+  code,
+  moduleDict = {},
+  editorName = ""
+) {
   await pyodideReadyPromise;
   pyodide.runPython(
-    `from pyodide.code import find_imports\nimported_modules = find_imports(${JSON.stringify(
+    `from pyodide import find_imports\nimported_modules = find_imports(${JSON.stringify(
       code
     )})`
   );
@@ -226,7 +230,7 @@ async function foreignModulesFromImports(code, moduleDict = {}, id_editor = 0) {
       } else {
         importLine = importLine.replace(moduleName, moduleFakeName);
       }
-      if (moduleName.includes("turtle")) showGUI(id_editor);
+      if (moduleName.includes("turtle")) showGUI(editorName);
 
       executedCode =
         `import micropip\nawait micropip.install("${moduleFakeName}")\n${importLine}\n` +
@@ -267,8 +271,8 @@ function generateAssertionLog(errLineLog, code) {
     .replace("assert ", "")}`;
 }
 
-function generateErrLog(errTypeLog, errLineLog, code, src = 0) {
-  let dictErrType = {
+function generateErrLog(errorTypeLog, errLineLog, code, src = 0) {
+  let errorTypes = {
     AssertionError: "Erreur avec les tests publics",
     SyntaxError: "Erreur de syntaxe",
     ModuleNotFoundError: "Erreur de chargement de module",
@@ -287,29 +291,29 @@ function generateErrLog(errTypeLog, errLineLog, code, src = 0) {
     UnboundLocalError: "Variable non définie",
   };
   // Ellipsis is triggered when dots (...) are used
-  errTypeLog =
-    errTypeLog +
-    (errTypeLog.includes("Ellipsis") ? " (issue with the dots ...)" : "");
-  for (errType in dictErrType) {
-    if (errTypeLog.includes(errType)) {
-      if (errType != "AssertionError") {
+  errorTypeLog =
+    errorTypeLog +
+    (errorTypeLog.includes("Ellipsis") ? " (issue with the dots ...)" : "");
+  for (errorType in errorTypes) {
+    if (errorTypeLog.includes(errorType)) {
+      if (errorType != "AssertionError") {
         // All Exceptions but assertions
-        return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${errLineLog}\n ---\n ${errTypeLog}`;
+        return ` Python a renvoyé une '${errorTypes[errorType]}' à la ligne ${errLineLog}\n ---\n ${errorTypeLog}`;
       } else {
-        if (errTypeLog !== "AssertionError") {
+        if (errorTypeLog !== "AssertionError") {
           // case : no Assertion description
-          return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${
+          return ` Python a renvoyé une '${errorTypes[errorType]}' à la ligne ${
             errLineLog + src
-          }\n ---\n ${errTypeLog}`;
+          }\n ---\n ${errorTypeLog}`;
         } else {
           // Assertion with description
-          errTypeLog = `${errTypeLog} : test '${generateAssertionLog(
+          errorTypeLog = `${errorTypeLog} : test '${generateAssertionLog(
             errLineLog + src,
             code
           )}' failed`;
-          return ` Python a renvoyé une '${dictErrType[errType]}' à la ligne ${
+          return ` Python a renvoyé une '${errorTypes[errorType]}' à la ligne ${
             errLineLog + src
-          }\n ---\n ${errTypeLog}`;
+          }\n ---\n ${errorTypeLog}`;
         }
       }
     }
@@ -336,21 +340,31 @@ function generateLog(err, code, src = 0) {
     Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift; //+ src; // get line number
 
   // catching multiline Exception logs (without line number)
-  var errTypeLog = lastLogs[1];
+  var errorTypeLog = lastLogs[1];
   p = 2;
   while (p < lastLogs.length) {
-    errTypeLog = errTypeLog + "\n" + " " + lastLogs[p];
+    errorTypeLog = errorTypeLog + "\n" + " " + lastLogs[p];
     p++;
   }
-  console.log(errTypeLog, errLineLog, code);
+  console.log(errorTypeLog, errLineLog, code);
   console.log(src);
-  return generateErrLog(errTypeLog, errLineLog, code, src);
+  return generateErrLog(errorTypeLog, errLineLog, code, src);
 }
 
-var pluralize = (cond, sg, pl = "s", irr = false) =>
-  irr ? (cond ? sg : pl) : cond ? sg : sg + "s";
+const pluralize = (numberOfItems, singularForm, pluralForm = "s") => {
+  return numberOfItems == 1
+    ? singularForm
+    : pluralForm != "s"
+    ? pluralForm
+    : singularForm + "s";
+};
 
-async function evaluatePythonFromACE(code, id_editor, mode) {
+const enumerize = (liste) =>
+  liste.length == 1
+    ? liste.join("")
+    : liste.slice(0, -1).join(", ") + " et " + liste.slice(-1);
+
+async function evaluatePythonFromACE(code, editorName, mode) {
   await pyodideReadyPromise;
 
   $.terminal.active().clear();
@@ -360,12 +374,12 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
       __sys__.stdout = __io__.StringIO()
     `);
 
-  if (mode === "v")
+  if (mode === "_v")
     $.terminal
       .active()
       .resize(
         $.terminal.active().width(),
-        document.getElementById(id_editor).style.height
+        document.getElementById(editorName).style.height
       );
 
   // Strategy : code delimited in 2 blocks
@@ -389,7 +403,7 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     mainCode = await foreignModulesFromImports(
       mainCode,
       { turtle: "pyo_js_turtle" },
-      id_editor
+      editorName
     );
 
     await pyodide.runPythonAsync(
@@ -399,46 +413,43 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
     var testDummy = mainCode.includes("dummy_");
     if (testDummy) {
       var splitJoin = (txt, e) => txt.split(e).join("");
-      var enumerize = (liste) =>
-        liste.length == 1
-          ? liste.join("")
-          : liste.slice(0, -1).join(", ") + " et " + liste.slice(-1);
       console.log("ici");
 
       let joinInstr = [];
       let joinLib = [];
       let matchInstr = code.match(new RegExp("dummy_(\\w+)\\(", "g"));
-      let matchLib = code.match(new RegExp("#import dummy_lib_(\\w+)", "g"));
+      let importedPythonModules = code.match(
+        new RegExp("#import dummy_lib_(\\w+)", "g")
+      );
       if (matchInstr != null)
-        for (instruction of matchInstr)
+        for (let instruction of matchInstr)
           joinInstr.push(splitJoin(splitJoin(instruction, "dummy_"), "("));
-      if (matchLib != null)
-        for (instruction of matchLib)
+      if (importedPythonModules != null)
+        for (let instruction of importedPythonModules)
           joinLib.push(splitJoin(instruction, "#import dummy_lib_"));
       let nI = joinInstr.length;
       let nL = joinLib.length;
       stdout = ">>> Script exécuté : \n------\n";
       if (nI > 0)
-        stdout += ` ${pluralize(nI == 1, "La", "Les", true)} ${pluralize(
-          nI == 1,
+        stdout += ` ${pluralize(nI, "La", "Les")} ${pluralize(
+          nI,
           "fonction"
         )} ${splitJoin(
           splitJoin(enumerize(joinInstr), "dummy_"),
           "("
-        )} ${pluralize(nI == 1, "est", "sont", true)} ${pluralize(
-          nI == 1,
+        )} ${pluralize(nI, "est", "sont")} ${pluralize(
+          nI,
           "interdite"
         )} pour cet exercice !\n`;
       if (nL > 0)
-        stdout += ` ${pluralize(nL == 1, "Le", "Les", true)} ${pluralize(
-          nL == 1,
+        stdout += ` ${pluralize(nL, "Le", "Les")} ${pluralize(
+          nL,
           "module"
         )} ${splitJoin(enumerize(joinLib), "dummy_lib_")} ${pluralize(
-          nL == 1,
+          nL,
           "est",
-          "sont",
-          true
-        )} ${pluralize(nL == 1, "interdit")} pour cet exercice !\n`;
+          "sont"
+        )} ${pluralize(nL, "interdit")} pour cet exercice !\n`;
       stdout += "------";
     }
 
@@ -464,35 +475,41 @@ async function evaluatePythonFromACE(code, id_editor, mode) {
   }
 }
 
-async function evaluateHdrFile(id_editor) {
-  let url_pyfile = document.getElementById("content_" + id_editor).innerText;
-  if (url_pyfile.includes(tagHdr)) {
-    splitHdrPyFile = url_pyfile.match(new RegExp(tagHdr + "(.*)" + tagHdr));
+function restoreEscapedCharacters(codeContent) {
+  return codeContent
+    .replace(/bksl-nl/g, "\n")
+    .replace(/py-und/g, "_")
+    .replace(/py-str/g, "*");
+}
+
+async function evaluateHdrFile(editorName) {
+  let pythonFileContent = document.getElementById(
+    "content_" + editorName
+  ).innerText;
+  if (pythonFileContent.includes(tagHdr)) {
+    const splitHdrPyFile = pythonFileContent.match(
+      new RegExp(tagHdr + "(.*)" + tagHdr)
+    );
     if (splitHdrPyFile !== null)
-      pyodide.runPython(
-        splitHdrPyFile[1]
-          .replace(/bksl-nl/g, "\n")
-          .replace(/py-und/g, "_")
-          .replace(/py-str/g, "*")
-      );
+      pyodide.runPython(restoreEscapedCharacters(splitHdrPyFile[1]));
   }
 }
 
-async function silentInterpretACE(id_editor) {
-  let ideClasseDiv = document.getElementById("term_" + id_editor).parentElement
+async function playSilent(editorName) {
+  let ideClassDiv = document.getElementById("term_" + editorName).parentElement
     .parentElement;
-  window.console_ready = await pyterm("#term_" + id_editor, 150);
-  $("#term_" + id_editor)
+  window.console_ready = await pyterm("#term_" + editorName, 150);
+  $("#term_" + editorName)
     .terminal()
     .focus(true); // gives the focus to the corresponding terminal
 
-  let stream = await ace.edit(id_editor).getSession().getValue();
+  let stream = await ace.edit(editorName).getSession().getValue();
 
-  localStorage.setItem(id_editor, stream);
+  localStorage.setItem(editorName, stream);
 
-  console.log(ideClasseDiv.dataset.exclude);
-  if (ideClasseDiv.dataset.exclude != "") {
-    for (let instruction of ideClasseDiv.dataset.exclude.split(",")) {
+  console.log(ideClassDiv.dataset.exclude);
+  if (ideClassDiv.dataset.exclude != "") {
+    for (let instruction of ideClassDiv.dataset.exclude.split(",")) {
       pyodide.runPython(`
         def dummy_${instruction}(src):
             return src
@@ -509,11 +526,11 @@ async function silentInterpretACE(id_editor) {
   return stream;
 }
 
-async function interpretACE(id_editor, mode) {
-  let stream = await silentInterpretACE(id_editor);
-  evaluateHdrFile(id_editor);
+async function play(editorName, mode) {
+  let stream = await playSilent(editorName);
+  evaluateHdrFile(editorName);
   calcTermSize(stream, mode);
-  evaluatePythonFromACE(stream, id_editor, mode);
+  evaluatePythonFromACE(stream, editorName, mode);
 }
 
 async function start_term(idName) {
@@ -522,59 +539,50 @@ async function start_term(idName) {
   window.console_ready = pyterm("#" + idName);
 }
 
-function downloadFile(id_editor, nom_script) {
-  let data = ace.edit(id_editor).getValue();
-  let script2download = nom_script + ".py";
+function download(editorName, scriptName) {
+  const generateDownloadName = (scriptName) => {
+    if (scriptName != "") return `${scriptName}.py`;
 
-  if (nom_script == "") {
-    let splitDate = new Date().toISOString().split("T");
-    let date =
-      splitDate[0] + "-" + splitDate[1].split(".")[0].replace(/:/g, "-");
-    script2download = `script_${date}.py`;
-  }
+    let [day, time] = new Date().toISOString().split("T");
+    let hhmmss = time.split(".")[0].replace(/:/g, "-");
+    return `script_${day}-${hhmmss}.py`;
+  };
 
   let link = document.createElement("a");
-  link.download = script2download;
-  let blob = new Blob(["" + data + ""], { type: "text/plain" });
+  link.download = generateDownloadName(scriptName);
+  let ideContent = ace.edit(editorName).getValue();
+  let blob = new Blob(["" + ideContent + ""], { type: "text/plain" });
   link.href = URL.createObjectURL(blob);
   link.click();
   URL.revokeObjectURL(link.href);
 }
 
-function reload(idEditor) {
-  localStorage.removeItem(`editor_${idEditor}`);
-  let content = document.getElementById(`content_editor_${idEditor}`).innerText;
-  ace
-    .edit("editor_" + idEditor)
-    .getSession()
-    .setValue(
-      content
-        .replace(/bksl-nl/g, "\n")
-        .replace(/py-und/g, "_")
-        .replace(/py-str/g, "*")
-    );
+function restart(editorName) {
+  localStorage.removeItem(editorName);
+  let content = document.getElementById(`content_${editorName}`).innerText;
+  ace.edit(editorName).getSession().setValue(restoreEscapedCharacters(content));
 }
 
-function saveEditor(idEditor) {
+function save(editorName) {
   localStorage.setItem(
-    `editor_${idEditor}`,
-    ace.edit(`editor_${idEditor}`).getSession().getValue()
+    editorName,
+    ace.edit(editorName).getSession().getValue()
   );
 }
 
 function calcTermSize(text, mode) {
   let nlines =
-    mode === "v"
+    mode === "_v"
       ? Math.max(text.split(/\r\n|\r|\n/).length, 6)
       : Math.max(5, Math.min(10, text.split(/\r\n|\r|\n/).length));
   $.terminal.active().resize($.terminal.active().width(), nlines * 30);
   return nlines;
 }
 
-function getWrapperElement(filetype, idEditor) {
-  if (document.getElementById(filetype + idEditor) === null) {
+function getWrapperElement(filetype, editorName) {
+  if (document.getElementById(filetype + editorName) === null) {
     let wrapperElement =
-      document.getElementById(idEditor); /* going up the DOM to IDE+buttons */
+      document.getElementById(editorName); /* going up the DOM to IDE+buttons */
     while (wrapperElement.className !== "ide_classe") {
       wrapperElement = wrapperElement.parentNode;
     }
@@ -582,45 +590,37 @@ function getWrapperElement(filetype, idEditor) {
   }
 }
 
-function showGUI(idEditor) {
-  let wrapperElement = getWrapperElement("gui_", idEditor);
-  var txt = document.createElement("div");
+function showGUI(editorName) {
+  let wrapperElement = getWrapperElement("gui_", editorName);
+  let txt = document.createElement("div");
   // txt.innerHTML='<details class="check"><summary>Fenêtre graphique</summary>\
   // <div class="highlight" id="gui_'+idEditor+'"></div></details>'
   txt.innerHTML =
     '<details open class="check"><summary>Fenêtre graphique</summary><div class = "can_wrapper"><div id = "gui_' +
-    idEditor +
+    editorName +
     '"><canvas id = "gui_' +
-    idEditor +
+    editorName +
     '_tracer" width="700" height="400"></canvas><canvas id="gui_' +
-    idEditor +
+    editorName +
     '_pointer" width="700" height="400"></canvas></div></div></details>';
 
   wrapperElement.insertAdjacentElement("afterend", txt);
 }
 
-function showCorrection(id_editor) {
-  let wrapperElement = getWrapperElement("gui_", id_editor);
+function showCorrection(editorName) {
+  let wrapperElement = getWrapperElement("gui_", editorName);
 
   var txt = document.createElement("div");
-  txt.setAttribute("id", `solution_${id_editor}`);
+  txt.setAttribute("id", `solution_${editorName}`);
   txt.innerHTML =
     '<details class="admonition check" open><summary>Solution</summary>\
     <div class="highlight" id="corr_' +
-    id_editor +
+    editorName +
     '"></div></details>';
 
-  let corrElt = document.getElementById(`corr_content_${id_editor}`);
-  let url_pyfile = corrElt.textContent;
-  console.log("url", corrElt);
-
-  // __md_scope=new URL(".",location)
-  // __md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e))
-  // console.log('BLAM', __md_scope)
-  // console.log('localStorage', localStorage)
-  // console.log('localStorage 2', __md_scope.pathname+"."+"__palette")
-  // console.log('localStorage 3', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
-  // console.log('localStorage 4', __md_get("__palette").scheme)
+  let corrElement = document.getElementById(`corr_content_${editorName}`);
+  let url_pyfile = corrElement.textContent;
+  console.log("url", corrElement);
 
   var _slate = document.getElementById("ace_palette").dataset.aceDarkMode;
   var _default = document.getElementById("ace_palette").dataset.aceLightMode;
@@ -645,8 +645,8 @@ function showCorrection(id_editor) {
     return "ace/theme/" + ace_style[customTheme[curPalette]];
   }
 
-  function createACE(id_editor) {
-    var editor = ace.edit(id_editor, {
+  function createACE(editorName) {
+    var editor = ace.edit(editorName, {
       theme: createTheme(),
       mode: "ace/mode/python",
       autoScrollEditorIntoView: true,
@@ -658,36 +658,32 @@ function showCorrection(id_editor) {
     });
     // Decode the backslashes into newlines for ACE editor from admonitions
     // (<div> autocloses in an admonition)
-    editor.getSession().setValue(
-      url_pyfile
-        .replace(/bksl-nl/g, "\n")
-        .replace(/py-und/g, "_")
-        .replace(/py-str/g, "*")
-    );
+    editor.getSession().setValue(restoreEscapedCharacters(url_pyfile));
   }
+
   wrapperElement.insertAdjacentElement("afterend", txt);
-  if (corrElt.dataset.strudel == "")
-    window.IDE_ready = createACE(`corr_${id_editor}`);
+  if (corrElement.dataset.strudel == "")
+    window.IDE_ready = createACE(`corr_${editorName}`);
 
   // revealing the remark from Element
-  var remElement = document.getElementById("rem_content_" + id_editor);
+  var remElement = document.getElementById("rem_content_" + editorName);
   remElement.style.display = "block";
 
   var fragment = document.createDocumentFragment();
   fragment.appendChild(remElement);
   // console.log(document.getElementById("solution_" + id_editor).firstChild)
   document
-    .getElementById("solution_" + id_editor)
+    .getElementById("solution_" + editorName)
     .firstChild.appendChild(fragment);
 }
 
-function executeTest(id_editor, mode) {
-  executeTestAsync(id_editor, mode);
+function check(editorName, mode) {
+  checkAsync(editorName, mode);
 }
 
-async function executeTestAsync(id_editor, mode) {
+async function checkAsync(editorName, mode) {
   await pyodideReadyPromise;
-  let interpret_code = silentInterpretACE("editor_" + id_editor, "");
+  let interpret_code = playSilent(editorName, "");
 
   var code = await interpret_code;
   $.terminal.active().clear();
@@ -697,65 +693,61 @@ async function executeTestAsync(id_editor, mode) {
     console.log(code, testDummy);
     if (testDummy) {
       var splitJoin = (txt, e) => txt.split(e).join("");
-      var enumerize = (liste) =>
-        liste.length == 1
-          ? liste.join("")
-          : liste.slice(0, -1).join(", ") + " et " + liste.slice(-1);
+
       console.log("ici");
 
       let joinInstr = [];
       let joinLib = [];
       let matchInstr = code.match(new RegExp("dummy_(\\w+)\\(", "g"));
-      let matchLib = code.match(new RegExp("#import dummy_lib_(\\w+)", "g"));
+      let importedPythonModules = code.match(
+        new RegExp("#import dummy_lib_(\\w+)", "g")
+      );
       if (matchInstr != null)
         for (instruction of matchInstr)
           joinInstr.push(splitJoin(splitJoin(instruction, "dummy_"), "("));
-      if (matchLib != null)
-        for (instruction of matchLib)
+      if (importedPythonModules != null)
+        for (instruction of importedPythonModules)
           joinLib.push(splitJoin(instruction, "#import dummy_lib_"));
       let nI = joinInstr.length;
       let nL = joinLib.length;
       stdout = ">>> Script exécuté : \n------\n";
       if (nI > 0)
-        stdout += ` ${pluralize(nI == 1, "La", "Les", true)} ${pluralize(
-          nI == 1,
+        stdout += ` ${pluralize(nI, "La", "Les")} ${pluralize(
+          nI,
           "fonction"
         )} ${splitJoin(
           splitJoin(enumerize(joinInstr), "dummy_"),
           "("
-        )} ${pluralize(nI == 1, "est", "sont", true)} ${pluralize(
-          nI == 1,
+        )} ${pluralize(nI, "est", "sont")} ${pluralize(
+          nI,
           "interdite"
         )} pour cet exercice !\n`;
       if (nL > 0)
-        stdout += ` ${pluralize(nL == 1, "Le", "Les", true)} ${pluralize(
-          nL == 1,
+        stdout += ` ${pluralize(nL, "Le", "Les")} ${pluralize(
+          nL,
           "module"
         )} ${splitJoin(enumerize(joinLib), "dummy_lib_")} ${pluralize(
-          nL == 1,
+          nL,
           "est",
-          "sont",
-          true
+          "sont"
         )} ${pluralize(nL == 1, "interdit")} pour cet exercice !\n`;
       stdout += "------";
     } else {
       let executed_code = await foreignModulesFromImports(
         code,
         { turtle: "pyo_js_turtle" },
-        "editor_" + id_editor
+        editorName
       );
       await pyodide.runPythonAsync(
         "from __future__ import annotations\n" + executed_code
       ); // Running the code
       // pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
 
-      let test_code = document
-        .getElementById("test_term_editor_" + id_editor)
-        .textContent.replace(/bksl-nl/g, "\n")
-        .replace(/py-und/g, "_")
-        .replace(/py-str/g, "*");
+      let unittest_code = restoreEscapedCharacters(
+        document.getElementById("test_term_" + editorName).textContent
+      );
 
-      if (test_code.includes("benchmark")) {
+      if (unittest_code.includes("benchmark")) {
         pyodide.runPython(`
         import sys as __sys__
         import io as __io__
@@ -803,12 +795,12 @@ async function executeTestAsync(id_editor, mode) {
             return global_failed
         `);
         var output = await pyodide.runPythonAsync(
-          test_code + "\ntest_unitaire(benchmark)"
+          unittest_code + "\ntest_unitaire(benchmark)"
         ); // Running the code OUTPUT
       } else {
-        console.log("declaration", test_code);
+        console.log("declaration", unittest_code);
         var global_failed = 0;
-        var testCodeTable = test_code.split("\n"); // splits test code into several lines
+        var testCodeTable = unittest_code.split("\n"); // splits test code into several lines
         testCodeTable = testCodeTable.filter((e) => e != ""); // get rid of blank lines
         var testCodeTableMulti = []; // multiple lines code joined into one line
         var line = 0;
@@ -911,18 +903,7 @@ async function executeTestAsync(id_editor, mode) {
             i++;
           }
         }
-        // for (let test of testCodeTableMulti) {
-        //     try
-        //     {
-        //         pyodide.runPython(`${test}`)
-        //         if (test.includes("assert") && !test.startsWith("#")) {nPassedDict[i] = [1, test]; i++;success++;}
-        //     }
-        //     catch (err)
-        //     {
-        //         nPassedDict[i] = [0, test] ;
-        //         i++;
-        //     }
-        // }
+
         window.n_passed = nPassedDict;
         window.ext_var_data = extVarData;
 
@@ -974,9 +955,7 @@ print(f"""------""", end="")
       var stdout = pyodide.runPython(
         "import sys as __sys__\n__sys__.stdout.getvalue()"
       ); // Catching and redirecting the output
-      let elementCounter = document.getElementById(
-        "test_term_editor_" + id_editor
-      );
+      let elementCounter = document.getElementById("test_term_" + editorName);
       let parentCounter = elementCounter.parentElement.dataset.max;
       const nAttempts = parentCounter;
       console.log("730", "all passed");
@@ -984,39 +963,40 @@ print(f"""------""", end="")
       while (elementCounter.className !== "compteur") {
         elementCounter = elementCounter.nextElementSibling;
       }
-      if (output === 0) dict[id_editor] = nAttempts;
-      else dict[id_editor] = 1 + (id_editor in dict ? dict[id_editor] : 0);
+      let [rootName, idEditor] = editorName.split("_");
+      if (output === 0) dict[idEditor] = nAttempts;
+      else dict[idEditor] = 1 + (idEditor in dict ? dict[idEditor] : 0);
 
       if (nAttempts !== "\u221e") {
         // INFTY symbol
         elementCounter.textContent =
-          Math.max(0, nAttempts - dict[id_editor]) + "/" + parentCounter;
+          Math.max(0, nAttempts - dict[idEditor]) + "/" + parentCounter;
       } else {
         elementCounter.textContent = parentCounter + "/" + parentCounter;
       }
       console.log("747", "all passed");
 
       if (
-        dict[id_editor] == nAttempts &&
-        !document.getElementById("solution_editor_" + id_editor)
+        dict[idEditor] == nAttempts &&
+        !document.getElementById("solution_" + editorName)
       ) {
-        let correctionExists = $("#corr_content_editor_" + id_editor).text(); // Extracting url from the div before Ace layer
+        let correctionExists = $("#corr_content_" + editorName).text(); // Extracting url from the div before Ace layer
         if (
           correctionExists !== "" ||
-          document.getElementById("corr_content_editor_" + id_editor).dataset
+          document.getElementById("corr_content_" + editorName).dataset
             .strudel != ""
         ) {
-          showCorrection("editor_" + id_editor);
+          showCorrection(editorName);
         }
       }
 
       console.log("756", "Correction should be shown");
-      nlines = calcTermSize(stdout, mode);
-      let editor = ace.edit("editor_" + id_editor);
+      let nlines = calcTermSize(stdout, mode);
+      let editor = ace.edit(editorName);
       let stream = await editor.getSession().getValue();
-      if (editor.session.getLength() <= nlines && mode === "v") {
-        nslash = editor.session.getLength() - nlines + 3; // +3 takes into account shift and newlines
-        for (var i = 0; i < nslash; i++) {
+      if (editor.session.getLength() <= nlines && mode === "_v") {
+        const nslash = editor.session.getLength() - nlines + 3; // +3 takes into account shift and newlines
+        for (let i = 0; i < nslash; i++) {
           stream += "\n";
         }
         editor.session.setValue(stream); // set value and reset undo history
@@ -1027,7 +1007,6 @@ print(f"""------""", end="")
   } catch (err) {
     // Python not correct.
     err = err.toString().split("\n").slice(-7).join("\n");
-    nlines = calcTermSize(err, mode);
     console.log("fin");
     $.terminal
       .active()

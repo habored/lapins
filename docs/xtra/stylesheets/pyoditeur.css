@@ -12,7 +12,7 @@
   filter: opacity(35%);
 }
 
-.wrapper_h {
+.wrapper {
   border: solid 1px;
   border-radius: 6px;
   border-color: var(--main-theme);
@@ -23,7 +23,7 @@
   content: "ici";
 } */
 
-.wrapper {
+.wrapper_v {
 border: solid 1px;
 border-radius: 6px;
 border-color: var(--main-theme);
@@ -33,7 +33,7 @@ flex-wrap: wrap;
 flex: 1 1 auto;
 }
 
-.wrapper > * {
+.wrapper_v > * {
 flex: 1 1 300px;
 }
 
@@ -41,6 +41,11 @@ flex: 1 1 300px;
 border-right: 1px solid var(--main-theme);
 width:50%;
 }
+
+.line_v {
+  border-right: 1px solid var(--main-theme);
+  width:50%;
+}  
 
 .line{
 border-bottom : 1px solid var(--main-theme);
@@ -60,39 +65,46 @@ background: var(--background-theme);
 height: 205px;
 }
 
-.term_editor_h {
---color:var(--main-theme);
---background: var(--gutter-theme);
---size : 1.4;
-height: 150px;
-}
+.term_editor_v {
+  --color:var(--main-theme);
+  --background: var(--gutter-theme);
+  --size : 1.4;
+  height: 205px;
+  }  
 
 /* First apply terminal CSS */
 .terminal {
-width: 50%;
+  width: 50%;
 }
 
 /* Then change width to 100% */
 .terminal_f {
---color:var(--main-theme);
---background: var(--gutter-theme);
---size : 1.4;
-border: solid 1px;
-border-radius: 6px;
-border-color: var(--main-theme);
-height: 205px; 
-width: 100%;
+  --color:var(--main-theme);
+  --background: var(--gutter-theme);
+  --size : 1.4;
+  border: solid 1px;
+  border-radius: 6px;
+  border-color: var(--main-theme);
+  height: 205px; 
+  width: 100%;
 }
 
 /* Test to decide which REPL is best */
 .terminal_f_h {
---color:var(--main-theme);
---background: var(--gutter-theme);
---size : 1.4;
-height: 150px; 
-width: 100%;
+  --color:var(--main-theme);
+  --background: var(--gutter-theme);
+  --size : 1.4;
+  height: 150px; 
+  width: 100%;
 }
 
+.term_editor {
+  --color:var(--main-theme);
+  --background: var(--gutter-theme);
+  --size : 1.4;
+  height: 150px; 
+  width: 100%;
+}
 
 textarea {
 width: 100%;
@@ -239,6 +251,7 @@ left: 0;
   right:0px;
   z-index: 9;
 }
+
 .comment:hover {
   cursor: pointer;
   display: inline-block;

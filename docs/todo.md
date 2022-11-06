@@ -96,11 +96,11 @@
     Can include automatically a correction. Needs lots of refactoring though ⏳⏳⏳. 
 
 
-!!! done "REPL > IDE"
+!!! success "REPL > IDE"
 
     Une reprise complète de la dénomination a été faite. Les REPL s'appellent maintenant (et à raison) [IDE](https://fr.wikipedia.org/wiki/Environnement_de_développement "Définition IDE") Merci Fred Leleu pour le travail supplémentaire 😍 .
 
-!!! done "Fichiers javascripts"
+!!! success "Fichiers javascripts"
 
     ~~C'est le bazar dans l'appel des fichiers JS. Si quelqu'un peut me mettre de l'ordre dans tout cela, je suis preneur !~~
 
@@ -111,7 +111,7 @@
 
     Pyodide propose un module `#!python micropip` permettant de charger les modules manquants. Nous pourrions faire des interfaces graphiques à l'aide de cela mais est-ce vraiment utile ? 
 
-!!! done "Evaluateur de code"
+!!! success "Evaluateur de code"
 
     ~~Avec l'utilisation du code de [fjunier](https://mooc-forums.inria.fr/moocnsi/t/mkdocs-une-solution-ideale/1758/175), nous pourrions intégrer un juge en ligne ? Utile ou non ?~~
 
@@ -124,13 +124,13 @@
     Il faudra créer un pipe pour générer automatiquement un fichier de benchmark depuis un script de corrigé.
 
 
-!!! done "Javascript et IDE"
+!!! success "Javascript et IDE"
 
     ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du IDE, est vraiment naze. Il faut trouver autre chose.~~
     
     Je devais vraiment dormir. On peut tout simplement ajouter une ligne dans le template Jinja2 `main.html` du `custom_dir` de mkdocs. Cela permet de charger le javascript nécessaire au bon fonctionnement des IDE sans s'embêter.
 
-!!! done "Boutons et IDE"
+!!! success "Boutons et IDE"
 
     ~~La solution avec le -1 dans `main.py`, discutée dans le guide technique du IDE, est vraiment naze. Il faut trouver autre chose.~~
     
@@ -145,7 +145,7 @@
     
     Pédagogiquement, c'est plus discutable car certaines variables seront initialisées dans le Terminal 1 et utilisées dans le Terminal 2. Cela cache la notion d'initialisation.
 
-!!! done "IDE vertical"
+!!! success "IDE vertical"
 
     Est-ce vraiment utile de les conserver ?
     
@@ -153,7 +153,7 @@
 
     Quelques modifications ont permis de les conserver sans altérer les performances.  
 
-!!! done "macro Python"
+!!! success "macro Python"
 
     ~~Ma solution est un peu sale mais a-t-on vraiment le choix avec l'inclusion de balise HTML ?~~
 
