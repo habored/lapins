@@ -9,7 +9,7 @@ tags:
 
 On considère dans cet exercice un parenthésage avec les couples `()`, `{}`, `[]` et `<>`. On dira qu'une expression est bien parenthésée si chaque symbole ouvrant correspond à un symbole fermant et si l'expression contenue à l'intérieur est elle-même bien parenthésée.
 
-!!! done "Bien parenthésées"
+!!! success "Bien parenthésées"
     - `(2 + 4)*7`
     - `tableau[f(i) - g(i)]`
     - `#include <stdio.h> int main(){int liste[2] = {4, 2}; return (10*liste[0] + liste[1]);}`

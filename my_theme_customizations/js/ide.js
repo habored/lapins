@@ -156,93 +156,66 @@ $("[id^=editor_]").each(function () {
     ace.edit(idEditor).getSession().setValue("\n".repeat(6));
 
   // A correction Element always exists (can be void)
-  prevNode = document.getElementById("corr_content_" + idEditor);
-  var key = prevNode.dataset.strudel;
-  var workingNode = prevNode;
-  var remNode = document.createElement("div");
+  let correctionNode = document.getElementById("corr_content_" + idEditor);
+  var hiddenFolderName = correctionNode.dataset.strudel;
+  var remarkStartNode = correctionNode.nextElementSibling;
+  console.log(idEditor, remarkStartNode);
+  if (!remarkStartNode.innerHTML.includes("remark_start_node")) {
+    console.log("Invalid remark markers.");
+    return;
+  }
 
-  // console.log('la1', idEditor, key)
-  // console.log('la2', prevNode)
-  // console.log('la3', prevNode.innerHTML)
+  var remarkNode = document.createElement("div");
 
-  // console.log('la4', prevNode.innerHTML)
-  if (prevNode.innerHTML !== "" || key !== "") {
-    // soit y a pas de correction, soit la clé SHA256 n'est pas vide
-    if (prevNode.parentNode.tagName === "P") {
-      // REM file on top level
-      workingNode = prevNode.parentNode.nextElementSibling; //'<strong>A</strong>'
-      // console.log('bef', idEditor)
-      // console.log(workingNode.innerHTML)
-      // console.log(workingNode.nextElementSibling.innerHTML)
-      // console.log(prevNode.parentNode.nextElementSibling, workingNode.innerHTML)
-      // if (workingNode.nex)
-
-      if (
-        workingNode.innerHTML.includes("<strong>A</strong>") &&
-        workingNode.nextElementSibling.innerHTML.includes("<strong>Z</strong>")
-      ) {
-        remNode.innerHTML = "Pas de remarque particulière.";
-        workingNode.nextElementSibling.remove();
-        workingNode.remove();
-      } else {
-        workingNode.remove();
-        workingNode = prevNode.parentNode.nextElementSibling;
-        // console.log(prevNode.parentNode)
-
-        var tableElements = [];
-        while (!workingNode.innerHTML.includes("<strong>Z</strong>")) {
-          tableElements.push(workingNode);
-          workingNode = workingNode.nextElementSibling;
-        }
-        workingNode.remove();
-
-        for (let i = 0; i < tableElements.length; i++)
-          remNode.append(tableElements[i]);
-      }
+  if (correctionNode.innerHTML !== "" || hiddenFolderName !== "") {
+    let possibleRemarkEndNode = remarkStartNode.nextElementSibling;
+    let isRemarkEndNode =
+      possibleRemarkEndNode !== null &&
+      possibleRemarkEndNode.innerHTML.includes("remark_end_node");
+    if (isRemarkEndNode) {
+      remarkNode.innerHTML = "Pas de remarque particulière.";
+      remarkStartNode.remove();
+      possibleRemarkEndNode.remove();
     } else {
-      // Search for the rem DIV.
-      workingNode = workingNode.nextElementSibling;
-      // console.log(prevNode, workingNode)
-      // If workingNode is a <p> (admonition), we continue
-      // else, we are outside an admonition
-      if (workingNode !== null) workingNode = workingNode.nextElementSibling;
-
-      // No remark file. Creates standard sentence.
-      if (workingNode === null)
-        remNode.innerHTML = "Pas de remarque particulière.";
-      else {
-        var tableElements = [];
-        while (workingNode !== null) {
-          tableElements.push(workingNode);
-          workingNode = workingNode.nextElementSibling;
-        }
-
-        for (let i = 0; i < tableElements.length; i++)
-          remNode.append(tableElements[i]);
+      let isAdmonition = correctionNode.parentNode.tagName !== "P";
+      console.log(idEditor, isAdmonition);
+      let startingNode = isAdmonition
+        ? correctionNode
+        : correctionNode.parentNode;
+      let nextNode = startingNode.nextElementSibling;
+      let tableElements = [];
+      while (!nextNode.innerHTML.includes("remark_end_node")) {
+        tableElements.push(nextNode);
+        nextNode = nextNode.nextElementSibling;
+      }
+      let remarkEndNode = nextNode.lastChild;
+      remarkEndNode.remove();
+      remarkStartNode.remove();
+      tableElements.push(nextNode);
+      let startingElement = isAdmonition ? 1 : 0;
+      for (let i = startingElement; i < tableElements.length; i++) {
+        console.log(tableElements[i]);
+        remarkNode.append(tableElements[i]);
       }
     }
 
-    if (key != "") {
-      /* another possible condition is this : 
-    !remNode.innerHTML.includes('<h1'))  */
-      remNode = document.createElement("div");
-      remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5(
-        "e-nsi+" + key
+    if (hiddenFolderName != "") {
+      remarkNode = document.createElement("div");
+      remarkNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5(
+        "e-nsi+" + hiddenFolderName
       )}/exo_REM/" target="_blank"> en cliquant ici </a>`;
     }
 
-    prevNode.insertAdjacentElement("afterend", remNode);
-    remNode.setAttribute("id", "rem_content_" + idEditor);
+    correctionNode.insertAdjacentElement("afterend", remarkNode);
+    remarkNode.setAttribute("id", "rem_content_" + idEditor);
     document.getElementById("rem_content_" + idEditor).style.display = "none";
   } else {
-    console.log("on est là ICIIII!");
-    workingNode = prevNode.parentNode.nextElementSibling;
-    if (
-      workingNode.innerHTML.includes("<strong>A</strong>") &&
-      workingNode.nextElementSibling.innerHTML.includes("<strong>Z</strong>")
-    ) {
-      workingNode.nextElementSibling.remove();
-      workingNode.remove();
+    let remarkEndNode = remarkStartNode.nextElementSibling;
+    if (remarkEndNode.innerHTML.includes("remark_end_node")) {
+      remarkStartNode.remove();
+      remarkEndNode.remove();
+    } else {
+      console.log("This case is invalid. BTW, you shouldn't be here.");
     }
   }
 });
@@ -310,10 +283,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function randomizeQCM(el) {
-  let qcmAns = el.childNodes;
+  let multipleChoiceAnswers = el.childNodes;
   if (el.dataset.shuffle == 1) {
-    for (let i = qcmAns.length; i >= 0; i--)
-      el.appendChild(qcmAns[Math.floor(Math.random() * i)]);
+    for (let i = multipleChoiceAnswers.length; i >= 0; i--)
+      el.appendChild(multipleChoiceAnswers[Math.floor(Math.random() * i)]);
   }
 }
 
@@ -322,7 +295,6 @@ document.querySelectorAll("[id^=qcm_]").forEach((el) => {
 
   for (let element of el.children) {
     element.addEventListener("click", () => {
-      // element.firstChild.disabled = true
       if (!element.firstChild.disabled) {
         if (!maxAnswerReached(el))
           element.firstChild.checked = !element.firstChild.checked;
@@ -338,7 +310,6 @@ function nTotalAnswers(el) {
   for (let question of el.children) {
     if (question.className == "wrapper_qcm") {
       somme += parseInt(question.dataset.nCorrect);
-      console.log(somme);
     }
   }
   return somme;
@@ -394,7 +365,6 @@ function nRightAnswers(el) {
 
 document.querySelectorAll("[id^=valider_]").forEach((el) => {
   let number = el.id.split("_").pop();
-  console.log(number);
   el.addEventListener("click", () => {
     let elScore = document.getElementById(`score_${number}`);
     let totalScore = nTotalAnswers(elScore.parentElement);
@@ -404,61 +374,59 @@ document.querySelectorAll("[id^=valider_]").forEach((el) => {
     } else {
       elScore.innerHTML = `Cours à reprendre. Score : ${studentScore} / ${totalScore}`;
     }
-    // let blabla = document.createElement('DIV');
-    // blabla.setAttribute("id", "Div1");
-    // let truc = document.createTextNode('$\\frac{1}{2}$')
-    // blabla.appendChild(truc)
-    // var curre = document.getElementById(`score_${number}`).parentElement
-    // curre.insertAdjacentElement("afterend", blabla)
-    // // window.MathJax.
-    // window.MathJax.startup.document.clear();
-    // window.MathJax.startup.document.updateDocument();
   });
 });
 
-function normalize_var(html_attribute) {
-  return html_attribute.slice(3).toLowerCase();
+function forceFormat(htmlAttribute) {
+  return htmlAttribute.slice(3).toLowerCase();
 }
 
-function create_dictionnary(dataset) {
-  let var_dictionnary = {};
-  for (let html_attr in dataset) {
-    if (html_attr.startsWith("var")) {
-      var_name = normalize_var(html_attr); // pas de majuscule dans les noms de variables.
-      var_dictionnary[var_name] = dataset[html_attr].startsWith("[")
-        ? JSON.parse(dataset[html_attr])
-        : JSON.parse("[" + dataset[html_attr] + "]");
+function createDictionnary(dataset) {
+  let dictionnaryOfVariables = {};
+  for (let htmlAttribute in dataset) {
+    if (htmlAttribute.startsWith("var")) {
+      variableName = forceFormat(htmlAttribute);
+      dictionnaryOfVariables[variableName] = dataset[htmlAttribute].startsWith(
+        "["
+      )
+        ? JSON.parse(dataset[htmlAttribute])
+        : JSON.parse("[" + dataset[htmlAttribute] + "]");
     }
   }
-  return var_dictionnary;
+  return dictionnaryOfVariables;
 }
 
-function pick_rnd_value(list_values) {
-  return list_values[Math.floor(Math.random() * list_values.length)];
+function pickRandomValue(values) {
+  return values[Math.floor(Math.random() * values.length)];
 }
 
-function pick_rnd_values(var_dict) {
-  let picked_var_dict = {};
-  for (let var_name in var_dict)
-    picked_var_dict[var_name] = pick_rnd_value(var_dict[var_name]);
-  return picked_var_dict;
+function pickRandomValues(dictionnaryOfVariables) {
+  let dictionnaryOfPickedVariables = {};
+  for (let variableName in dictionnaryOfVariables)
+    dictionnaryOfPickedVariables[variableName] = pickRandomValue(
+      dictionnaryOfVariables[variableName]
+    );
+  return dictionnaryOfPickedVariables;
 }
 
-function process_rnd_formula(htmlElement, var_dict) {
-  if (var_dict !== {}) {
-    // there is variable parts
+function processRandomFormula(htmlElement, dictionnaryOfVariables) {
+  if (dictionnaryOfVariables !== {}) {
+    // there are variable parts
     if (MathJax.startup.document.getMathItemsWithin(htmlElement)[0]) {
       // there is a math formula
       // console.log(htmlElement, htmlElement.htmlFor)
       let formula =
         MathJax.startup.document.getMathItemsWithin(htmlElement)[0].math;
-      for (let var_name in var_dict) {
-        if (formula.includes(`{${var_name}}`))
+      for (let variableName in dictionnaryOfVariables) {
+        if (formula.includes(`{${variableName}}`))
           sessionStorage.setItem(`${htmlElement.htmlFor}`, formula);
         else formula = sessionStorage.getItem(`${htmlElement.htmlFor}`);
       }
-      for (let var_name in var_dict)
-        formula = formula.replace(`{${var_name}}`, var_dict[var_name]);
+      for (let variableName in dictionnaryOfVariables)
+        formula = formula.replace(
+          `{${variableName}}`,
+          dictionnaryOfVariables[variableName]
+        );
       console.log(formula);
       htmlElement.innerHTML = `\\(${formula}\\)`;
     }
@@ -472,32 +440,23 @@ document.querySelectorAll("[id^=recharger_]").forEach((el) => {
     elScore.innerHTML = "";
     for (let question of elScore.parentElement.children) {
       if (question.className == "wrapper_qcm") {
-        let var_dictionnary = create_dictionnary(question.dataset);
-        var picked_var_dict = pick_rnd_values(var_dictionnary);
+        let dictionnaryOfVariables = createDictionnary(question.dataset);
+        var dictionnaryOfPickedVariables = pickRandomValues(
+          dictionnaryOfVariables
+        );
 
         for (let answer of question.children) {
           answer.firstChild.classList.remove("reveal");
           answer.firstChild.disabled = false;
           answer.firstChild.checked = false;
           // answer.lastChild.innerHTML =
-          process_rnd_formula(answer.lastChild, picked_var_dict);
+          processRandomFormula(answer.lastChild, dictionnaryOfPickedVariables);
         }
         MathJax.typeset();
 
-        // for (let i in var_dictionnary['p']) console.log(i)
+        // for (let i in dictionnaryOfVariables['p']) console.log(i)
         randomizeQCM(question);
       }
     }
   });
 });
-
-// const node = document.getElementsByClassName('arithmatex');
-// console.log("arithmatex", node)
-// window.MathJax.typesetClear(node[2]);
-// window.MathJax.startup.document.clear();
-// window.MathJax.startup.document.updateDocument();
-
-// // node.innerHTML = new_html;
-// // MathJax.typesetPromise([node]).then(() => {
-// //   // the new content is has been typeset
-// // });

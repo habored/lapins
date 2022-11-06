@@ -2,11 +2,16 @@
 
 ## Exemple
 
+{{IDE('exo', MAX = "+", SANS = "eval,max")}}
+
 Un IDE se présente sous cette forme :
 
 ???+ info "Enroulez-moi !"
 
-    {{IDE('exo2', MAX = 1000, SANS = "eval,max")}}
+    {{IDE('exo2', MAX = "+", SANS = "eval,max")}}
+
+    {{IDE('exo3/exo3', MAX = "+", SANS = "eval,max")}}
+
 
 Il dispose de quatre boutons :
 
@@ -116,7 +121,7 @@ Par défaut, la commande `#!markdown {% raw %}{{IDE('exo2')}}{% endraw %}` perme
 
 ## Plein d'exercices !
 
-!!! info "Exercices sur la longueur d'un tableau"
+<!-- !!! info "Exercices sur la longueur d'un tableau"
 
     === "Exercice 1"
         Complétez la fonction `longueur` afin que celle-ci renvoie la taille d'un tableau L.
@@ -134,7 +139,7 @@ Par défaut, la commande `#!markdown {% raw %}{{IDE('exo2')}}{% endraw %}` perme
         Complétez la fonction `nombre_mots` afin que celle-ci renvoie le nombre de mots séparé par un espace d'une phrase `phrase`.
         {{IDEv('demo/demo3')}}
 
-On peut bien sur enrouler tout cela...
+On peut bien sur enrouler tout cela... -->
 
 
 
