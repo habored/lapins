@@ -81,7 +81,7 @@ def define_env(env):
         """
         id_ide = env.variables["term_counter"]
         env.variables["term_counter"] += 1
-        return f"""<div onclick='start_term("id{id_ide}")' id="fake_id{id_ide}" class="terminal_f"><label class="terminal"><span>>>> </span></label></div><div id="id{id_ide}" class="hide"></div>"""
+        return f"""<div onclick='start_term("id{id_ide}")' id="fake_id{id_ide}" class="py_mk_terminal_f"><label class="terminal"><span>>>> </span></label></div><div id="id{id_ide}" class="py_mk_hide"></div>"""
 
     def read_external_file(script_name: str, path: str, extension: str = "py") -> str:
         """
@@ -261,7 +261,7 @@ def define_env(env):
             f""""document.getElementById('input_{editor_name}').click()" """
         )
         return f"""{create_button("Upload", onclick_action)}\
-                <input type="file" id="input_{editor_name}" name="file" enctype="multipart/form-data" class="hide"/>"""
+                <input type="file" id="input_{editor_name}" name="file" enctype="multipart/form-data" class="py_mk_hide"/>"""
 
     def create_unittest_button(
         editor_name: str,
@@ -283,7 +283,7 @@ def define_env(env):
             return ""
 
         onclick_action = f"""\'check("{editor_name}","{mode}")\'"""
-        return f"""<span id="test_term_{editor_name}" class="hide">{content}</span>\
+        return f"""<span id="test_term_{editor_name}" class="py_mk_hide">{content}</span>\
             {create_button("Check", onclick_action)}\
             <span class="compteur">{number_max_attempts}/{number_max_attempts}</span>"""
 
@@ -375,12 +375,12 @@ def define_env(env):
         return block_remark
 
     def insert_content(editor_name: str, ide_content: str) -> str:
-        return f"""<span id="content_{editor_name}" class="hide">{ide_content}</span>"""
+        return f"""<span id="content_{editor_name}" class="py_mk_hide">{ide_content}</span>"""
 
     def insert_corr_content(
         editor_name: str, ide_corr_content: str, key_ide: str
     ) -> str:
-        return f"""<span id="corr_content_{editor_name}" class="hide" data-strudel="{str(key_ide)}">{ide_corr_content}</span>"""
+        return f"""<span id="corr_content_{editor_name}" class="py_mk_hide" data-strudel="{str(key_ide)}">{ide_corr_content}</span>"""
 
     @env.macro
     def IDE(
@@ -416,7 +416,7 @@ def define_env(env):
                 editor_name, script_name, mode, filepath, allowed_number_of_attempts
             ),
             {
-                "class": "ide_classe",
+                "class": "py_mk_ide",
                 "data-max": f"{allowed_number_of_attempts}",
                 "data-exclude": f'{"eval,exec" + format_excluded_instructions(SANS)}',
             },

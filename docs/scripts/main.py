@@ -20,7 +20,7 @@ def define_env(env):
     @env.macro
     def cours():
         """raccourci et formatage auto balise cours"""
-        return f'success "Cours"'
+        return f'done "Cours"'
 
     @env.macro
     def ext():
@@ -172,7 +172,7 @@ def define_env(env):
     @env.macro
     def IDE(nom_script: str = "", mode: str = "h", MAX: int = 5, SANS: str = "") -> str:
         """
-        Purpose : Create an IDE (Editor+Terminal) on a MkDocs document. {nom_script}.py is loaded on the editor if present. 
+        Purpose : Create an IDE (Editor+Terminal) on a MkDocs document. {nom_script}.py is loaded on the editor if present.
         Methods : Two modes are available : vertical or horizontal. Buttons are added through functional calls.
         Last span hides the code content of the IDE if loaded.
         """
@@ -222,7 +222,7 @@ def define_env(env):
         if mode == "v":
             div_edit += f'<div class="wrapper"><span id="comment_editor_{tc}" class="comment">###</span><div class="interior_wrapper"><div id="editor_{tc}"></div></div><div id="term_editor_{tc}" class="term_editor"></div></div>'
         else:
-            div_edit += f'<div class="wrapper_h"><span id="comment_editor_{tc}" class="comment">###</span><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h terminal_f_h"></div></div>'
+            div_edit += f'<div class="wrapper_h"><span id="comment_editor_{tc}" class="comment">###</span><div class="line" id="editor_{tc}"></div><div id="term_editor_{tc}" class="term_editor_h py_mk_terminal_f_h"></div></div>'
 
         div_edit += tooltip_button(
             f"""'interpretACE("editor_{tc}","{mode}")'""",

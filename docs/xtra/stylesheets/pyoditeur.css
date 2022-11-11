@@ -12,7 +12,7 @@
   filter: opacity(35%);
 }
 
-.wrapper {
+div.py_mk_ide .wrapper {
   border: solid 1px;
   border-radius: 6px;
   border-color: var(--main-theme);
@@ -23,7 +23,7 @@
   content: "ici";
 } */
 
-.wrapper_v {
+div.py_mk_ide .wrapper_v {
 border: solid 1px;
 border-radius: 6px;
 border-color: var(--main-theme);
@@ -33,39 +33,46 @@ flex-wrap: wrap;
 flex: 1 1 auto;
 }
 
-.wrapper_v > * {
+div.py_mk_ide .wrapper_v > * {
 flex: 1 1 300px;
 }
 
-.interior_wrapper {
+div.py_mk_ide .interior_wrapper {
 border-right: 1px solid var(--main-theme);
 width:50%;
 }
 
-.line_v {
+div.py_mk_ide .line_v {
   border-right: 1px solid var(--main-theme);
   width:50%;
 }  
 
-.line{
+div.py_mk_ide .line{
 border-bottom : 1px solid var(--main-theme);
 }
 
-.ace_editor {
+div.py_mk_ide .ace_editor {
 font-size:1em;
 margin: 4px 4px;
 height: 200px;
 background: var(--background-theme);
 }
 
-.term_editor {
+div[id*='solution'] .ace_editor {
+  font-size:1em;
+  margin: 4px 4px;
+  height: 200px;
+  background: var(--background-theme);
+  }
+
+div.py_mk_ide .term_editor {
 --color:var(--main-theme);
 --background: var(--gutter-theme);
 --size : 1.4;
 height: 205px;
 }
 
-.term_editor_v {
+div.py_mk_ide .term_editor_v {
   --color:var(--main-theme);
   --background: var(--gutter-theme);
   --size : 1.4;
@@ -73,12 +80,12 @@ height: 205px;
   }  
 
 /* First apply terminal CSS */
-.terminal {
+div.py_mk_terminal_f .terminal {
   width: 50%;
 }
 
 /* Then change width to 100% */
-.terminal_f {
+.py_mk_terminal_f {
   --color:var(--main-theme);
   --background: var(--gutter-theme);
   --size : 1.4;
@@ -90,12 +97,12 @@ height: 205px;
 }
 
 /* Test to decide which REPL is best */
-.terminal_f_h {
-  --color:var(--main-theme);
-  --background: var(--gutter-theme);
-  --size : 1.4;
-  height: 150px; 
-  width: 100%;
+.py_mk_terminal_f_h {
+--color:var(--main-theme);
+--background: var(--gutter-theme);
+--size : 1.4;
+height: 150px; 
+width: 100%;
 }
 
 .term_editor {
@@ -106,27 +113,17 @@ height: 205px;
   width: 100%;
 }
 
-textarea {
+div.py_mk_ide textarea {
 width: 100%;
 resize: vertical;
 }
 
-textarea:focus {
+div.py_mk_ide textarea:focus {
   outline: none;
 }
 
-.hide {
+.py_mk_hide {
 display:none;
-}
-
-.blinking {
-width: 8px;
-height: 20.84375px;
-background-color: var(--main-theme);
-animation-name: blinking;
-animation-duration: 1s;
-animation-iteration-count: infinite;
-display: inline-block;
 }
 
 /* overloading ace gutters to hide them behind navbar */
@@ -146,13 +143,13 @@ div[class*='ace-'] .ace_gutter {
   color: #DEDEDE;
 }
 
-.compteur {
+div.py_mk_ide .compteur {
 float: right;
 color: var(--main-theme);
 font-size : 1.2em
 }
 
-.compteur::before {
+div.py_mk_ide .compteur::before {
 content: "Evaluations restantes : ";
 color: var(--main-theme);
 font-size : 0.8em
@@ -169,25 +166,25 @@ min-width: 30em;
 height: auto;
 }
 
-.can_wrapper {
+.py_mk_gui_wrapper {
 position: relative;
 width: 100%;
 height: 400px;
 }
 
-.can_wrapper canvas {
+.py_mk_gui_wrapper canvas {
 position: absolute;
 top: 0;
 left: 0;
 }
 
-.tooltip {
+div.py_mk_ide .tooltip {
   padding: 5px 4px 0px 0px;
   position: relative;
   display: inline-block;
 }
 
-.tooltip .tooltiptext {
+div.py_mk_ide .tooltip .tooltiptext {
   visibility: hidden;
   background-color: var(--main-theme);
   color: #fff;
@@ -202,7 +199,7 @@ left: 0;
   font-size: 0.9em;
 }
 
-.tooltip .tooltiptext::after {
+div.py_mk_ide .tooltip .tooltiptext::after {
   content: " ";
   position: absolute;
   bottom: 100%;  /* At the top of the tooltip */
@@ -213,11 +210,11 @@ left: 0;
   border-color: transparent transparent var(--main-theme) transparent;
 }
 
-.tooltip:hover .tooltiptext {
+div.py_mk_ide .tooltip:hover .tooltiptext {
   visibility: visible;
 }
   
-.tooltip > img {
+div.py_mk_ide .tooltip > img {
   width: 32px;
   border: 1px solid rgba(85,119,196);
   padding: 3px;
@@ -226,7 +223,7 @@ left: 0;
   background-image: linear-gradient(to bottom, rgb(191, 255, 255), 15%, rgba(var(--main-color),0.8));
 }
 
-.tooltip:hover > img {
+div.py_mk_ide .tooltip:hover > img {
   text-shadow: 0px 0px rgba(87,147,240,0);
   position:relative; 
   left: 1px; 
@@ -235,13 +232,8 @@ left: 0;
   font-size : 2em;
   box-shadow: 0px 0px rgba(87,147,240,0);
 }
-/* 
 
-[data-md-color-scheme="slate"] {
-  --md-primary-fg-color: var(--red);
-} */
-
-.comment {
+div.py_mk_ide .comment {
   display: inline-block;
   font-size: 1em;
   margin-top: 2px;
@@ -251,8 +243,7 @@ left: 0;
   right:0px;
   z-index: 9;
 }
-
-.comment:hover {
+div.py_mk_ide .comment:hover {
   cursor: pointer;
   display: inline-block;
   font-size: 1em;

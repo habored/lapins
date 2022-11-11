@@ -534,8 +534,8 @@ async function play(editorName, mode) {
 }
 
 async function start_term(idName) {
-  document.getElementById(idName).className = "terminal terminal_f";
-  document.getElementById("fake_" + idName).className = "hide";
+  document.getElementById(idName).className = "terminal py_mk_terminal_f";
+  document.getElementById("fake_" + idName).className = "py_mk_hide";
   window.console_ready = pyterm("#" + idName);
 }
 
@@ -583,25 +583,25 @@ function getWrapperElement(filetype, editorName) {
   if (document.getElementById(filetype + editorName) === null) {
     let wrapperElement =
       document.getElementById(editorName); /* going up the DOM to IDE+buttons */
-    while (wrapperElement.className !== "ide_classe") {
+    while (wrapperElement.className !== "py_mk_ide") {
       wrapperElement = wrapperElement.parentNode;
     }
     return wrapperElement;
   }
 }
 
-function showGUI(editorName) {
-  let wrapperElement = getWrapperElement("gui_", editorName);
-  let txt = document.createElement("div");
+function showGUI(idEditor) {
+  let wrapperElement = getWrapperElement("gui_", idEditor);
+  var txt = document.createElement("div");
   // txt.innerHTML='<details class="check"><summary>Fenêtre graphique</summary>\
   // <div class="highlight" id="gui_'+idEditor+'"></div></details>'
   txt.innerHTML =
-    '<details open class="check"><summary>Fenêtre graphique</summary><div class = "can_wrapper"><div id = "gui_' +
-    editorName +
+    '<details open class="check"><summary>Fenêtre graphique</summary><div class = "py_mk_canvas_wrapper"><div id = "gui_' +
+    idEditor +
     '"><canvas id = "gui_' +
-    editorName +
+    idEditor +
     '_tracer" width="700" height="400"></canvas><canvas id="gui_' +
-    editorName +
+    idEditor +
     '_pointer" width="700" height="400"></canvas></div></div></details>';
 
   wrapperElement.insertAdjacentElement("afterend", txt);
