@@ -168,3 +168,6 @@
     // console.log('localStorage 2', __md_scope.pathname+"."+"__palette")
     // console.log('localStorage 3', localStorage.getItem(__md_scope.pathname+"."+"__palette"))
     // console.log('localStorage 4', __md_get("__palette").index, __md_get("__palette").color.scheme)
+
+{{ macros_info() }}
+
