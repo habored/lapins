@@ -111,7 +111,11 @@ def define_env(env):
         )
 
     def get_image_path() -> str:
-        return convert_url_to_utf8(env.variables.page.abs_url).split("/")[1]
+        split_page_url = os.path.dirname(
+            convert_url_to_utf8(env.variables.page.url)
+        ).split("/")
+        prefix = "".join(["../" for folder in split_page_url if folder != ""])
+        return f"""{prefix}pyodide-mkdocs"""
 
     # TODO : this issue concerning the urls must be closed ASAP
     def get_filepath() -> str:
@@ -228,6 +232,7 @@ def define_env(env):
             key_ide = ""  # base case -> no clef.txt file
         return key_ide
 
+    @env.macro
     def create_button(
         button_name: str, onclick_action: str, isTranslated: bool = True
     ) -> str:
@@ -247,9 +252,9 @@ def define_env(env):
         tooltip_text = AVAILABLE_BUTTONS[button_name] if isTranslated else button_name
 
         return f"""<button class="tooltip" onclick={onclick_action}>\
-                <img src="/{get_image_path()}/images/buttons/icons8-{button_name.lower()}-64.png">\
-                <span class="tooltiptext">{tooltip_text}</span>\
-                </button>"""
+            <img src="{get_image_path()}/icons8-{button_name.lower()}-64.png">\
+            <span class="tooltiptext">{tooltip_text}</span>\
+            </button>"""
 
     def create_upload_button(editor_name: str) -> str:
         """
@@ -358,10 +363,16 @@ def define_env(env):
             IDE_calls_from_md_file[0] if len(IDE_calls_from_md_file) >= 1 else ""
         )
 
-        leading_spaces = " " * (len(first_IDE_call) - len(first_IDE_call.lstrip()))
+        if script_name == "":
+            leading_spaces = " "  # to avoid conflict with empty IDEs
+        else:
+            leading_spaces = " " * (len(first_IDE_call) - len(first_IDE_call.lstrip()))
 
-        block_remark = f"""
-{leading_spaces}<strong>remark_start_node</strong>"""
+        block_remark = ""
+        if script_name != "":
+            block_remark = f"""
+{leading_spaces}--8<--- "{get_image_path()}/start_REM.md"
+"""
         filepath = get_filepath()
         block_remark += (
             f'''
@@ -369,8 +380,10 @@ def define_env(env):
             if key_ide == ""
             else f""
         )
-        block_remark += f"""
-{leading_spaces}<strong>remark_end_node</strong>"""
+        if script_name != "":
+            block_remark += f"""
+{leading_spaces}--8<--- "{get_image_path()}/end_REM.md"
+"""
 
         return block_remark
 

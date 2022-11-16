@@ -2,6 +2,10 @@
 
 ## Exemple
 
+!!! help "tests"
+
+    {{IDE()}}
+
 {{IDE('exo', MAX = "+", SANS = "eval,max")}}
 
 Un IDE se présente sous cette forme :
@@ -13,12 +17,17 @@ Un IDE se présente sous cette forme :
     {{IDE('exo3/exo3', MAX = "+", SANS = "eval,max")}}
 
 
-Il dispose de quatre boutons :
-
-- Lancer le script : <button class="tooltip"><img src="../images/buttons/icons8-play-64.png"></button>
-- Télécharger le script : <button class="tooltip"><img src="../images/buttons/icons8-download-64.png"></button>
-- Téléverser un script : <button class="tooltip"><img src="../images/buttons/icons8-upload-64.png"></button>
-- Valider le script avec des tests unitaires : <button class="tooltip"><img src="../images/buttons/icons8-check-64.png"></button>
+Il dispose de six boutons :
+<div class="py_mk_ide">
+<ul>
+<li> Lancer le script : <button class="tooltip"><img src="../pyodide-mkdocs/icons8-play-64.png"></button></li>
+<li> Valider le script avec des tests unitaires : <button class="tooltip"><img src="../pyodide-mkdocs/icons8-check-64.png"></button></li>
+<li> Télécharger le script actuel : <button class="tooltip"><img src="../pyodide-mkdocs/icons8-download-64.png"></button></li>
+<li> Téléverser un script local : <button class="tooltip"><img src="../pyodide-mkdocs/icons8-upload-64.png"></button></li>
+<li> Recharger l'énoncé : <button class="tooltip"><img src="../pyodide-mkdocs/icons8-restart-64.png"></button></li>
+<li> Enregistrer le script actuel : <button class="tooltip"><img src="../pyodide-mkdocs/icons8-save-64.png"></button></li>
+</ul>
+</div>
 
 !!! info "Rappel"
 

@@ -29,66 +29,61 @@ Garantie :
 
 Vous ne connaissez rien à MkDocs et vous souhaitez vous y mettre ? Des mots comme `yaml`, `javascript`, `Pyodide` ou templates `Jinja` vous font peur ? 
 
-Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueur : Clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !
+Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueur : clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !
 
 ## Installation
 
-On part d'une installation comme indiqué sur [https://ens-fr.gitlab.io/mkdocs/] avec le **plugin macro**, préalablement installé.
+On part d'une installation comme indiqué sur [ce lien](https://ens-fr.gitlab.io/mkdocs/) avec le **plugin macro**, préalablement installé.
 
 L'installation demande de rajouter à cette configuration les éléments suivants.
 
-__Modification__ :
+__Modification apportée__ :
   
 - fichier YML `mkdocs.yml` ;
 - fichier de macro `main.py` ;
 
-__Ajout__ :
+__Ajout nécessaire__ :
 
 - un dossier `#!bash my_theme_customizations/` à la racine du projet MkDocs ;
 - un template HTML `#!bash my_theme_customizations/main.html` ;
-- un fichier CSS `#!bash docs/xtra/stylesheets/pyoditeur.css` ;
-- deux fichiers Javascript `#!bash docs/xtra/javascripts/interpreter.js` et `#!bash my_theme_customizations/js/ide.js` ;
-- deux fichiers Markdown `#!bash docs/xtra/start.md` et `#!bash docs/xtra/end.md`.
+- un fichier CSS `#!bash my_theme_customizations/pyodide-mkdocs/pyoditeur.css` ;
+- deux fichiers Javascript `#!bash my_theme_customizations/pyodide-mkdocs/interpreter.js` et `#!bash my_theme_customizations/pyodide-mkdocs/ide.js` ;
+- six images de boutons.
 
 ### Fichier YML `mkdocs.yml`
 
-Ajoutez les lignes surlignées dans votre fichier mkdocs.yml .
+Ajoutez la ligne appelée `custom_dir` dans la partie `theme` de votre fichier mkdocs.yml :
 
-```yaml hl_lines="7 16 19"
-    --8<--- "docs/scripts/mkdocs.yml"
+```yaml
+theme:
+  name: material
+  custom_dir: my_theme_customizations/
 ```
 
 ### Fichier macro Python `main.py`
 
-À votre fichier `main.py`, ajoutez les lignes du fichier [`main.py`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/scripts/main.py "main.py sur Gitlab").
+À votre fichier `main.py`, ajoutez les lignes du fichier [`main.py`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/main.py "main.py sur Gitlab"). Vous devez disposer de Python 3.5 au minimum. 
 
 
 ### Création du dossier `custom_dir`
 
 **N'oubliez pas de créer le dossier `#!bash my_theme_customizations/` à la racine du projet MkDocs**.
 
-Dans ce dossier, ajoutez le template Jinja `#!bash main.html` :
-
-```jinja
-    --8<--- "my_theme_customizations/main.html"
-```
+Dans ce dossier, ajoutez le template Jinja [`#!bash main.html`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/main.html).
 
 ### Fichier CSS `pyoditeur.css`
 
-Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/stylesheets/pyoditeur.css "Pyoditeur CSS sur Gitlab") au dossier `docs/xtra/stylesheets/`.
+Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/pyodide-mkdocs/pyoditeur.css "Pyoditeur CSS sur Gitlab") au dossier `my_theme_customizations/pyodide-mkdocs/`.
 
-Si vous avez opté pour d'autres couleurs, c'est là que vous pourrez faire les modifications de l'éditeur.
+??? note "Couleurs" 
+
+    Si vous avez opté pour d'autres couleurs, c'est là que vous pourrez faire les modifications de l'éditeur.
 
 ### Fichiers javascripts `interpreter.js` et `ide.js`
 
-Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/javascripts/interpreter.js "interpreter JS sur Gitlab ") et [`ide.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/js/ide.js "ide JS sur Gitlab ") sont nécessaires :
+Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/pyodide-mkdocs/interpreter.js "interpreter JS sur Gitlab ") et [`ide.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/pyodide-mkdocs/ide.js "ide JS sur Gitlab ") sont nécessaires :
 
-- `interpreter.js` doit être placé dans le dossier : `docs/xtra/javascripts/` ;
-- `ide.js` doit être placé dans le dossier : `my_theme_customizations/js/ide.js`.
-
-### Fichiers `start_REM.md` et `end_REM.md`
-
-Pour la bonne gestion des fichiers de remarque, il faut également ajouter deux fichiers standardisés au format markdown : [`start_REM.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/start_REM.md "start_REM.md sur Gitlab ") et [`end_REM.md`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/docs/xtra/end_REM.md "end_REM.md sur Gitlab ")
+Ces fichiers doivent être placés dans le dossier : `my_theme_customizations/pyodide-mkdocs/`.
 
 ### Images des boutons
 

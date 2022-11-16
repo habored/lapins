@@ -156,66 +156,94 @@ $("[id^=editor_]").each(function () {
     ace.edit(idEditor).getSession().setValue("\n".repeat(6));
 
   // A correction Element always exists (can be void)
-  let correctionNode = document.getElementById("corr_content_" + idEditor);
-  var hiddenFolderName = correctionNode.dataset.strudel;
-  var remarkStartNode = correctionNode.nextElementSibling;
-  console.log(idEditor, remarkStartNode);
-  if (!remarkStartNode.innerHTML.includes("remark_start_node")) {
-    console.log("Invalid remark markers.");
-    return;
-  }
+  // A correction Element always exists (can be void)
+  prevNode = document.getElementById("corr_content_" + idEditor);
+  var key = prevNode.dataset.strudel;
+  var workingNode = prevNode;
+  var remNode = document.createElement("div");
 
-  var remarkNode = document.createElement("div");
+  console.log("la1", idEditor, key);
+  console.log("la2", prevNode);
+  console.log("la3", prevNode.innerHTML);
 
-  if (correctionNode.innerHTML !== "" || hiddenFolderName !== "") {
-    let possibleRemarkEndNode = remarkStartNode.nextElementSibling;
-    let isRemarkEndNode =
-      possibleRemarkEndNode !== null &&
-      possibleRemarkEndNode.innerHTML.includes("remark_end_node");
-    if (isRemarkEndNode) {
-      remarkNode.innerHTML = "Pas de remarque particulière.";
-      remarkStartNode.remove();
-      possibleRemarkEndNode.remove();
-    } else {
-      let isAdmonition = correctionNode.parentNode.tagName !== "P";
-      console.log(idEditor, isAdmonition);
-      let startingNode = isAdmonition
-        ? correctionNode
-        : correctionNode.parentNode;
-      let nextNode = startingNode.nextElementSibling;
-      let tableElements = [];
-      while (!nextNode.innerHTML.includes("remark_end_node")) {
-        tableElements.push(nextNode);
-        nextNode = nextNode.nextElementSibling;
+  // console.log('la4', prevNode.innerHTML)
+  if (prevNode.innerHTML !== "" || key !== "") {
+    // soit y a pas de correction, soit la clé SHA256 n'est pas vide
+    if (prevNode.parentNode.tagName === "P") {
+      // REM file on top level
+      workingNode = prevNode.parentNode.nextElementSibling; //'<strong>A</strong>'
+      // console.log('bef', idEditor)
+      // console.log(workingNode.innerHTML)
+      // console.log(workingNode.nextElementSibling.innerHTML)
+      // console.log(prevNode.parentNode.nextElementSibling, workingNode.innerHTML)
+      // if (workingNode.nex)
+
+      if (
+        workingNode.innerHTML.includes("<strong>A</strong>") &&
+        workingNode.nextElementSibling.innerHTML.includes("<strong>Z</strong>")
+      ) {
+        remNode.innerHTML = "Pas de remarque particulière.";
+        workingNode.nextElementSibling.remove();
+        workingNode.remove();
+      } else {
+        workingNode.remove();
+        workingNode = prevNode.parentNode.nextElementSibling;
+        // console.log(prevNode.parentNode)
+
+        var tableElements = [];
+        while (!workingNode.innerHTML.includes("<strong>Z</strong>")) {
+          tableElements.push(workingNode);
+          workingNode = workingNode.nextElementSibling;
+        }
+        workingNode.remove();
+
+        for (let i = 0; i < tableElements.length; i++)
+          remNode.append(tableElements[i]);
       }
-      let remarkEndNode = nextNode.lastChild;
-      remarkEndNode.remove();
-      remarkStartNode.remove();
-      tableElements.push(nextNode);
-      let startingElement = isAdmonition ? 1 : 0;
-      for (let i = startingElement; i < tableElements.length; i++) {
-        console.log(tableElements[i]);
-        remarkNode.append(tableElements[i]);
+    } else {
+      // Search for the rem DIV.
+      workingNode = workingNode.nextElementSibling;
+      // console.log(prevNode, workingNode)
+      // If workingNode is a <p> (admonition), we continue
+      // else, we are outside an admonition
+      if (workingNode !== null) workingNode = workingNode.nextElementSibling;
+
+      // No remark file. Creates standard sentence.
+      if (workingNode === null)
+        remNode.innerHTML = "Pas de remarque particulière.";
+      else {
+        var tableElements = [];
+        while (workingNode !== null) {
+          tableElements.push(workingNode);
+          workingNode = workingNode.nextElementSibling;
+        }
+
+        for (let i = 0; i < tableElements.length; i++)
+          remNode.append(tableElements[i]);
       }
     }
 
-    if (hiddenFolderName != "") {
-      remarkNode = document.createElement("div");
-      remarkNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5(
-        "e-nsi+" + hiddenFolderName
+    if (key != "") {
+      /* another possible condition is this : 
+    !remNode.innerHTML.includes('<h1'))  */
+      remNode = document.createElement("div");
+      remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5(
+        "e-nsi+" + key
       )}/exo_REM/" target="_blank"> en cliquant ici </a>`;
     }
 
-    correctionNode.insertAdjacentElement("afterend", remarkNode);
-    remarkNode.setAttribute("id", "rem_content_" + idEditor);
+    prevNode.insertAdjacentElement("afterend", remNode);
+    remNode.setAttribute("id", "rem_content_" + idEditor);
     document.getElementById("rem_content_" + idEditor).style.display = "none";
   } else {
-    let remarkEndNode = remarkStartNode.nextElementSibling;
-    if (remarkEndNode.innerHTML.includes("remark_end_node")) {
-      remarkStartNode.remove();
-      remarkEndNode.remove();
-    } else {
-      console.log("This case is invalid. BTW, you shouldn't be here.");
+    console.log("on est là ICIIII!");
+    workingNode = prevNode.parentNode.nextElementSibling;
+    if (
+      workingNode.innerHTML.includes("<strong>A</strong>") &&
+      workingNode.nextElementSibling.innerHTML.includes("<strong>Z</strong>")
+    ) {
+      workingNode.nextElementSibling.remove();
+      workingNode.remove();
     }
   }
 });

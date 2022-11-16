@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [0.9.0] - 2022-11-21
+## [0.9.0] - 2022-13-21
 
 ### Changed
 
-- Minor | Updated ACE version to 12.5
 - Major | Updated Pyodide version to 21.3
+- Major | Restructured pyodide-mkdocs file architecture
+- Major | Integrated handling of remark files : `end_REM.md` and `start_REM.md` disappeared.
+- Minor | Updated ACE version to 12.5
+- Minor | Improved documentation readability
 
 ### Quality
 
