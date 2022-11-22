@@ -2,6 +2,19 @@ var debug_mode = false;
 var dict = {}; // Global dictionnary tracking the number of clicks
 var tagHdr = "#--- HDR ---#";
 
+function richTextFormat(content, style, color = "", background = "") {
+  return `[[${style};${color};${background}]${content}]`;
+}
+
+let error = (content) => richTextFormat(content, "b", "red");
+let warning = (content) => richTextFormat(content, "", "orange");
+let stress = (content) => richTextFormat(content, "b");
+let info = (content) => richTextFormat(content, "", "grey");
+let runScriptPrompt = info("%Script exécuté");
+
+let ps1 = ">>> ",
+  ps2 = "... ";
+
 function sleep(s) {
   return new Promise((resolve) => setTimeout(resolve, s));
 }
@@ -144,7 +157,7 @@ async function pyterm(id, height) {
           let p = $.terminal.active().get_command();
           clear_console();
           $.terminal.active().echo(ps1 + p);
-          $.terminal.active().echo("[[;red;]KeyboardInterrupt]");
+          $.terminal.active().echo(error("KeyboardInterrupt"));
           term.set_command("");
           term.set_prompt(ps1);
         },
@@ -253,25 +266,25 @@ function countParenthesis(string, char = "(") {
   return countChar(string, char) - countChar(string, END[char]);
 }
 
-function generateAssertionLog(errLineLog, code) {
+function generateAssertionLog(errorLineInLog, code) {
   // PROBLEME s'il y a des parenthèses non correctement parenthésées dans l'expression à parser !
   var codeTable = code.split("\n"); // get assertion test
   console.log("generateAsssertionLog", codeTable);
-  errLineLog -= 1;
-  var endErrLineLog = errLineLog;
+  errorLineInLog -= 1;
+  var endErrLineLog = errorLineInLog;
   var countPar = 0;
   do {
     // multilines assertions
-    countPar += countParenthesis(codeTable[endErrLineLog]);
+    countPar += countParenthesis(codeTable[errorLineInLog]);
     endErrLineLog++;
   } while (countPar !== 0 && !/^(\s*assert)/.test(codeTable[endErrLineLog]));
   return `${codeTable
-    .slice(errLineLog, endErrLineLog)
+    .slice(errorLineInLog, endErrLineLog)
     .join(" ")
     .replace("assert ", "")}`;
 }
 
-function generateErrLog(errorTypeLog, errLineLog, code, src = 0) {
+function generateErrorLog(errorTypeLog, errorLineInLog, code, src = 0) {
   let errorTypes = {
     AssertionError: "Erreur avec les tests publics",
     SyntaxError: "Erreur de syntaxe",
@@ -294,28 +307,28 @@ function generateErrLog(errorTypeLog, errLineLog, code, src = 0) {
   errorTypeLog =
     errorTypeLog +
     (errorTypeLog.includes("Ellipsis") ? " (issue with the dots ...)" : "");
-  for (errorType in errorTypes) {
+  for (const errorType in errorTypes) {
     if (errorTypeLog.includes(errorType)) {
       if (errorType != "AssertionError") {
         // All Exceptions but assertions
-        return ` Python a renvoyé une '${errorTypes[errorType]}' à la ligne ${errLineLog}\n ---\n ${errorTypeLog}`;
-      } else {
-        if (errorTypeLog !== "AssertionError") {
-          // case : no Assertion description
-          return ` Python a renvoyé une '${errorTypes[errorType]}' à la ligne ${
-            errLineLog + src
-          }\n ---\n ${errorTypeLog}`;
-        } else {
-          // Assertion with description
-          errorTypeLog = `${errorTypeLog} : test '${generateAssertionLog(
-            errLineLog + src,
-            code
-          )}' failed`;
-          return ` Python a renvoyé une '${errorTypes[errorType]}' à la ligne ${
-            errLineLog + src
-          }\n ---\n ${errorTypeLog}`;
-        }
+        return errorMessage(
+          errorTypes[errorType],
+          errorLineInLog,
+          errorTypeLog
+        );
       }
+      // if no description in Assertion, we skip
+      if (errorTypeLog === "AssertionError") {
+        // Assertion with description : assert test, description
+        errorTypeLog = `${errorTypeLog} : test ${warning(
+          generateAssertionLog(errorLineInLog + src, code)
+        )} failed`;
+      }
+      return errorMessage(
+        errorTypes[errorType],
+        errorLineInLog + src,
+        errorTypeLog
+      );
     }
   }
 }
@@ -348,15 +361,12 @@ function generateLog(err, code, src = 0) {
   }
   console.log(errorTypeLog, errLineLog, code);
   console.log(src);
-  return generateErrLog(errorTypeLog, errLineLog, code, src);
+  return generateErrorLog(errorTypeLog, errLineLog, code, src);
 }
 
 const pluralize = (numberOfItems, singularForm, pluralForm = "s") => {
-  return numberOfItems == 1
-    ? singularForm
-    : pluralForm != "s"
-    ? pluralForm
-    : singularForm + "s";
+  let plural = pluralForm != "s" ? pluralForm : singularForm + "s";
+  return numberOfItems <= 1 ? singularForm : plural;
 };
 
 const enumerize = (liste) =>
@@ -393,7 +403,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
   console.log(splitCode, mainCode);
   let lineShift = mainCode.split("\n").length;
 
-  $.terminal.active().echo(">>> Script exécuté : \n------");
+  $.terminal.active().echo(ps1 + runScriptPrompt);
 
   try {
     if (debug_mode) {
@@ -453,24 +463,21 @@ async function evaluatePythonFromACE(code, editorName, mode) {
       stdout += "------";
     }
 
-    if (stdout !== "") $.terminal.active().echo(" " + stdout);
+    if (stdout !== "") $.terminal.active().echo(stdout);
 
     if (assertionCode !== undefined) {
       await pyodide.runPythonAsync(
         "from __future__ import annotations\n" + assertionCode
       ); // Running the assertions
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
-      console.log("tout s'est bien passé");
-      if (!testDummy) $.terminal.active().echo(" " + stdout + "\n------\n");
+      if (!testDummy && stdout !== "") $.terminal.active().echo(stdout);
     }
   } catch (err) {
     console.log("err", err);
     // generateLog does the work
     // TODO : why was lineShift useful ?
     if (!testDummy)
-      $.terminal
-        .active()
-        .echo(generateLog(err, code, lineShift - 1) + "\n------\n");
+      $.terminal.active().echo(generateLog(err, code, lineShift - 1));
     // if (!testDummy) $.terminal.active().echo(generateLog(err, code, 0) + "\n------\n");
   }
 }
@@ -710,7 +717,7 @@ async function checkAsync(editorName, mode) {
           joinLib.push(splitJoin(instruction, "#import dummy_lib_"));
       let nI = joinInstr.length;
       let nL = joinLib.length;
-      stdout = ">>> Script exécuté : \n------\n";
+      stdout = "";
       if (nI > 0)
         stdout += ` ${pluralize(nI, "La", "Les")} ${pluralize(
           nI,
@@ -731,7 +738,7 @@ async function checkAsync(editorName, mode) {
           "est",
           "sont"
         )} ${pluralize(nL == 1, "interdit")} pour cet exercice !\n`;
-      stdout += "------";
+      stdout += "";
     } else {
       let executed_code = await foreignModulesFromImports(
         code,
@@ -768,26 +775,26 @@ async function checkAsync(editorName, mode) {
 
                 for benchmark in numerous_benchmark:
                     failed = 0
-                    print(f">>> Test de la fonction ** {benchmark[0].split('(')[0].upper()} **")
+                    print(f">>> Test de la fonction [[b;;]{benchmark[0].split('(')[0].upper()}]")
                     
                     for k, test in enumerate(benchmark, 1):
                         if eval(test):
                             print(f'Test {k} réussi :  {test} ')
                         else:
-                            print(f'Test {k} échoué :  {test} ')
+                            print(f'[[b;orange;]Test {k} échoué] : {test}')
                             failed += 1
 
                     if not failed :
-                        print(f"Bravo vous avez réussi tous les tests {choice(success_smb)}")
+                        print(f"[[b;green;]Bravo] vous avez réussi tous les tests {choice(success_smb)}")
                     else :
-                        if failed == 1 : msg = f"{failed} test a échoué. "
-                        else : msg = f"{failed} tests ont échoué. "
+                        if failed == 1 : msg = f"{failed} test a [[b;orange;]échoué]. "
+                        else : msg = f"{failed} tests ont [[b;orange;]échoué]. "
                         print(msg + f"Reprenez votre code {choice(fail_smb)}")
                         global_failed += 1
             except :
                 if numerous_benchmark != []:
-                    print(f"- Fonctions manquantes ou noms de fonctions incorrectes.")
-                    print(f"- Respectez les noms indiqués dans l'énoncé.")
+                    print(f"[[b;red;]Erreur :] Fonctions manquantes ou noms de fonctions incorrectes.")
+                    print(f"[[b;red;]    ... ] Respectez les noms indiqués dans l'énoncé.")
                     global_failed += 1
                 else:
                     print(f"🙇🏻 pas de fichier de test... Si vous êtes sur de vous, continuez à cliquer sur le gendarme.")
@@ -920,9 +927,9 @@ ext_var_data = ext_var_data.to_py()
 n_passed = list(map(lambda x: x[0],n_passed_dict.values())).count(-1)
 
 if n_passed == len(n_passed_dict):
-    print(f""">>> Bravo {random.choice(success_smb)} : vous avez réussi tous les tests. \n === Penser à lire le corrigé et les commentaires ===""")
+    print(f"""[[b;green;]Bravo] {random.choice(success_smb)} : vous avez réussi tous les tests. \n\nPenser à lire le corrigé et les commentaires.""", end="")
 else :
-    print(f""">>> Vérification : pour {len(n_passed_dict)} tests, il y a {n_passed} réussite{"s" if n_passed > 1 else ""} \n------""")
+    print(f"""[[b;orange;]Dommage] : pour {len(n_passed_dict)} test{"s" if len(n_passed_dict) > 1 else ""}, il y a {n_passed} réussite{"s" if n_passed > 1 else ""}""")
 
     def extract_log(dico):
         for key, value in n_passed_dict.items():
@@ -941,11 +948,9 @@ else :
     key, log, err_line = extract_log(n_passed_dict)
 
     if (ext_var := extract_external_var(log, err_line, ext_var_data)) != "":
-        print(f"""Échec du test n°{key} : \n\n{extract_external_var(log, err_line, ext_var_data)} \n\n{log}""")
+        print(f"""Échec du test n°{key} : \n\n{extract_external_var(log, err_line, ext_var_data)} \n\n{log}""", end="")
     else:
-        print(f"""Échec du test n°{key} : \n\n{log}""")
-
-print(f"""------""", end="")
+        print(f"""Échec du test n°{key} : \n\n{log}""", end="")
 `);
         if (nSecretTests == success) {
           var output = 0;
@@ -1008,12 +1013,6 @@ print(f"""------""", end="")
     // Python not correct.
     err = err.toString().split("\n").slice(-7).join("\n");
     console.log("fin");
-    $.terminal
-      .active()
-      .echo(
-        ">>> Script exécuté : \n------\n" +
-          generateLog(err, code, 0) +
-          "\n------\n"
-      );
+    $.terminal.active().echo(generateLog(err, code, 0));
   }
 }
