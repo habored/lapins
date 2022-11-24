@@ -311,11 +311,7 @@ function generateErrorLog(errorTypeLog, errorLineInLog, code, src = 0) {
     if (errorTypeLog.includes(errorType)) {
       if (errorType != "AssertionError") {
         // All Exceptions but assertions
-        return errorMessage(
-          errorTypes[errorType],
-          errorLineInLog,
-          errorTypeLog
-        );
+        return error(errorTypes[errorType], errorLineInLog, errorTypeLog);
       }
       // if no description in Assertion, we skip
       if (errorTypeLog === "AssertionError") {
@@ -324,11 +320,7 @@ function generateErrorLog(errorTypeLog, errorLineInLog, code, src = 0) {
           generateAssertionLog(errorLineInLog + src, code)
         )} failed`;
       }
-      return errorMessage(
-        errorTypes[errorType],
-        errorLineInLog + src,
-        errorTypeLog
-      );
+      return error(errorTypes[errorType], errorLineInLog + src, errorTypeLog);
     }
   }
 }
@@ -694,6 +686,7 @@ async function checkAsync(editorName, mode) {
 
   var code = await interpret_code;
   $.terminal.active().clear();
+  $.terminal.active().echo(ps1 + runScriptPrompt);
 
   try {
     var testDummy = code.includes("dummy_");

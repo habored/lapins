@@ -224,7 +224,7 @@ $("[id^=editor_]").each(function () {
     }
 
     if (key != "") {
-      /* another possible condition is this : 
+      /* another possible condition is this :
     !remNode.innerHTML.includes('<h1'))  */
       remNode = document.createElement("div");
       remNode.innerHTML = `Vous trouverez une analyse détaillée de la solution <a href = "../${md5(
