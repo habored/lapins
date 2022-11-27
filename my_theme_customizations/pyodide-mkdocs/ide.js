@@ -203,6 +203,7 @@ $("[id^=editor_]").each(function () {
     } else {
       // Search for the rem DIV.
       workingNode = workingNode.nextElementSibling;
+      console.log("BLABLA", workingNode.innerHTML, prevNode.innerHTML);
       // console.log(prevNode, workingNode)
       // If workingNode is a <p> (admonition), we continue
       // else, we are outside an admonition
@@ -213,13 +214,21 @@ $("[id^=editor_]").each(function () {
         remNode.innerHTML = "Pas de remarque particulière.";
       else {
         var tableElements = [];
-        while (workingNode !== null) {
-          tableElements.push(workingNode);
-          workingNode = workingNode.nextElementSibling;
-        }
+        currentNode = workingNode.nextElementSibling;
+        workingNode.remove();
+        if (currentNode === null) {
+          remNode.innerHTML = "Pas de remarque particulière.";
+        } else {
+          while (currentNode.nextElementSibling !== null) {
+            tableElements.push(currentNode);
+            currentNode = currentNode.nextElementSibling;
+          }
+          currentNode.remove();
 
-        for (let i = 0; i < tableElements.length; i++)
-          remNode.append(tableElements[i]);
+          for (let i = 0; i < tableElements.length; i++) {
+            remNode.append(tableElements[i]);
+          }
+        }
       }
     }
 

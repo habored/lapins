@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="256px" height="256px" viewBox="0 0 1048576 1048576" fill="none" stroke="black" >
+<rect x="262144" y="262144" rx="65536" ry="65536" width="524288" height="524288" stroke-width="32768" />
+<rect x="131072" y="655360" rx="32768" ry="32768" width="262144" height="262144" stroke-width="16384" />
+<rect x="655360" y="655360" rx="32768" ry="32768" width="262144" height="262144" stroke-width="16384" />
+<rect x="131072" y="131072" rx="32768" ry="32768" width="262144" height="262144" stroke-width="16384" />
+<rect x="655360" y="131072" rx="32768" ry="32768" width="262144" height="262144" stroke-width="16384" />
+</svg>

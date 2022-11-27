@@ -354,6 +354,15 @@ def define_env(env):
 
         return play_buttons_group + transfer_buttons_group + save_buttons_group
 
+    def get_last_dir_from(path: str) -> str:
+        return path.split("/")[-2]
+
+    def get_custom_dir() -> Union[str, None]:
+        for path in env.conf["theme"].dirs:
+            if os.path.exists(path + "/pyodide-mkdocs/start_REM.md"):
+                return get_last_dir_from(path)
+        return None
+
     @env.macro
     def insert_remark_file(script_name: str, key_ide: str) -> str:
         IDE_calls_from_md_file = [
@@ -371,7 +380,7 @@ def define_env(env):
         block_remark = ""
         if script_name != "":
             block_remark = f"""
-{leading_spaces}--8<--- "{get_image_path()}/start_REM.md"
+{leading_spaces}--8<--- "{get_custom_dir()}/pyodide-mkdocs/start_REM.md"
 """
         filepath = get_filepath()
         block_remark += (
@@ -382,7 +391,7 @@ def define_env(env):
         )
         if script_name != "":
             block_remark += f"""
-{leading_spaces}--8<--- "{get_image_path()}/end_REM.md"
+{leading_spaces}--8<--- "{get_custom_dir()}/pyodide-mkdocs/end_REM.md"
 """
 
         return block_remark

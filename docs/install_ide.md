@@ -2,10 +2,6 @@
 
 ## Exemple
 
-!!! help "tests"
-
-    {{IDE()}}
-
 {{IDE('exo', MAX = "+", SANS = "eval,max")}}
 
 Un IDE se présente sous cette forme :

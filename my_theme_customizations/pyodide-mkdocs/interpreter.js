@@ -559,7 +559,28 @@ function download(editorName, scriptName) {
 function restart(editorName) {
   localStorage.removeItem(editorName);
   let content = document.getElementById(`content_${editorName}`).innerText;
-  ace.edit(editorName).getSession().setValue(restoreEscapedCharacters(content));
+  if (content.includes(tagHdr)) {
+    // test if a header code is present
+    splitHdrPyFile = content.match(
+      new RegExp(tagHdr + "(.*)" + tagHdr + "(.*)")
+    );
+    if (splitHdrPyFile === null) {
+      var pythonFile = `Missing ${tagHdr} tag. Please check !\n\n` + content;
+    } else {
+      hdrFile = splitHdrPyFile[1];
+      var pythonFile = splitHdrPyFile[2];
+      newline = "bksl-nl";
+      while (pythonFile.startsWith(newline)) {
+        pythonFile = pythonFile.substring(newline.length);
+      }
+    }
+  } else {
+    var pythonFile = content;
+  }
+  ace
+    .edit(editorName)
+    .getSession()
+    .setValue(restoreEscapedCharacters(pythonFile));
 }
 
 function save(editorName) {
