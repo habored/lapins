@@ -1,4 +1,4 @@
-var tagHdr = "#--- HDR ---#";
+var hdrPlaceholderRe = /#\s*-[\s|-]*HDR\s*-[\s|-]*#/i;
 
 var _slate = document.getElementById("ace_palette").dataset.aceDarkMode;
 var _default = document.getElementById("ace_palette").dataset.aceLightMode;
@@ -70,28 +70,31 @@ function createTheme() {
 
 $("[id^=editor_]").each(function () {
   let number = this.id.split("_").pop();
-  let url_pyfile = $("#content_" + this.id).text(); // Extracting url from the div before Ace layer
+  let exerciseFileContent = $("#content_" + this.id).text(); // Extracting url from the div before Ace layer
 
-  if (url_pyfile.includes(tagHdr)) {
-    // test if a header code is present
-    splitHdrPyFile = url_pyfile.match(
-      new RegExp(tagHdr + "(.*)" + tagHdr + "(.*)")
+  let isHeaderPlaceHolderPresent = hdrPlaceholderRe.test(exerciseFileContent);
+  if (isHeaderPlaceHolderPresent) {
+    const matchResults = exerciseFileContent.match(
+      new RegExp(
+        hdrPlaceholderRe.source + "(.*)" + hdrPlaceholderRe.source + "(.*)"
+      )
     );
-    if (splitHdrPyFile === null) {
-      var pyFile = `Missing ${tagHdr} tag. Please check !\n\n` + url_pyfile;
+    if (matchResults === null) {
+      var exerciseCode =
+        `Missing ${tagHdr} tag. Please check !\n\n` + exerciseFileContent;
     } else {
-      hdrFile = splitHdrPyFile[1];
-      var pyFile = splitHdrPyFile[2];
-      newline = "bksl-nl";
-      while (pyFile.startsWith(newline)) {
-        pyFile = pyFile.substring(newline.length);
+      let headerCode = matchResults[1];
+      var exerciseCode = matchResults[2];
+      let newline = "bksl-nl";
+      while (exerciseCode.startsWith(newline)) {
+        exerciseCode = exerciseCode.substring(newline.length);
       }
     }
   } else {
-    var pyFile = url_pyfile;
+    var exerciseCode = exerciseFileContent;
   }
 
-  pyFile = pyFile
+  exerciseCode = exerciseCode
     .replace(/bksl-nl/g, "\n")
     .replace(/py-und/g, "_")
     .replace(/py-str/g, "*");
@@ -119,7 +122,7 @@ $("[id^=editor_]").each(function () {
       { win: "Alt-Tab", mac: "Alt-Tab" },
       "startAutocomplete"
     );
-    editor.getSession().setValue(pyFile);
+    editor.getSession().setValue(exerciseCode);
     editor.commands.addCommand({
       name: "commentTests",
       bindKey: { win: "Ctrl-I", mac: "Cmd-I" },
@@ -127,9 +130,6 @@ $("[id^=editor_]").each(function () {
     });
   }
   window.IDE_ready = createACE(idEditor); // Creating Ace Editor #idEditor
-
-  // console.log(editor.getSession().getValue())
-  // console.log(/#(\s*)Test(s?)[^\n]*/i.test(editor.getSession().getValue()))
 
   var nChange = 0;
   let editor = ace.edit(idEditor);
@@ -152,10 +152,9 @@ $("[id^=editor_]").each(function () {
   if (storedCode !== null) ace.edit(idEditor).getSession().setValue(storedCode);
 
   // Create 6 empty lines
-  if (url_pyfile === "")
+  if (exerciseFileContent === "")
     ace.edit(idEditor).getSession().setValue("\n".repeat(6));
 
-  // A correction Element always exists (can be void)
   // A correction Element always exists (can be void)
   prevNode = document.getElementById("corr_content_" + idEditor);
   var key = prevNode.dataset.strudel;
@@ -307,7 +306,7 @@ $(".highlight").bind("copy paste", function (e) {
 // $('[id^=qcm_]').each(function() {
 //     console.log(this.id)
 //     let number = this.id.split('_').pop();
-//     // let url_pyfile = $('#qcm_'+this.id) // Extracting url from the div before Ace layer
+//     // let exerciseFileContent = $('#qcm_'+this.id) // Extracting url from the div before Ace layer
 //     console.log(number)
 // });
 

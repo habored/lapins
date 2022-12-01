@@ -1,6 +1,6 @@
 var debug_mode = false;
 var dict = {}; // Global dictionnary tracking the number of clicks
-var tagHdr = "#--- HDR ---#";
+var hdrPlaceholderRe = /#\s*-[\s|-]*HDR\s*-[\s|-]*#/i;
 
 function richTextFormat(content, style, color = "", background = "") {
   return `[[${style};${color};${background}]${content}]`;
@@ -392,7 +392,6 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     .split("#tests"); // normalisation
   var mainCode = splitCode[0],
     assertionCode = splitCode[1];
-  console.log(splitCode, mainCode);
   let lineShift = mainCode.split("\n").length;
 
   $.terminal.active().echo(ps1 + runScriptPrompt);
@@ -482,15 +481,17 @@ function restoreEscapedCharacters(codeContent) {
 }
 
 async function evaluateHdrFile(editorName) {
-  let pythonFileContent = document.getElementById(
+  let exerciseFileContent = document.getElementById(
     "content_" + editorName
   ).innerText;
-  if (pythonFileContent.includes(tagHdr)) {
-    const splitHdrPyFile = pythonFileContent.match(
-      new RegExp(tagHdr + "(.*)" + tagHdr)
+  if (hdrPlaceholderRe.test(exerciseFileContent)) {
+    const matchResults = exerciseFileContent.match(
+      new RegExp(hdrPlaceholderRe.source + "(.*)" + hdrPlaceholderRe.source)
     );
-    if (splitHdrPyFile !== null)
-      pyodide.runPython(restoreEscapedCharacters(splitHdrPyFile[1]));
+    if (matchResults !== null) {
+      let headerCode = matchResults[1];
+      pyodide.runPython(restoreEscapedCharacters(headerCode));
+    }
   }
 }
 
@@ -498,9 +499,10 @@ async function playSilent(editorName) {
   let ideClassDiv = document.getElementById("term_" + editorName).parentElement
     .parentElement;
   window.console_ready = await pyterm("#term_" + editorName, 150);
+  // gives the focus to the corresponding terminal
   $("#term_" + editorName)
     .terminal()
-    .focus(true); // gives the focus to the corresponding terminal
+    .focus(true);
 
   let stream = await ace.edit(editorName).getSession().getValue();
 
@@ -559,28 +561,29 @@ function download(editorName, scriptName) {
 function restart(editorName) {
   localStorage.removeItem(editorName);
   let content = document.getElementById(`content_${editorName}`).innerText;
-  if (content.includes(tagHdr)) {
-    // test if a header code is present
-    splitHdrPyFile = content.match(
-      new RegExp(tagHdr + "(.*)" + tagHdr + "(.*)")
+  if (hdrPlaceholderRe.test(exerciseFileContent)) {
+    const matchResults = exerciseFileContent.match(
+      new RegExp(
+        hdrPlaceholderRe.source + "(.*)" + hdrPlaceholderRe.source + "(.*)"
+      )
     );
-    if (splitHdrPyFile === null) {
-      var pythonFile = `Missing ${tagHdr} tag. Please check !\n\n` + content;
+    if (matchResults === null) {
+      var exerciseCode = `Missing HDR tag. Please check !\n\n` + content;
     } else {
-      hdrFile = splitHdrPyFile[1];
-      var pythonFile = splitHdrPyFile[2];
-      newline = "bksl-nl";
-      while (pythonFile.startsWith(newline)) {
-        pythonFile = pythonFile.substring(newline.length);
+      let headerCode = matchResults[1];
+      var exerciseCode = matchResults[2];
+      let newline = "bksl-nl";
+      while (exerciseCode.startsWith(newline)) {
+        exerciseCode = exerciseCode.substring(newline.length);
       }
     }
   } else {
-    var pythonFile = content;
+    var exerciseCode = content;
   }
   ace
     .edit(editorName)
     .getSession()
-    .setValue(restoreEscapedCharacters(pythonFile));
+    .setValue(restoreEscapedCharacters(exerciseCode));
 }
 
 function save(editorName) {

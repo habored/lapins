@@ -1,4 +1,4 @@
-# Pyodide-MkDocs 0.8 : Terminal et IDE dans MkDocs
+# Pyodide-MkDocs 0.9.0 : Terminal et IDE dans MkDocs
 
 ## Introduction
 
