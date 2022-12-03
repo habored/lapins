@@ -824,10 +824,13 @@ async function checkAsync(editorName, mode) {
       } else {
         console.log("declaration", unittest_code);
         var global_failed = 0;
-        var testCodeTable = unittest_code.split("\n"); // splits test code into several lines
-        testCodeTable = testCodeTable.filter((e) => e != ""); // get rid of blank lines
+        // splits test code into several lines without blank lines
+        var testCodeTable = unittest_code
+          .split("\n")
+          .filter((line) => line != "");
+
         var testCodeTableMulti = []; // multiple lines code joined into one line
-        var line = 0;
+        let line = 0;
         let comment = false;
         console.log("587");
         while (line < testCodeTable.length) {
@@ -837,6 +840,9 @@ async function checkAsync(editorName, mode) {
           let contiBool = false;
           let lineStart = line;
 
+          // TODO : Comments are also with #
+          // WARNING : testCodeTable.startsWith doesn't take into account indented code
+          // This is for multiline assertions ?
           if (
             testCodeTable[line].startsWith('"""') ||
             testCodeTable[line].startsWith("'''")
@@ -889,18 +895,19 @@ async function checkAsync(editorName, mode) {
         }
 
         // number of assert BLOCKS
-        var nSecretTests = formattedAssertCode.filter(
+        var numberOfSecretTests = formattedAssertCode.filter(
           (x) => x.includes("assert") && !x.startsWith("#")
         ).length;
-        var nExtVar = formattedAssertCode.filter(
+        var numberOfGlobalVariables = formattedAssertCode.filter(
           (x) =>
             !x.includes("assert") && !x.startsWith("#") && !x.includes("def ")
         ).length;
 
         var nPassedDict = {};
-        var extVarData = {};
-        for (let i = 0; i < nSecretTests; i++) nPassedDict[i] = 0;
-        for (let i = 0; i < nExtVar; i++) extVarData[i] = 0;
+        var globalVariables = {};
+        for (let i = 0; i < numberOfSecretTests; i++) nPassedDict[i] = 0;
+        for (let i = 0; i < numberOfGlobalVariables; i++)
+          globalVariables[i] = 0;
 
         console.log("627", formattedAssertCode);
 
@@ -914,7 +921,7 @@ async function checkAsync(editorName, mode) {
               !command.startsWith("#") &&
               !command.includes("def ")
             ) {
-              extVarData[j] = [line, command];
+              globalVariables[j] = [line, command];
               j++;
             }
             if (command.includes("assert") && !command.startsWith("#")) {
@@ -929,10 +936,15 @@ async function checkAsync(editorName, mode) {
         }
 
         window.n_passed = nPassedDict;
-        window.ext_var_data = extVarData;
+        window.global_variables = globalVariables;
+
+        //pyodide.runPython(unittest_code);
+        var stdout = pyodide.runPython(
+          "import sys as __sys__\n__sys__.stdout.getvalue()"
+        );
 
         pyodide.runPython(`
-from js import n_passed, ext_var_data
+from js import n_passed, global_variables
 import random
 import sys as __sys__
 import io as __io__
@@ -940,7 +952,7 @@ __sys__.stdout = __io__.StringIO()
 success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
 
 n_passed_dict = n_passed.to_py()
-ext_var_data = ext_var_data.to_py()
+global_variables = global_variables.to_py()
 n_passed = list(map(lambda x: x[0],n_passed_dict.values())).count(-1)
 
 if n_passed == len(n_passed_dict):
@@ -964,68 +976,70 @@ else :
 
     key, log, err_line = extract_log(n_passed_dict)
 
-    if (ext_var := extract_external_var(log, err_line, ext_var_data)) != "":
-        print(f"""Échec du test n°{key} : \n\n{extract_external_var(log, err_line, ext_var_data)} \n\n{log}""", end="")
+    if (ext_var := extract_external_var(log, err_line, global_variables)) != "":
+        print(f"""Échec du test n°{key} : \n\n{extract_external_var(log, err_line, global_variables)} \n\n{log}""", end="")
     else:
         print(f"""Échec du test n°{key} : \n\n{log}""", end="")
 `);
-        if (nSecretTests == success) {
+        if (numberOfSecretTests == success) {
           var output = 0;
         }
-      }
 
-      var stdout = pyodide.runPython(
-        "import sys as __sys__\n__sys__.stdout.getvalue()"
-      ); // Catching and redirecting the output
-      let elementCounter = document.getElementById("test_term_" + editorName);
-      let parentCounter = elementCounter.parentElement.dataset.max;
-      const nAttempts = parentCounter;
-      console.log("730", "all passed");
+        var stdout = pyodide.runPython(
+          "import sys as __sys__\n__sys__.stdout.getvalue()"
+        ); // Catching and redirecting the output
+        let elementCounter = document.getElementById("test_term_" + editorName);
+        let parentCounter = elementCounter.parentElement.dataset.max;
+        const nAttempts = parentCounter;
+        console.log("730", "all passed");
 
-      while (elementCounter.className !== "compteur") {
-        elementCounter = elementCounter.nextElementSibling;
-      }
-      let [rootName, idEditor] = editorName.split("_");
-      if (output === 0) dict[idEditor] = nAttempts;
-      else dict[idEditor] = 1 + (idEditor in dict ? dict[idEditor] : 0);
+        while (elementCounter.className !== "compteur") {
+          elementCounter = elementCounter.nextElementSibling;
+        }
+        let [rootName, idEditor] = editorName.split("_");
+        if (output === 0) dict[idEditor] = nAttempts;
+        else dict[idEditor] = 1 + (idEditor in dict ? dict[idEditor] : 0);
 
-      if (nAttempts !== "\u221e") {
-        // INFTY symbol
-        elementCounter.textContent =
-          Math.max(0, nAttempts - dict[idEditor]) + "/" + parentCounter;
-      } else {
-        elementCounter.textContent = parentCounter + "/" + parentCounter;
-      }
-      console.log("747", "all passed");
+        if (nAttempts !== "\u221e") {
+          // INFTY symbol
+          elementCounter.textContent =
+            Math.max(0, nAttempts - dict[idEditor]) + "/" + parentCounter;
+        } else {
+          elementCounter.textContent = parentCounter + "/" + parentCounter;
+        }
+        console.log("747", "all passed");
 
-      if (
-        dict[idEditor] == nAttempts &&
-        !document.getElementById("solution_" + editorName)
-      ) {
-        let correctionExists = $("#corr_content_" + editorName).text(); // Extracting url from the div before Ace layer
         if (
-          correctionExists !== "" ||
-          document.getElementById("corr_content_" + editorName).dataset
-            .strudel != ""
+          dict[idEditor] == nAttempts &&
+          !document.getElementById("solution_" + editorName)
         ) {
-          showCorrection(editorName);
+          let correctionExists = $("#corr_content_" + editorName).text(); // Extracting url from the div before Ace layer
+          if (
+            correctionExists !== "" ||
+            document.getElementById("corr_content_" + editorName).dataset
+              .strudel != ""
+          ) {
+            showCorrection(editorName);
+          }
         }
-      }
 
-      console.log("756", "Correction should be shown");
-      let nlines = calcTermSize(stdout, mode);
-      let editor = ace.edit(editorName);
-      let stream = await editor.getSession().getValue();
-      if (editor.session.getLength() <= nlines && mode === "_v") {
-        const nslash = editor.session.getLength() - nlines + 3; // +3 takes into account shift and newlines
-        for (let i = 0; i < nslash; i++) {
-          stream += "\n";
+        console.log("756", "Correction should be shown");
+        let nlines = calcTermSize(stdout, mode);
+        let editor = ace.edit(editorName);
+        let stream = await editor.getSession().getValue();
+        if (editor.session.getLength() <= nlines && mode === "_v") {
+          const nslash = editor.session.getLength() - nlines + 3; // +3 takes into account shift and newlines
+          for (let i = 0; i < nslash; i++) {
+            stream += "\n";
+          }
+          editor.session.setValue(stream); // set value and reset undo history
         }
-        editor.session.setValue(stream); // set value and reset undo history
+        console.log("767", "Done, all good");
       }
-      console.log("767", "Done, all good");
     }
     $.terminal.active().echo(stdout);
+
+    console.log("all went well");
   } catch (err) {
     // Python not correct.
     err = err.toString().split("\n").slice(-7).join("\n");
