@@ -372,28 +372,24 @@ def define_env(env):
             IDE_calls_from_md_file[0] if len(IDE_calls_from_md_file) >= 1 else ""
         )
 
-        if script_name == "":
-            leading_spaces = " "  # to avoid conflict with empty IDEs
-        else:
-            leading_spaces = " " * (len(first_IDE_call) - len(first_IDE_call.lstrip()))
+        leading_spaces = " " * (len(first_IDE_call) - len(first_IDE_call.lstrip()))
 
         block_remark = ""
         if script_name != "":
             block_remark = f"""
 {leading_spaces}--8<--- "{get_custom_dir()}/pyodide-mkdocs/start_REM.md"
 """
-        filepath = get_filepath()
-        block_remark += (
-            f'''
+            filepath = get_filepath()
+            block_remark += (
+                f'''
 {leading_spaces}--8<--- "docs/{filepath if filepath != "" else "scripts"}/{script_name}_REM.md"'''
-            if key_ide == ""
-            else f""
-        )
-        if script_name != "":
+                if key_ide == ""
+                else f""
+            )
+
             block_remark += f"""
 {leading_spaces}--8<--- "{get_custom_dir()}/pyodide-mkdocs/end_REM.md"
 """
-
         return block_remark
 
     def insert_content(editor_name: str, ide_content: str) -> str:

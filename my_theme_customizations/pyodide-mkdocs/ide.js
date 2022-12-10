@@ -155,6 +155,9 @@ $("[id^=editor_]").each(function () {
   if (exerciseFileContent === "")
     ace.edit(idEditor).getSession().setValue("\n".repeat(6));
 
+  let contentNode = document.getElementById("content_" + idEditor);
+  if (contentNode.childNodes.length === 0) return;
+
   // A correction Element always exists (can be void)
   prevNode = document.getElementById("corr_content_" + idEditor);
   var key = prevNode.dataset.strudel;
