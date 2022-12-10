@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@primer/octicons": "^17.9.0",
+    "simple-icons": "^7.19.0"
+  }
+}

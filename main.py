@@ -314,7 +314,7 @@ def define_env(env):
         )
 
         div_decorations = (
-            f'<div class="line_v"><div id="{editor_name}"></div></div>"'
+            f'<div class="line_v"><div id="{editor_name}"></div></div>'
             if mode == "_v"
             else f'<div class="line" id="{editor_name}"></div>'
         )
