@@ -43,7 +43,7 @@ Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueu
 
 ### Ajout nécessaire
 
-À la racine du projet MkDocs (dans le dossier docs/), vous devez décompresser l'archive .zip téléchargeable [en cliquant ici](../my_theme_customizations.zip) :
+À la racine du projet MkDocs (dans le dossier docs/), vous devez décompresser l'archive .zip téléchargeable [en cliquant ici](my_theme_customizations.zip) :
 
 ??? question "Plus d'information"
 

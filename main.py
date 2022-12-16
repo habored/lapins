@@ -692,39 +692,3 @@ def define_env(env):
         return html_element
 
     # Fin copie
-
-    # @env.macro
-    # def multi_qcm(*input, shuffle = True):
-    #     liste_QCM = []
-    #     if type(input) == str:
-    #         question, liste_bonne_reponse, liste_reponse = extract_csv_file(input)
-    #         liste_QCM.append({"question" : question, "reponse": [rep for rep in liste_reponse], "bonne_reponse": [bonne_rep for bonne_rep in liste_bonne_reponse]})
-    #     else:
-    #         for i in range(len(input)):
-    #             question = input[i][0]
-    #             list_answers = input[i][1]
-    #             list_correct = input[i][2]
-    #             if len(input[i]) == 4:
-    #                 dictionnaire_var = input[i][3]
-    #                 # dictionnaire_var = get_variables_state(input[i][4])
-    #             liste_QCM.append({"question" : question, "reponse": list_answers, "bonne_reponse": list_correct})
-
-    #     id_qcm = generate_id()
-    #     html_element = "<div></div>"#f"""<span id = "setQCM_{id_qcm}">"""
-    #     # print(html_element)
-    #     for i in range(len(input)):
-    #         question = input[i][0]
-    #         list_answers = input[i][1]
-    #         list_correct = input[i][2]
-    #         if len(input[i]) == 4:
-    #             dictionnaire_var = input[i][3]  # {'x' : [2,3,4], 'n' : [3,1,2]}
-    #             var_state = get_variables_state(question)
-    #             for clé in dictionnaire_var:
-    #                 value_in_use = random.choice()
-    #                 question.replace(f"\{{clé}\}", )
-    #             random.choice()
-    #         html_element += f"<span class = 'questionQCM arithmatex'>Question {i+1} : {question}</span>"
-    #         html_element += qcm(list_answers, list_correct, shuffle = shuffle, single = False)
-    #     html_element += f"""<div class="buttonWrapper"><span class = "validationButton" id = "valider_{id_qcm}">Valider</span><span class = "validationButton" id = "recharger_{id_qcm}">Recharger</span></div><div class = "showScore" id="score_{id_qcm}"></div>"""
-    #     print(html_element)
-    #     return html_element
