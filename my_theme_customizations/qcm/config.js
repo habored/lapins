@@ -1,3 +1,15 @@
+//window.MathJax = {
+//  tex: {
+//    inlineMath: [["\\(", "\\)"]],
+//    displayMath: [["\\[", "\\]"]],
+//    processEscapes: true,
+//    processEnvironments: true,
+//  },
+//  options: {
+//    ignoreHtmlClass: ".*|",
+//    processHtmlClass: "arithmatex",
+//  },
+//};
 window.MathJax = {
   startup: {
     ready: () => {
@@ -17,24 +29,3 @@ window.MathJax = {
     processHtmlClass: "arithmatex",
   },
 };
-
-document$.subscribe(() => {
-  MathJax.typesetPromise();
-});
-
-//window.MathJax = {
-//  tex: {
-//    inlineMath: [["\\(", "\\)"]],
-//    displayMath: [["\\[", "\\]"]],
-//    processEscapes: true,
-//    processEnvironments: true,
-//  },
-//  options: {
-//    ignoreHtmlClass: ".*|",
-//    processHtmlClass: "arithmatex",
-//  },
-//};
-
-//document$.subscribe(() => {
-//  MathJax.typesetPromise();
-//});

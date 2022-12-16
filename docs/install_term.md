@@ -4,6 +4,16 @@
 
 {{ terminal() }}
 
+## Utilisation
+
+Entrez simplement sur une ligne : 
+
+```markdown
+{% raw %}
+{{ terminal() }}
+{% endraw %}
+```
+
 ## Technique
 
 Techniquement, le terminal est obtenu en utilisant le plugin [Terminal](https://terminal.jcubic.pl "plugin Jquery") de jQuery[^ip]. 
@@ -12,7 +22,7 @@ Techniquement, le terminal est obtenu en utilisant le plugin [Terminal](https://
 
 On crée un `#!html <div>` qui possède un identificateur numéro (entier commençant à 1 et auto-incrémenté). Ce `#!html <div>` est ensuite colorié à l'aide du plugin Terminal. 
 
-!!! warning "Technique"
+??? warning "Technique"
 
     Un problème provient du focus du terminal. Par défaut, le dernier terminal créé aura le focus, ce qui souvent nous emmène en bas de page...  
 
@@ -20,7 +30,3 @@ On crée un `#!html <div>` qui possède un identificateur numéro (entier commen
         
     - Le premier `#!html <div>` est un simple bloc de texte mimant un Terminal. Il est appelé [fake_id](https://www.youtube-nocookie.com/embed/uwNIMM4qnrI?autoplay=1&iv_load_policy=3&loop=1&modestbranding=1&playlist=uwNIMM4qnrI "Fake ID").
     - Le second `#!html <div>` contient effectivement le Terminal. Il ne se créera que si l'événement onclick du `#!html <div id = fake_id>` est déclenché.
-
-??? danger "Vraiment très technique"
-
-    Voir aussi les fonctions `#!javascript pyterm` et `#!js start_term` de `interpreter.js`.

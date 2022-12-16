@@ -1,3 +1,4 @@
+# Debut copie
 import os
 import hashlib
 from math import log10
@@ -7,8 +8,7 @@ from typing import Literal, Union
 from urllib.parse import unquote
 
 MAX_EMPTY_IDE = 10**8
-
-# print(env.variables.config['theme']['palette']) # access palette color. Automatic toggle of color ?
+# Fin copie
 
 
 def define_env(env):
@@ -68,6 +68,7 @@ def define_env(env):
             <span class="task-list-indicator"></span>\
             </label>{text}</li></ul>"""
 
+    # Debut copie
     env.variables["term_counter"] = 0
     env.variables["IDE_counter"] = 0
     INFINITY_SYMBOL = "∞"
@@ -464,36 +465,22 @@ def define_env(env):
         alphabet = [chr(ord("a") + i) for i in range(26)]
         return "".join(random.choices(alphabet, k=6))
 
-    @env.macro
-    def qcm(list_answers, list_correct, opts=None, shuffle=True, single=True):
-        # single -> une seule question de QCM
-        print("opts", opts)
-        if type(list_correct) == int:
-            list_correct = [list_correct]
-        # back to 0 to n-1 indexing
-        list_correct = list(map(lambda x: x - 1, list_correct))
-
-        def spanify(html_tag):
-            return f"""<span>{html_tag}</span>"""
-
-        def buttonify(answer, id, correct):
-            reveal = "reveal" if single else ""
-            return f"""<input type="checkbox" id="{id}" class="qcm-checkbox {correct} {reveal}"><span class="check-toggle"></span><label for="{id}" class="qcm-item arithmatex">{answer}</label>"""
-
-        def latexify(answer):
-            """$ might not be the first character :
-            blabla $1+1$
-            """
-            if answer.count("$") - answer.count("\$") < 2:
-                return answer
-
+    def latexify(answer):
+        """$ might not be the first character :
+        blabla $1+1$
+        """
+        answer = str(answer)
+        if (
+            answer.count("$") - answer.count("\$") >= 2
+        ):  # regex begin ___$ and end $____ and $ not preceded by \
             string = ""
             start_dollar = True
             for i in range(len(answer)):
                 lettre = answer[i]
                 if lettre == "$":
-                    # case escaping dollar \$
-                    if i == 0 or (i >= 1 and answer[i - 1] != "\\"):
+                    if i == 0 or (
+                        i >= 1 and answer[i - 1] != "\\"
+                    ):  # case escaping dollar \$
                         string += "\(" if start_dollar else "\)"
                         start_dollar = not start_dollar
                     else:
@@ -501,6 +488,25 @@ def define_env(env):
                 else:
                     string += lettre
             return string
+        return answer
+
+    @env.macro
+    def qcm(list_answers, list_correct, opts=None, shuffle=True, single=True):
+        # single -> une seule question de QCM
+        print("opts", opts)
+        if type(list_correct) == int:
+            list_correct = [list_correct]
+        print("liste", list_correct, type(list_correct))
+        list_correct = list(
+            map(lambda x: x - 1, list_correct)
+        )  # back to 0 to n-1 indexing
+
+        def spanify(html_tag):
+            return f"""<span>{html_tag}</span>"""
+
+        def buttonify(answer, id, correct):
+            reveal = "reveal" if single else ""
+            return f"""<input type="checkbox" id="{id}" class="qcm-checkbox {correct} {reveal}"><span class="check-toggle"></span><label for="{id}" class="qcm-item arithmatex">{answer}</label>"""
 
         def codeblockify(answer):
             if answer[0:3] == "`#!":
@@ -510,17 +516,20 @@ def define_env(env):
             return answer
 
         indices = [i for i in range(len(list_answers))]
+        # if shuffle: random.shuffle(indices)
 
+        dict_correspondance = {indices[i]: i for i in range(len(list_answers))}
         inv_dict_correspondance = {i: indices[i] for i in range(len(list_answers))}
 
-        qcm_id = generate_id()
+        id = generate_id()
 
         prefix = "data-var-"
         variable_part = ""
         if opts != None:
+            print("opts", opts, type(opts))
             for clé in opts:
-                variable_part += f"{prefix}{clé} = '{opts[clé]}' "
-        html_element = f"""<div class="wrapper_qcm" id = "qcm_{qcm_id}" data-n-correct = {len(list_correct)} data-shuffle = {1 if shuffle else 0} {variable_part}>"""
+                variable_part += f"""{prefix}{clé} = "{opts[clé]}" """
+        html_element = f"""<div class="wrapper_qcm" id = "qcm_{id}" data-n-correct = {len(list_correct)} data-shuffle = {1 if shuffle else 0} {variable_part}>"""
 
         for i in range(len(list_answers)):
             answer = list_answers[inv_dict_correspondance[i]]
@@ -541,7 +550,7 @@ def define_env(env):
 
         return html_element
 
-    def extract_csv_file(input_file):
+    def extract_csv_file(input_file, sep=";"):
         # extract info from external file
         docs_path = f"""docs/"""
         path = "/".join(
@@ -552,12 +561,27 @@ def define_env(env):
         )
 
         try:
-            f = open(docs_path + path if path != "" else "scripts" + input_file)
-            content = "".join(f.readlines())
+            if path == "":
+                f = open(f"""{docs_path}/scripts/{input_file}""")
+            else:
+                f = open(f"""{docs_path}/{path}/{input_file}""")
+
+            content = list(map(lambda x: x[:-1], f.readlines()))
+            header = content.pop(0).split(sep)
+            csv_file = []
+            print(header)
+            for ligne in content:
+                split_ligne = ligne.split(sep)
+                dico = {
+                    header[i]: split_ligne[i].replace("\\\\", "\\")
+                    if split_ligne[i] != ""
+                    else None
+                    for i in range(len(header))
+                }
+                csv_file.append(dico)
+
             f.close()
-            content = content + "\n"
-            # Hack to integrate code lines in admonitions in mkdocs
-            # change backslash_newline by backslash-newline
+            return csv_file
         except:
             return ""
 
@@ -573,43 +597,88 @@ def define_env(env):
 
     @env.macro
     def multi_qcm(*input, shuffle=True):
+        def latexify(answer):
+            if (
+                answer.count("$") - answer.count("\$") >= 2
+            ):  # regex begin ___$ and end $____ and $ not preceded by \
+                string = ""
+                start_dollar = True
+                for i in range(len(answer)):
+                    lettre = answer[i]
+                    if lettre == "$":
+                        if i == 0 or (
+                            i >= 1 and answer[i - 1] != "\\"
+                        ):  # case escaping dollar \$
+                            string += "\(" if start_dollar else "\)"
+                            start_dollar = not start_dollar
+                        else:
+                            string += "$"
+                    else:
+                        string += lettre
+                return string
+            return answer
+
+        def convert_type(string):
+            string = string.strip()
+            if string[0] in ["'", '"', "‘", "“"]:
+                return str(string[1:-1])
+            elif "." in string:
+                return float(string)
+            else:
+                return int(string)
+
+        def dictionnarify(string):
+            string = string + ","
+            dico = {}
+            regex = r"\s*(\w*)\s*:\s*(\[[\s\w,\.'\"‘“’”]*\]|\w*)\s*,"
+            words = re.findall(regex, string)
+            for var in words:
+                dico[var[0]] = list(
+                    map(convert_type, var[1].strip("[").strip("]").split(","))
+                )
+            return dico
+
         liste_QCM = []
-        if type(input) == str:
-            question, liste_bonne_reponse, liste_reponse = extract_csv_file(input)
-            liste_QCM.append(
-                {
-                    "question": question,
-                    "reponse": [rep for rep in liste_reponse],
-                    "bonne_reponse": [bonne_rep for bonne_rep in liste_bonne_reponse],
-                }
-            )
+        if type(input[0]) == str:
+            csv_file = extract_csv_file(input[0])
+            for entry in csv_file:
+                question = entry["Question"]
+                list_answers = [
+                    entry[clé]
+                    for clé in entry
+                    if "Answer" in clé and entry[clé] != None
+                ]
+                list_correct = list(map(int, entry["Valid"].split(",")))
+                dictionnaire_var = (
+                    dictionnarify(entry["Variable"])
+                    if entry["Variable"] != None
+                    else None
+                )
+                liste_QCM.append(
+                    [question, list_answers, list_correct, dictionnaire_var]
+                )
         else:
             for i in range(len(input)):
                 question = input[i][0]
                 list_answers = input[i][1]
                 list_correct = input[i][2]
                 dictionnaire_var = input[i][3] if len(input[i]) == 4 else None
-                # dictionnaire_var = get_variables_state(input[i][4])
                 liste_QCM.append(
-                    {
-                        "question": question,
-                        "reponse": list_answers,
-                        "bonne_reponse": list_correct,
-                    }
+                    [question, list_answers, list_correct, dictionnaire_var]
                 )
 
         id_qcm = generate_id()
-        html_element = "<div></div>"  # f"""<span id = "setQCM_{id_qcm}">"""
-        # print(html_element)
-        for i in range(len(input)):
-            question = input[i][0]
-            list_answers = input[i][1]
-            list_correct = input[i][2]
-            dictionnaire_var = input[i][3] if len(input[i]) == 4 else None
-            # {'x' : [2,3,4], 'n' : [3,1,2]}
-            # dictionnaire_var = {'x' : [2,3,4], 'n' : [3,1,2]}
-            html_element += f"<span class = 'questionQCM arithmatex'>Question {i+1} : {question}</span>"
-            print("dic", dictionnaire_var)
+        html_element = "<div>"
+        for i, entry in enumerate(liste_QCM):
+            question = entry[0]
+            list_answers = entry[1]
+            list_correct = entry[2]
+            dictionnaire_var = entry[3]
+
+            print(entry, dictionnaire_var)
+
+            html_element += f"<div class = 'setQCM'>"
+            html_element += f"<span class = 'questionQCM arithmatex' data-nq = {i+1}>{latexify(question)}</span>"
             html_element += qcm(
                 list_answers,
                 list_correct,
@@ -617,9 +686,12 @@ def define_env(env):
                 shuffle=shuffle,
                 single=False,
             )
+            html_element += "</div>"
         html_element += f"""<div class="buttonWrapper"><span class = "validationButton" id = "valider_{id_qcm}">Valider</span><span class = "validationButton" id = "recharger_{id_qcm}">Recharger</span></div><div class = "showScore" id="score_{id_qcm}"></div>"""
-        print(html_element)
+        html_element += "</div>"
         return html_element
+
+    # Fin copie
 
     # @env.macro
     # def multi_qcm(*input, shuffle = True):

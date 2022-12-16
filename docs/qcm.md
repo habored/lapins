@@ -1,46 +1,46 @@
-# Des QCM en MkDocs
+# Bonus : QCM et multi QCM
 
+## Des QCM en MkDocs
 
-!!! help "Des QCM en MkDocs"
+Quelle est la réponse à la question universelle (deux réponses possibles) ?
 
-    Quelle est la réponse à la question universelle ?
+{{ qcm(
+    ["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], shuffle = True
+    ) 
+}}
 
-    {{ qcm(
-        ["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], shuffle = True
-        ) 
-    }}
-
-    !!! warning "Code source"
-        
-        === "Utilisation"
-
-            ```markdown 
-            {% raw %}
-            {{ qcm(["$6\\times 7$", "$\\int_0^{42} 1 dx$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], shuffle = True) }}
-            {% endraw %}
-            ```
-            
-            - Argument 1: Tableau de strings contenant vos réponses.
-
-            - Argument 2: Entier ou tableau d'entiers indiquant les bonnes réponses. L'indexation naturelle (1 à N) est choisie.
-
-            - Argument 3: True pour une génération aléatoire à chaque push du site web. False sinon. 
-        
-        === "Limitations"
-
-            - Toute instruction Latex nécessitant un backslash `\` doit être échappé avec un second backslash `\`.
-            
-            - Les codes (e.g. instructions Python) doivent tenir sur une ligne (à améliorer dans le futur).
-            
-            - La génération aléatoire n'est faite qu'une seule fois (à la génération du site statique).
-
-
-!!! help "Installation"
-
-    Prérequis : 
+!!! warning "Syntaxe"
     
-    - plugin macros de MkDocs
+    === "Utilisation"
+
+        ```markdown 
+        {% raw %}
+        {{ qcm(["$6\\times 7$", "$\\int_0^{42} 1 dx$", "`#!python sum([i for i in range(10)])`", "La réponse D"], [1,2], shuffle = True) }}
+        {% endraw %}
+        ```
+        
+        - Argument 1: Tableau de strings contenant vos réponses.
+
+        - Argument 2: Entier ou tableau d'entiers indiquant les bonnes réponses. L'indexation naturelle (1 à N) est choisie.
+
+        - Argument 3: True pour une génération aléatoire à chaque rechargement du site web. False sinon. 
+    
+    === "Limitations"
+
+        - Toute instruction Latex nécessitant un backslash `\` doit être échappé avec un second backslash `\`.
+        
+        - Les codes (e.g. instructions Python) doivent tenir sur une ligne.
+        
+        - La génération aléatoire n'est faite qu'une seule fois (à la génération du site statique).
+
+
+## Installation
+
+!!! help "Prérequis" 
+    
+    - Plugin macro
     - MathJax 3.0
+    - Pyodide-MkDocs
 
     === "mkdocs.yml"
 
@@ -49,7 +49,7 @@
         ```yml
             extra_css:
                 ....
-                - xtra/stylesheets/qcm.css
+                - my_theme_customizations/qcm/qcm.css
                 ....
         ```
     
@@ -126,4 +126,15 @@
         })
         ```
 
-Plus de fonctionnalités à venir.
+## Multi QCM
+
+!!! warning "test"
+
+    {{multi_qcm("exemple.csv")}}
+
+{{multi_qcm(
+  ["1+1=?", ["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D", '42'], [1,2, 5]],
+  ["1+1=?", ["$12$", "2", "Je sais pas", "L'age du capitaine"], [2]],
+  ["$x - {n} = {p}$", ["$x = {n} + {p}$", "$x = {n} - {p}$", "$x = {p}$", "$x = {n} / {p}$"], [1], {'p' : [1, 3, 7], 'n' : [4, 2, 1]} ],  
+  ["Résoudre l'équation $x - {n} = {p}$ pour $x>{p}$.", ["$x = |{n} + {p}|$", "$x = |{n} - {p}|$", "$x = |{p}|$", "$x = \\dfrac{{n}}{{p}}$"], [1], {'p' : [1, 3, 7], 'n' : [4, 2, 1]} ]
+)}}

@@ -2,7 +2,7 @@
 
 ## Introduction
 
-`Pyodide-MkDocs` est une solution technique permettant de créer un cours interactif à partir d'un site généré par MkDocs. 
+Pyodide-MkDocs est une solution technique permettant de créer un cours interactif à partir d'un site statique généré par MkDocs. 
 
 Il permet d'intégrer, dans le navigateur, côté client :
 
@@ -19,79 +19,65 @@ Garantie :
 ??? info "Solution"
     La technologie permettant ce tour de force s'appelle [Pyodide](https://pyodide.org/en/stable/ "Pyodide, Python with the scientific stack, compiled to WebAssembly").
     
-    Pyodide utilise WebAssembly pour faire le lien entre Python et Javascript et proposer un environnement permettant de manipuler le DOM avec Python, ou de manipuler Python avec Javascript.
+    Pyodide utilise WebAssembly pour faire le lien entre Python et Javascript et proposer un environnement permettant de manipuler le DOM Javascript avec Python, ou inversement de manipuler Python avec Javascript.
 
 ## Aperçu
 
-{{IDE('dentiste/exo', MAX = 5)}}
+Une installation complète permet d'obtenir ce résultat :
 
-## Démarrage rapide
+{{IDE('dentiste/exo', MAX = 3)}}
+
+<!--## Démarrage rapide
 
 Vous ne connaissez rien à MkDocs et vous souhaitez vous y mettre ? Des mots comme `yaml`, `javascript`, `Pyodide` ou templates `Jinja` vous font peur ? 
 
-Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueur : clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !
+Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueur : clonez le [répertoire Git](https://gitlab.com/ens-fr/exp2) !-->
 
 ## Installation
 
-On part d'une installation comme indiqué sur [ce lien](https://ens-fr.gitlab.io/mkdocs/) avec le **plugin macro**, préalablement installé.
+### Prérequis
 
-L'installation demande de rajouter à cette configuration les éléments suivants.
+- Material for MkDocs : par exemple, installé comme indiquée sur [cet excellent lien](https://ens-fr.gitlab.io/mkdocs/) ;
+- [Plugin macro](https://mkdocs-macros-plugin.readthedocs.io/en/latest/) ;
+- Python 3.5 et supérieur.
 
-__Modification apportée__ :
-  
-- fichier YML `mkdocs.yml` ;
-- fichier de macro `main.py` ;
+### Ajout nécessaire
 
-__Ajout nécessaire__ :
+À la racine du projet MkDocs (dans le dossier docs/), vous devez décompresser l'archive .zip téléchargeable [en cliquant ici](../my_theme_customizations.zip) :
 
-- un dossier `#!bash my_theme_customizations/` à la racine du projet MkDocs ;
-- un template HTML `#!bash my_theme_customizations/main.html` ;
-- un fichier CSS `#!bash my_theme_customizations/pyodide-mkdocs/pyoditeur.css` ;
-- deux fichiers Javascript `#!bash my_theme_customizations/pyodide-mkdocs/interpreter.js` et `#!bash my_theme_customizations/pyodide-mkdocs/ide.js` ;
-- six images de boutons.
+??? question "Plus d'information"
 
-### Fichier YML `mkdocs.yml`
+    Cela rajoutera les éléments suivants à votre configuration :
 
-Ajoutez la ligne appelée `custom_dir` dans la partie `theme` de votre fichier mkdocs.yml :
+    - un dossier `#!bash my_theme_customizations/` ; <!-- originally it's `bundled_custom_dir` without the banner -->
+    - un template HTML `#!bash my_theme_customizations/main.html` ;
+    - un fichier CSS `#!bash my_theme_customizations/pyodide-mkdocs/pyoditeur.css` ;
+    - deux fichiers Javascript `#!bash my_theme_customizations/pyodide-mkdocs/interpreter.js` et `#!bash my_theme_customizations/pyodide-mkdocs/ide.js` ;
+    - six images de boutons.
 
-```yaml
-theme:
-  name: material
-  custom_dir: my_theme_customizations/
-```
+### Modification apportée
 
-### Fichier macro Python `main.py`
+Vous devez également modifier deux fichiers créés lors de votre installation de Material for Mkdocs.
 
-À votre fichier `main.py`, ajoutez les lignes du fichier [`main.py`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/main.py "main.py sur Gitlab"). Vous devez disposer de Python 3.5 au minimum. 
+!!! question  "Fichiers à modifier"
 
+    === "Fichier YAML `mkdocs.yml`"
 
-### Création du dossier `custom_dir`
+        Ajoutez la ligne appelée `custom_dir` dans la partie `theme` de votre fichier mkdocs.yml :
 
-**N'oubliez pas de créer le dossier `#!bash my_theme_customizations/` à la racine du projet MkDocs**.
+        ```yaml
+        theme:
+          name: material
+          custom_dir: my_theme_customizations/
+        ```
 
-Dans ce dossier, ajoutez le template Jinja [`#!bash main.html`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/main.html).
+    === "Fichier de macro `main.py`"
 
-### Fichier CSS `pyoditeur.css`
+        À votre fichier `main.py`, ajoutez les lignes comprises entre _Debut copie_ et _Fin copie_ du fichier [`main.py`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/release/0.9.0/main.py "main.py sur Gitlab"). 
 
-Afin de coller au thème du site, recopiez et ajoutez le fichier [`pyoditeur.css`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/pyodide-mkdocs/pyoditeur.css "Pyoditeur CSS sur Gitlab") au dossier `my_theme_customizations/pyodide-mkdocs/`.
-
-??? note "Couleurs" 
-
-    Si vous avez opté pour d'autres couleurs, c'est là que vous pourrez faire les modifications de l'éditeur.
-
-### Fichiers javascripts `interpreter.js` et `ide.js`
-
-Deux fichiers Javascript [`interpreter.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/pyodide-mkdocs/interpreter.js "interpreter JS sur Gitlab ") et [`ide.js`](https://gitlab.com/bouillotvincent/pyodide-mkdocs/-/raw/main/my_theme_customizations/pyodide-mkdocs/ide.js "ide JS sur Gitlab ") sont nécessaires :
-
-Ces fichiers doivent être placés dans le dossier : `my_theme_customizations/pyodide-mkdocs/`.
-
-### Images des boutons
-
-Les boutons doivent être placés à cette adresse : `/docs/images/buttons/`. Il existe six boutons que vous pouvez récupérer en téléchargeant l'[archive](images/buttons/Buttons.zip).
+        Il y a deux blocs : le bloc des `python import` et le bloc de code.
 
 ## Syntaxe et exemples
-
-### Syntaxe Markdown
 
 !!! summary "La syntaxe"
 
@@ -111,7 +97,7 @@ Les boutons doivent être placés à cette adresse : `/docs/images/buttons/`. Il
         {{ IDE() }}
         {% endraw %}
         ```
-        Création d'un IDE (~ Thonny) vide. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type _snippet_ avec ++tab++.
+        Création d'un IDE vide, visuellement proche de Thonny. La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type _snippet_ avec ++alt+space++.
 
         {{IDE()}}
 
@@ -121,7 +107,7 @@ Les boutons doivent être placés à cette adresse : `/docs/images/buttons/`. Il
         {{ IDEv() }}
         {% endraw %}
         ```
-        Cette commande crée un IDE vide, avec division verticale. La flèche permet de lancer le code tapé dans la zone de saisie (avec les numéros de ligne). La zone de saisie se redimensionne automatiquement et autorise l'auto-complétion de type snippet avec ++tab++.
+        Cette commande crée un IDE vide, avec division verticale. 
 
         {{IDEv()}}
 
@@ -131,11 +117,12 @@ Les boutons doivent être placés à cette adresse : `/docs/images/buttons/`. Il
         {{ IDE('foo/bar/nom_de_fichier', MAX = 8, SANS = 'max,min') }}
         {% endraw %}
         ```
-        Cette commande charge le fichier `nom_de_fichier.py` dans un IDE. Le fichier doit être dans `docs/scripts/foo/bar/`. Ne pas oublier les guillemets. 
         
-        `MAX = 8` indique le nombre maximal de tentatives de validation que l'élève peut effectuer. `MAX = 1000` permet de mettre ce nombre à l'infini. Valeur par défaut : `MAX = 5` .
+        - Le fichier `nom_de_fichier.py` est chargée dans un IDE. Ce fichier doit être situé impérativement dans `docs/scripts/foo/bar/`. 
+    
+        - `MAX = 8` : indique le nombre maximal de tentatives de validation que l'élève peut effectuer. `MAX = 1000` ou `MAX = "+"` permet de mettre ce nombre à l'infini. Valeur par défaut : `MAX = 5` .
 
-        `SANS = 'max,min'` permet d'interdire l'utilisation des fonctions built-ins `#!python max` et `#!python min`.
+        - `SANS = 'max,min'` permet d'interdire l'utilisation des fonctions built-ins `#!python max` et `#!python min`.
 
         Les IDE sont enregistrés à intervalle de temps régulier. Ils permettent également l'autocomplétion avec la combinaison de touches ++alt+space++.
 
@@ -149,23 +136,11 @@ Les boutons doivent être placés à cette adresse : `/docs/images/buttons/`. Il
         ```
         Cette commande charge le fichier `nom_de_fichier` dans un IDE avec division verticale. Le fichier doit être dans `docs/scripts/foo/bar/`.       
 
-        {{IDEv('demo/demo1', MAX = 3)}}
+        {{IDEv('demo/demo2', MAX = 3)}}
  
 
 ??? warning "Détails techniques"
 
     Tous les IDE et les terminaux partagent le même _namespace_. On peut donc accéder à n'importe quelle fonction créée dans n'importe quel IDE ou terminal. 
     
-    **C'est un comportement qui a l'avantage de pouvoir proposer des exercices où l'on construit petit à petit un code complexe.**
-
-
-### Exemples
-
-L'exemple ci-dessous, obtenu avec `#!markdown {% raw %} {{ IDEv('exo2') }} {% endraw %}`. N'hésitez pas à modifier le code pour calculer la moyenne, l'écart-type, afficher cela dans le terminal etc.
-
-{{IDEv('exo2')}}
-
-L'exemple ci-dessous a été obtenu avec `#!markdown {% raw %} {{ IDE('algo_glouton') }} {% endraw %}`.
-
-{{IDE('algo_glouton')}}
-
+    C'est un comportement qui a l'avantage de pouvoir proposer des exercices où l'on construit petit à petit un code complexe mais qui fera l'objet de changement important à l'avenir.
