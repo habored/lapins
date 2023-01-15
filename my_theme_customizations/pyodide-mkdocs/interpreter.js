@@ -390,8 +390,8 @@ async function evaluatePythonFromACE(code, editorName, mode) {
   let splitCode = code
     .replace(/#(\s*)Test(s?)[^\n]*/i, "#tests")
     .split("#tests"); // normalisation
-  var mainCode = splitCode[0],
-    assertionCode = splitCode[1];
+  var mainCode = splitCode[0];
+  var assertionCode = splitCode[1];
   let lineShift = mainCode.split("\n").length;
 
   $.terminal.active().echo(ps1 + runScriptPrompt);
@@ -407,9 +407,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
       editorName
     );
 
-    await pyodide.runPythonAsync(
-      "from __future__ import annotations\n" + mainCode
-    ); // Running the code
+    pyodide.runPython(mainCode); // Running the code
     var stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
     var testDummy = mainCode.includes("dummy_");
     if (testDummy) {
@@ -457,9 +455,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     if (stdout !== "") $.terminal.active().echo(stdout);
 
     if (assertionCode !== undefined) {
-      await pyodide.runPythonAsync(
-        "from __future__ import annotations\n" + assertionCode
-      ); // Running the assertions
+      pyodide.runPython(assertionCode); // Running the assertions
       var stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
       if (!testDummy && stdout !== "") $.terminal.active().echo(stdout);
     }
@@ -762,9 +758,7 @@ async function checkAsync(editorName, mode) {
         { turtle: "pyo_js_turtle" },
         editorName
       );
-      await pyodide.runPythonAsync(
-        "from __future__ import annotations\n" + executed_code
-      ); // Running the code
+      pyodide.runPython(executed_code); // Running the code
       // pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
 
       let unittest_code = restoreEscapedCharacters(
@@ -909,13 +903,14 @@ async function checkAsync(editorName, mode) {
         for (let i = 0; i < numberOfGlobalVariables; i++)
           globalVariables[i] = 0;
 
-        console.log("627", formattedAssertCode);
+        console.log("912", formattedAssertCode);
 
         i = 0;
         let j = 0;
         for (let [line, command] of formattedAssertCode.entries()) {
           try {
-            pyodide.runPython(`${command}`);
+            console.log(line, command);
+            pyodide.runPython(command);
             if (
               !command.includes("assert") &&
               !command.startsWith("#") &&
@@ -937,11 +932,6 @@ async function checkAsync(editorName, mode) {
 
         window.n_passed = nPassedDict;
         window.global_variables = globalVariables;
-
-        //pyodide.runPython(unittest_code);
-        var stdout = pyodide.runPython(
-          "import sys as __sys__\n__sys__.stdout.getvalue()"
-        );
 
         pyodide.runPython(`
 from js import n_passed, global_variables
@@ -1000,6 +990,8 @@ else :
         if (output === 0) dict[idEditor] = nAttempts;
         else dict[idEditor] = 1 + (idEditor in dict ? dict[idEditor] : 0);
 
+        console.log(output, dict, nAttempts);
+
         if (nAttempts !== "\u221e") {
           // INFTY symbol
           elementCounter.textContent =
@@ -1023,7 +1015,6 @@ else :
           }
         }
 
-        console.log("756", "Correction should be shown");
         let nlines = calcTermSize(stdout, mode);
         let editor = ace.edit(editorName);
         let stream = await editor.getSession().getValue();
@@ -1043,7 +1034,7 @@ else :
   } catch (err) {
     // Python not correct.
     err = err.toString().split("\n").slice(-7).join("\n");
-    console.log("fin");
+    console.log("Error triggered", err);
     $.terminal.active().echo(generateLog(err, code, 0));
   }
 }
