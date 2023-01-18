@@ -556,7 +556,9 @@ function download(editorName, scriptName) {
 
 function restart(editorName) {
   localStorage.removeItem(editorName);
-  let content = document.getElementById(`content_${editorName}`).innerText;
+  let exerciseFileContent = document.getElementById(
+    `content_${editorName}`
+  ).innerText;
   if (hdrPlaceholderRe.test(exerciseFileContent)) {
     const matchResults = exerciseFileContent.match(
       new RegExp(
@@ -564,7 +566,8 @@ function restart(editorName) {
       )
     );
     if (matchResults === null) {
-      var exerciseCode = `Missing HDR tag. Please check !\n\n` + content;
+      var exerciseCode =
+        `Missing HDR tag. Please check !\n\n` + exerciseFileContent;
     } else {
       let headerCode = matchResults[1];
       var exerciseCode = matchResults[2];
@@ -574,7 +577,7 @@ function restart(editorName) {
       }
     }
   } else {
-    var exerciseCode = content;
+    var exerciseCode = exerciseFileContent;
   }
   ace
     .edit(editorName)
