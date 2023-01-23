@@ -140,6 +140,17 @@ async function pyterm(id, height) {
     unlock();
   }
 
+  // Code issued from https://stackoverflow.com/questions/5379120/get-the-highlighted-selected-text
+  function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+      text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+      text = document.selection.createRange().text;
+    }
+    return text;
+  }
+
   let term = $(id).terminal(
     // creates terminal
     (command) => interpreter(command, id), // how to read the input
@@ -154,12 +165,14 @@ async function pyterm(id, height) {
       },
       keymap: {
         "CTRL+C": async function (event, original) {
-          let p = $.terminal.active().get_command();
-          clear_console();
-          $.terminal.active().echo(ps1 + p);
-          $.terminal.active().echo(error("KeyboardInterrupt"));
-          term.set_command("");
-          term.set_prompt(ps1);
+          if (!getSelectionText()) {
+            let p = $.terminal.active().get_command();
+            clear_console();
+            $.terminal.active().echo(ps1 + p);
+            $.terminal.active().echo(error("KeyboardInterrupt"));
+            term.set_command("");
+            term.set_prompt(ps1);
+          }
         },
       },
     }
