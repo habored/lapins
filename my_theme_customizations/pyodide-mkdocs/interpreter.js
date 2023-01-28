@@ -342,12 +342,14 @@ function generateLog(err, code, src = 0) {
   console.log("err 229", err);
   err = String(err).split("\n");
   let p = -2;
-  var lastLogs = err.slice(p, -1);
+  let lastLogs = err.slice(p, -1);
   // catching relevant Exception logs
-  while (!lastLogs[0].includes("line")) {
+
+  while (!/line\s[0-9]+($|[^)]+)/.test(lastLogs[0])) {
     lastLogs = err.slice(p, -1);
     p--;
   }
+
   var errLineLog = lastLogs[0].split(",");
   // catching line number of Exception
   let i = 0;
