@@ -12,6 +12,7 @@ nav:
   - "Guide de l'IDE 🐍": install_ide.md
   - "Avancé ⭐️": advanced.md
   - "Changelog 🧾": CHANGELOG.md
+  - "Bac à sable 🧾": sandbox.md
   #- "QCM en MkDocs ✅❌": qcm.md
   #- "Exemple pratique 🏖": N1/140-multiplication/sujet.md
 

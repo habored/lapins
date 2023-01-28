@@ -10,6 +10,12 @@ let error = (content) => richTextFormat(content, "b", "red");
 let warning = (content) => richTextFormat(content, "", "orange");
 let stress = (content) => richTextFormat(content, "b");
 let info = (content) => richTextFormat(content, "", "grey");
+let italic = (content) => richTextFormat(content, "i");
+let errorMessage = (errorType, lineNumber, log) => {
+  return ` Python a renvoyé une ${error(
+    errorType
+  )} à la ligne ${lineNumber} :\n\n ${italic(log)}`;
+};
 let runScriptPrompt = info("%Script exécuté");
 
 let ps1 = ">>> ",
@@ -281,14 +287,14 @@ function countParenthesis(string, char = "(") {
 
 function generateAssertionLog(errorLineInLog, code) {
   // PROBLEME s'il y a des parenthèses non correctement parenthésées dans l'expression à parser !
-  var codeTable = code.split("\n"); // get assertion test
-  console.log("generateAsssertionLog", codeTable);
+  let codeTable = code.split("\n"); // get assertion test
   errorLineInLog -= 1;
-  var endErrLineLog = errorLineInLog;
-  var countPar = 0;
+  console.log("generateAsssertionLog", code, codeTable, errorLineInLog);
+  let endErrLineLog = errorLineInLog;
+  let countPar = 0;
   do {
     // multilines assertions
-    countPar += countParenthesis(codeTable[errorLineInLog]);
+    countPar += countParenthesis(codeTable[endErrLineLog]);
     endErrLineLog++;
   } while (countPar !== 0 && !/^(\s*assert)/.test(codeTable[endErrLineLog]));
   return `${codeTable
@@ -297,9 +303,14 @@ function generateAssertionLog(errorLineInLog, code) {
     .replace("assert ", "")}`;
 }
 
-function generateErrorLog(errorTypeLog, errorLineInLog, code, src = 0) {
-  let errorTypes = {
-    AssertionError: "Erreur avec les tests publics",
+function generateErrorLog(
+  errorTypeLog,
+  errorLineInLog,
+  code,
+  mainCodeLength = 0
+) {
+  let conversionTable = {
+    AssertionError: "Erreur d'assertion",
     SyntaxError: "Erreur de syntaxe",
     ModuleNotFoundError: "Erreur de chargement de module",
     IndexError: "Erreur d'indice",
@@ -308,7 +319,6 @@ function generateErrorLog(errorTypeLog, errorLineInLog, code, src = 0) {
     AttributeError: "Erreur de référence",
     TypeError: "Erreur de type",
     NameError: "Erreur de nommage",
-    IndentationError: "Erreur d'indentation",
     ZeroDivisionError: "Division par zéro",
     MemoryError: "Dépassement mémoire",
     OverflowError: "Taille maximale de flottant dépassée",
@@ -317,29 +327,41 @@ function generateErrorLog(errorTypeLog, errorLineInLog, code, src = 0) {
     UnboundLocalError: "Variable non définie",
   };
   // Ellipsis is triggered when dots (...) are used
-  errorTypeLog =
-    errorTypeLog +
-    (errorTypeLog.includes("Ellipsis") ? " (issue with the dots ...)" : "");
-  for (const errorType in errorTypes) {
+  errorTypeLog += errorTypeLog.includes("Ellipsis")
+    ? " (issue with the dots ...)"
+    : "";
+  for (const errorType in conversionTable) {
     if (errorTypeLog.includes(errorType)) {
       if (errorType != "AssertionError") {
-        // All Exceptions but assertions
-        return error(errorTypes[errorType], errorLineInLog, errorTypeLog);
+        return errorMessage(
+          conversionTable[errorType],
+          errorLineInLog,
+          errorTypeLog
+        );
       }
-      // if no description in Assertion, we skip
-      if (errorTypeLog === "AssertionError") {
-        // Assertion with description : assert test, description
-        errorTypeLog = `${errorTypeLog} : test ${warning(
-          generateAssertionLog(errorLineInLog + src, code)
-        )} failed`;
+      let prefix = "";
+      if (mainCodeLength != 0)
+        prefix += stress(" Erreur avec les tests publics :\n");
+
+      let isNoDescriptionInAssertion = errorTypeLog === "AssertionError";
+      if (isNoDescriptionInAssertion) {
+        errorTypeLog = `${errorTypeLog}: test ${warning(
+          generateAssertionLog(errorLineInLog + mainCodeLength, code)
+        )} ${richTextFormat("échoué", "", "b")}`;
       }
-      return error(errorTypes[errorType], errorLineInLog + src, errorTypeLog);
+      return (
+        prefix +
+        errorMessage(
+          conversionTable[errorType],
+          errorLineInLog + mainCodeLength,
+          errorTypeLog
+        )
+      );
     }
   }
 }
 
-function generateLog(err, code, src = 0) {
-  console.log("err 229", err);
+function generateLog(err, code, mainCodeLength = 0) {
   err = String(err).split("\n");
   let p = -2;
   let lastLogs = err.slice(p, -1);
@@ -354,8 +376,9 @@ function generateLog(err, code, src = 0) {
   // catching line number of Exception
   let i = 0;
   while (!errLineLog[i].includes("line")) i++;
-  // When <exec> appears, an extra line is executed on Pyodide side (correct for it with -1)
-  let shift = errLineLog[0].includes("<exec>") ? -1 : 0;
+  // When <exec> appears, an extra line is executed on Pyodide side (correct for it with -1) // corrected in version XXX ?
+  //let shift = errLineLog[0].includes("<exec>") ? -1 : 0;
+  let shift = 0;
   errLineLog =
     Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift; //+ src; // get line number
 
@@ -367,8 +390,8 @@ function generateLog(err, code, src = 0) {
     p++;
   }
   console.log(errorTypeLog, errLineLog, code);
-  console.log(src);
-  return generateErrorLog(errorTypeLog, errLineLog, code, src);
+  console.log(mainCodeLength);
+  return generateErrorLog(errorTypeLog, errLineLog, code, mainCodeLength);
 }
 
 const pluralize = (numberOfItems, singularForm, pluralForm = "s") => {
@@ -407,7 +430,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     .split("#tests"); // normalisation
   var mainCode = splitCode[0];
   var assertionCode = splitCode[1];
-  let lineShift = mainCode.split("\n").length;
+  let mainCodeLength = mainCode.split("\n").length;
 
   $.terminal.active().echo(ps1 + runScriptPrompt);
 
@@ -423,7 +446,8 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     );
 
     pyodide.runPython(mainCode); // Running the code
-    var stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
+    let stdout = pyodide.runPython("__sys__.stdout.getvalue()");
+    pyodide.runPython("__sys__.stdout.close()");
     var testDummy = mainCode.includes("dummy_");
     if (testDummy) {
       var splitJoin = (txt, e) => txt.split(e).join("");
@@ -470,17 +494,23 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     if (stdout !== "") $.terminal.active().echo(stdout);
 
     if (assertionCode !== undefined) {
-      pyodide.runPython(assertionCode); // Running the assertions
-      var stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
-      if (!testDummy && stdout !== "") $.terminal.active().echo(stdout);
+      // Note : with the try/catch method, it is not possible to run all the tests or print and catch
+      try {
+        pyodide.runPython(`
+        import sys as __sys__
+        import io as __io__
+        __sys__.stdout = __io__.StringIO()
+      `);
+        pyodide.runPython(assertionCode); // Running the assertions
+        stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
+        if (!testDummy && stdout !== "") $.terminal.active().echo(stdout);
+      } catch (err) {
+        if (!testDummy)
+          $.terminal.active().echo(generateLog(err, code, mainCodeLength - 1));
+      }
     }
   } catch (err) {
-    console.log("err", err);
-    // generateLog does the work
-    // TODO : why was lineShift useful ?
-    if (!testDummy)
-      $.terminal.active().echo(generateLog(err, code, lineShift - 1));
-    // if (!testDummy) $.terminal.active().echo(generateLog(err, code, 0) + "\n------\n");
+    if (!testDummy) $.terminal.active().echo(generateLog(err, code));
   }
 }
 

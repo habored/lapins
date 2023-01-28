@@ -1,0 +1,1 @@
+Je n'ai qu'une remarque à faire : quel bel exercice !

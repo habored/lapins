@@ -1,6 +1,10 @@
 # Bac à sable
 
-<p id="formule" class="arithmatex">
+{{IDE('exo_test/exo', MAX = 3)}}
+
+{{IDE('exo_test_HDR/exo', MAX = 3)}}
+
+<!--<p id="formule" class="arithmatex">
 \(x=3\)
 </p>
 <div id="formule" class="arithmatex">
@@ -21,25 +25,25 @@ $$
 
 $x=3$
 
-<input type="button" onclick="MAJ_formule()" value="Mise à jour">
+<input type="button" onclick="MAJ_formule()" value="Mise à jour">-->
 
 <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
 <!-- <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js?"></script> -->
-<script>
+<!--<script>
 function MAJ_formule() {
   let valeur = Math.floor(Math.random() * 10)
   console.log(valeur)
   document.getElementById("formule").innerHTML = "\\( x = \\sqrt{" + valeur + "}\\)"
 	MathJax.typeset()}
-</script>
+</script>-->
 
 
-
+<!--
 {{multi_qcm(
   ["Age du capitaine ?", ["$6\\times 7$", "Ça : $\\int_0^{42} 1 \\textrm{d} x$", "`#!python sum([i for i in range(10)])`", "La réponse D", '42'], [1,2, 5]],
   ["1+1=?", ["$12$", "2", "Je sais pas", "L'age du capitaine"], [2]],
   ["${x}^{p} = ?$", ["${x}^{p}$", "${x}+{p}$", "Je sais pas", "L'age du capitaine"], [1], {'x' : [8, 2], 'p' : 7} ]
-)}}
+)}}-->
 
 <!-- <span id="truc_m">$x^p$</span>
 
