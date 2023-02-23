@@ -52,7 +52,7 @@ Commencez en douceur en partant d'un repo MkDocs aux dernières normes en vigueu
     - un dossier `#!bash my_theme_customizations/` ; <!-- originally it's `bundled_custom_dir` without the banner -->
     - un template HTML `#!bash my_theme_customizations/main.html` ;
     - un fichier CSS `#!bash my_theme_customizations/pyodide-mkdocs/pyoditeur.css` ;
-    - deux fichiers Javascript `#!bash my_theme_customizations/pyodide-mkdocs/interpreter.js` et `#!bash my_theme_customizations/pyodide-mkdocs/ide.js` ;
+    - trois fichiers Javascript `#!bash my_theme_customizations/pyodide-mkdocs/interpreter.js`, `#!bash my_theme_customizations/pyodide-mkdocs/ide.js` et `#!bash my_theme_customizations/pyodide-mkdocs/utils.js`;
     - six images de boutons.
 
 ### Modification apportée
