@@ -207,7 +207,7 @@ async function foreignModulesFromImports(
 ) {
   await pyodideReadyPromise;
   pyodide.runPython(
-    `from pyodide import find_imports\nimported_modules = find_imports(${JSON.stringify(
+    `from pyodide.code import find_imports\nimported_modules = find_imports(${JSON.stringify(
       code
     )})`
   );
@@ -420,7 +420,7 @@ async function playSilent(editorName) {
 async function play(editorName, mode) {
   let stream = await playSilent(editorName);
   evaluateHdrFile(editorName);
-  calcTermSize(stream, mode);
+  resizeTerminal(stream, mode);
   evaluatePythonFromACE(stream, editorName, mode);
 }
 
@@ -486,7 +486,7 @@ function save(editorName) {
   );
 }
 
-function calcTermSize(text, mode) {
+function resizeTerminal(text, mode) {
   let nlines =
     mode === "_v"
       ? Math.max(text.split(/\r\n|\r|\n/).length, 6)
@@ -912,7 +912,7 @@ else :
           }
         }
 
-        let nlines = calcTermSize(stdout, mode);
+        let nlines = resizeTerminal(stdout, mode);
         let editor = ace.edit(editorName);
         let stream = await editor.getSession().getValue();
         if (editor.session.getLength() <= nlines && mode === "_v") {
