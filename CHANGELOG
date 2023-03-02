@@ -5,13 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.9.1] - 2023-03-31 -> to commit 859ccc8
 
-### Added 
+### User side modifications
 
-### Fixed
+- Major | Assertions are now failing as expected in standard cases (asserts in loops are still experimental)
+- Major | ++Ctrl+C++ in the Terminal or IDE is copying if a selection is made, else it interrupts the process
+- Major | Reload button works now as expected
+- Major | Validating counts correctly the number of attempts of students
 
-## [0.9.0] - 2022-13-21
+- Minor | Added a versioning number accessible from a Terminal or an IDE with Python command `version()`.
+- Minor | HDR are now read whatever actions you do
+
+### Code quality
+
+- Minor | Fix deprecation warnings from new version of Pyodide
+- Major | Creation of a separate file for utilitary functions"
+
+## [0.9.0] - 2022-12-21
 
 ### User side modifications
 
