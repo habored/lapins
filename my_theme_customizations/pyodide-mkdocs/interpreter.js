@@ -1,6 +1,7 @@
 var debug_mode = false;
 var dict = {}; // Global dictionnary tracking the number of clicks
 var hdrPlaceholderRe = /#\s*-[\s|-]*HDR\s*-[\s|-]*#/i;
+var CURRENT_REVISION = "0.9.0";
 
 function sleep(s) {
   return new Promise((resolve) => setTimeout(resolve, s));
@@ -185,6 +186,13 @@ async function pyterm(id, height) {
     await sleep(15);
     term.pause();
   };
+
+  pyodide.runPython(
+    `
+    def version():
+      print("${stress("Pyodide-MkDocs")} : version ${error(CURRENT_REVISION)}")
+    `
+  );
 }
 
 function removeLines(data, moduleName) {
