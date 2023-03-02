@@ -393,6 +393,7 @@ async function playSilent(editorName) {
   $("#term_" + editorName)
     .terminal()
     .focus(true);
+  evaluateHdrFile(editorName);
 
   let stream = await ace.edit(editorName).getSession().getValue();
 
@@ -611,8 +612,6 @@ async function checkAsync(editorName, mode) {
     if (testDummy) {
       var splitJoin = (txt, e) => txt.split(e).join("");
 
-      console.log("ici");
-
       let joinInstr = [];
       let joinLib = [];
       let matchInstr = code.match(new RegExp("dummy_(\\w+)\\(", "g"));
@@ -712,6 +711,9 @@ async function checkAsync(editorName, mode) {
         var output = await pyodide.runPythonAsync(
           unittest_code + "\ntest_unitaire(benchmark)"
         ); // Running the code OUTPUT
+        var stdout = pyodide.runPython(
+          "import sys as __sys__\n__sys__.stdout.getvalue()"
+        );
       } else {
         console.log("declaration", unittest_code);
         var global_failed = 0;

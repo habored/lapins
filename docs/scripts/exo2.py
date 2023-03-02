@@ -1,3 +1,11 @@
+# --HDR--#
+def mystere(a: int) -> int:
+    return a
+
+
+# --HDR--#
+
+
 def sommation(T: list) -> int:
     a = 0
     for nombre in T:
