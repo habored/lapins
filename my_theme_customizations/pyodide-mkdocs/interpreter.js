@@ -7,6 +7,19 @@ function sleep(s) {
   return new Promise((resolve) => setTimeout(resolve, s));
 }
 
+/* This function is needed to deal with correct display of tables in tables and Pyodide */
+const echo = (term, msg, ...opts) => {
+  function keepFirstLetterAfterBrackets(match, ...args) {
+    return `&lsqb;&lsqb;${match.slice(2)}`;
+  }
+  term.echo(
+    msg
+      .replace(/(\[\[)[^a-z;]/g, keepFirstLetterAfterBrackets)
+      .replace(/\]\]/g, "&rsqb;&rsqb;"),
+    ...opts
+  );
+};
+
 async function main() {
   globalThis.pyodide = await loadPyodide({
     stdin: () => {
@@ -51,6 +64,7 @@ async function pyterm(id, height) {
   let await_fut = namespace.get("await_fut");
   let pyconsole = namespace.get("pyconsole");
   let clear_console = namespace.get("clear_console");
+
   namespace.destroy();
 
   let ps1 = ">>> ",
@@ -102,7 +116,8 @@ async function pyterm(id, height) {
       try {
         let [value] = await wrapped;
         if (value !== undefined) {
-          $.terminal.active().echo(
+          echo(
+            $.terminal.active(),
             repr_shorten.callKwargs(value, {
               separator: "\n<long output truncated>\n",
             })
@@ -156,8 +171,8 @@ async function pyterm(id, height) {
           if (!getSelectionText()) {
             let p = $.terminal.active().get_command();
             clear_console();
-            $.terminal.active().echo(ps1 + p);
-            $.terminal.active().echo(error("KeyboardInterrupt"));
+            echo($.terminal.active(), ps1 + p);
+            echo($.terminal.active(), error("KeyboardInterrupt"));
             term.set_command("");
             term.set_prompt(ps1);
           }
@@ -168,7 +183,7 @@ async function pyterm(id, height) {
 
   window.term = term;
   pyconsole.stdout_callback = (s) =>
-    $.terminal.active().echo(s, { newline: false });
+    echo($.terminal.active(), s, { newline: false });
   pyconsole.stderr_callback = (s) => {
     $.terminal.active().error(s.trimEnd());
   };
@@ -296,7 +311,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
   var assertionCode = splitCode[1];
   let mainCodeLength = mainCode.split("\n").length;
 
-  $.terminal.active().echo(ps1 + runScriptPrompt);
+  echo($.terminal.active(), ps1 + runScriptPrompt);
 
   try {
     if (debug_mode) {
@@ -355,7 +370,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
       stdout += "------";
     }
 
-    if (stdout !== "") $.terminal.active().echo(stdout);
+    if (stdout !== "") echo($.terminal.active(), stdout);
 
     if (assertionCode !== undefined) {
       // Note : with the try/catch method, it is not possible to run all the tests or print and catch
@@ -367,14 +382,14 @@ async function evaluatePythonFromACE(code, editorName, mode) {
       `);
         pyodide.runPython(assertionCode); // Running the assertions
         stdout = pyodide.runPython("__sys__.stdout.getvalue()"); // Catching and redirecting the output
-        if (!testDummy && stdout !== "") $.terminal.active().echo(stdout);
+        if (!testDummy && stdout !== "") echo($.terminal.active(), stdout);
       } catch (err) {
         if (!testDummy)
-          $.terminal.active().echo(generateLog(err, code, mainCodeLength - 1));
+          echo($.terminal.active(), generateLog(err, code, mainCodeLength - 1));
       }
     }
   } catch (err) {
-    if (!testDummy) $.terminal.active().echo(generateLog(err, code));
+    if (!testDummy) echo($.terminal.active(), generateLog(err, code));
   }
 }
 
@@ -612,7 +627,7 @@ async function checkAsync(editorName, mode) {
 
   var code = await interpret_code;
   $.terminal.active().clear();
-  $.terminal.active().echo(ps1 + runScriptPrompt);
+  echo($.terminal.active(), ps1 + runScriptPrompt);
 
   try {
     var testDummy = code.includes("dummy_");
@@ -850,6 +865,7 @@ success_smb = ['🔥','✨','🌠','✅','🥇','🎖']
 
 n_passed_dict = n_passed.to_py()
 global_variables = global_variables.to_py()
+
 n_passed = list(map(lambda x: x[0],n_passed_dict.values())).count(-1)
 
 if n_passed == len(n_passed_dict):
@@ -935,13 +951,13 @@ else :
         console.log("767", "Done, all good");
       }
     }
-    $.terminal.active().echo(stdout);
+    echo($.terminal.active(), stdout);
 
     console.log("all went well");
   } catch (err) {
     // Python not correct.
     err = err.toString().split("\n").slice(-7).join("\n");
     console.log("Error triggered", err);
-    $.terminal.active().echo(generateLog(err, code, 0));
+    echo($.terminal.active(), generateLog(err, code, 0));
   }
 }
