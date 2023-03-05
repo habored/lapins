@@ -11,7 +11,7 @@ async function main() {
   globalThis.pyodide = await loadPyodide({
     stdin: () => {
       let result = prompt();
-      echo(result);
+      $.terminal.active().echo(result);
       return result;
     },
   });
