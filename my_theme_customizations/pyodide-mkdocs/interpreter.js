@@ -252,8 +252,6 @@ async function foreignModulesFromImports(
   let micropip = pyodide.pyimport("micropip");
 
   for (let moduleName of importedModules) {
-    console.log(moduleName, Object.keys(moduleDict).length != 0);
-
     if (Object.keys(moduleDict).length != 0 && moduleName in moduleDict) {
       var moduleFakeName = moduleDict[moduleName];
       // number of characters before the first occurrence of the module name, presumably the import clause
@@ -565,9 +563,8 @@ function showCorrection(editorName) {
     editorName +
     '"></div></details>';
 
-  let corrElement = document.getElementById(`corr_content_${editorName}`);
-  let url_pyfile = corrElement.textContent;
-  console.log("url", corrElement);
+  let correctionCode = document.getElementById(`corr_content_${editorName}`);
+  let url_pyfile = correctionCode.textContent;
 
   var _slate = document.getElementById("ace_palette").dataset.aceDarkMode;
   var _default = document.getElementById("ace_palette").dataset.aceLightMode;
@@ -592,16 +589,18 @@ function showCorrection(editorName) {
     return "ace/theme/" + ace_style[customTheme[curPalette]];
   }
 
+  let ideMaximumSize = wrapperElement.dataset.max_size;
+
   function createACE(editorName) {
     var editor = ace.edit(editorName, {
       theme: createTheme(),
       mode: "ace/mode/python",
       autoScrollEditorIntoView: true,
-      maxLines: 30,
+      maxLines: ideMaximumSize,
       minLines: 6,
       tabSize: 4,
       readOnly: true,
-      printMargin: false, // hide ugly margins...
+      printMargin: false, // hide margins.
     });
     // Decode the backslashes into newlines for ACE editor from admonitions
     // (<div> autocloses in an admonition)
@@ -609,7 +608,7 @@ function showCorrection(editorName) {
   }
 
   wrapperElement.insertAdjacentElement("afterend", txt);
-  if (corrElement.dataset.strudel == "")
+  if (correctionCode.dataset.strudel == "")
     window.IDE_ready = createACE(`corr_${editorName}`);
 
   // revealing the remark from Element
@@ -618,7 +617,7 @@ function showCorrection(editorName) {
 
   var fragment = document.createDocumentFragment();
   fragment.appendChild(remElement);
-  // console.log(document.getElementById("solution_" + id_editor).firstChild)
+
   document
     .getElementById("solution_" + editorName)
     .firstChild.appendChild(fragment);

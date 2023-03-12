@@ -6,7 +6,7 @@ Un IDE se présente sous cette forme :
 
 ???+ info "Enroulez-moi !"
 
-    {{IDE('exo2', MAX = "+", SANS = "eval,max")}}
+    {{IDE('exo2', MAX = "+", SANS = "eval,max", SIZE = 20)}}
 
 Il dispose de six boutons :
 <div class="py_mk_ide">
@@ -163,6 +163,20 @@ Par défaut, la commande `#!markdown {% raw %}{{IDE('exo2')}}{% endraw %}` perme
         ```
 
         On a donc un tuple de tableau de chaînes de caractères qui sera évalué avec `#!python eval()`. 
+
+!!! info "Options"
+
+    Lors de l'appel à un IDE dans le fichier .md, il est possible de spécifier plusieurs options telles :
+    
+    `#!markdown{% raw %}{{IDE("fichier1.py", MAX = 5, SANS = "sort, exec", SIZE = 14)}}{% raw %}`
+
+    ou
+
+    `#!markdown{% raw %}{{IDE("fichier2.py", MAX = "+")}}{% raw %}`
+
+    - MAX : indique le nombre maximum d'essais autorisés pour résoudre un exercice avant révélation de la solution (1000 ou "+" pour infini). Par défaut : 5.
+    - SANS : exclu des instructions Python (builtins ou non). Par défaut : "exec, eval".
+    - SIZE : donne la taille **maximale** d'un IDE. Si le script est plus petit, la taille réelle s'adaptera au plus petit. Un script Python plus long que SIZE sera tout de même visible à l'aide des sliders. Par défaut : 20.
 
 !!! warning "Important"
 
