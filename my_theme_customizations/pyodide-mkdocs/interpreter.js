@@ -94,6 +94,13 @@ async function pyterm(id, height) {
         }
       }
 
+      let hasImports = c.startsWith("import");
+      if (hasImports) {
+        await pyodide.loadPackage("micropip");
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install(c.match(/import (\w+)/i)[1]);
+      }
+
       let fut = pyconsole.push(c);
       term.set_prompt(fut.syntax_check === "incomplete" ? ps2 : ps1);
       switch (fut.syntax_check) {
@@ -107,6 +114,7 @@ async function pyterm(id, height) {
         default:
           throw new Error(`Unexpected type ${ty}`);
       }
+
       // In JavaScript, await automatically also awaits any results of
       // awaits, so if an async function returns a future, it will await
       // the inner future too. This is not what we want so we
@@ -223,12 +231,14 @@ function removeLines(data, moduleName) {
     .join("\n");
 }
 
+// This function should be called for HDR and main code
 async function foreignModulesFromImports(
   code,
   moduleDict = {},
   editorName = ""
 ) {
   await pyodideReadyPromise;
+
   pyodide.runPython(
     `from pyodide.code import find_imports\nimported_modules = find_imports(${JSON.stringify(
       code
@@ -237,10 +247,15 @@ async function foreignModulesFromImports(
   const importedModules = pyodide.globals.get("imported_modules").toJs();
   var executedCode = code;
 
-  for (var moduleName in moduleDict) {
-    var moduleFakeName = moduleDict[moduleName];
+  // WARNING : there is probably a memory leak here (namespace issue)
+  await pyodide.loadPackage("micropip");
+  let micropip = pyodide.pyimport("micropip");
 
-    if (importedModules.includes(moduleName)) {
+  for (let moduleName of importedModules) {
+    console.log(moduleName, Object.keys(moduleDict).length != 0);
+
+    if (Object.keys(moduleDict).length != 0 && moduleName in moduleDict) {
+      var moduleFakeName = moduleDict[moduleName];
       // number of characters before the first occurrence of the module name, presumably the import clause
       var indexModule = executedCode.indexOf(moduleName);
       // substring to count the number of newlines
@@ -268,16 +283,11 @@ async function foreignModulesFromImports(
       }
       if (moduleName.includes("turtle")) showGUI(editorName);
 
-      executedCode =
-        `import micropip\nawait micropip.install("${moduleFakeName}")\n${importLine}\n` +
-        executedCode;
-    }
-    if (debug_mode) {
-      console.log(executedCode);
-    }
-    executedCode = removeLines(executedCode, moduleName);
-    if (debug_mode) {
-      console.log(executedCode);
+      await micropip.install(moduleFakeName);
+      executedCode = `${importLine}\n` + executedCode;
+      executedCode = removeLines(executedCode, moduleName);
+    } else {
+      await micropip.install(moduleName);
     }
   }
   return executedCode;
@@ -314,9 +324,6 @@ async function evaluatePythonFromACE(code, editorName, mode) {
   echo($.terminal.active(), ps1 + runScriptPrompt);
 
   try {
-    if (debug_mode) {
-      console.log(code);
-    }
     // foreignModulesFromImports kinda run the code once to detect the imports (that's shit, thanks pyodide)
     mainCode = await foreignModulesFromImports(
       mainCode,
