@@ -1,5 +1,23 @@
 # Options avancées
 
+## Pyodide et récursion
+
+Les fonctions récursives peuvent prendre significativement plus de temps pour terminer. 
+
+En raison de la taille limitée de la pile d'exécution sur le navigateur, la limite de récursion maximale est fixée à 200 appels.
+
+Pour des raisons de performance, la profondeur de récursion au démarrage est fixée à 100.
+
+Il est possible de changer cette profondeur à partir du terminal ou d'un terminal associé à un IDE :
+
+- `setrecursionlimit(153)` fixe le nombre d'appels récursif maximal à 153
+
+- `getrecursionlimit()` donne le nombre d'appels récursif maximal actuel
+
+???+ warning "Module `sys`"
+
+    Un appel au module `sys` et à `setrecursionlimit` sera inopérant.
+
 ## Palette de couleur et coloration de l'IDE
 
 Mkdocs appelle son mode sombre `slate` et son mode jour `default`.

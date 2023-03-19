@@ -26,6 +26,17 @@ function countParenthesis(string, separator = "(") {
   );
 }
 
+function removeRecursionWrapperFrom(errorlog) {
+  let indexRecursionWrapper = -1;
+  for (let i = 0; i < errorlog.length; i++) {
+    if (errorlog[i].includes("RecursionWrapper")) indexRecursionWrapper = i;
+  }
+
+  if (indexRecursionWrapper != -1) errorlog.splice(indexRecursionWrapper, 1);
+
+  return errorlog;
+}
+
 function generateAssertionLog(errorLineInLog, code) {
   // PROBLEME s'il y a des parenthèses non correctement parenthésées dans l'expression à parser !
   let codeTable = code.split("\n");
@@ -108,7 +119,10 @@ function generateLog(err, code, mainCodeLength = 0) {
   let lastLogs = err.slice(p, -1);
   // catching relevant Exception logs
 
-  while (!/line\s[0-9]+($|[^)]+)/.test(lastLogs[0])) {
+  while (
+    !/line\s[0-9]+($|[^)]+)/.test(lastLogs[0]) ||
+    lastLogs[0].includes("RecursionWrapper")
+  ) {
     lastLogs = err.slice(p, -1);
     p--;
   }
@@ -122,6 +136,8 @@ function generateLog(err, code, mainCodeLength = 0) {
   let shift = 0;
   errLineLog =
     Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift; //+ src; // get line number
+
+  lastLogs = removeRecursionWrapperFrom(lastLogs);
 
   // catching multiline Exception logs (without line number)
   var errorTypeLog = lastLogs[1];

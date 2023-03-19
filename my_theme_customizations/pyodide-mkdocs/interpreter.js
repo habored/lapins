@@ -212,8 +212,29 @@ async function pyterm(id, height) {
 
   pyodide.runPython(
     `
+    RECURSION_LIMIT = 100
+
     def version():
       print("${stress("Pyodide-MkDocs")} : version ${error(CURRENT_REVISION)}")
+    
+    def getrecursionlimit():
+      return RECURSION_LIMIT
+
+    def setrecursionlimit(limit: int):
+      RECURSION_LIMIT = min(limit, 200)
+
+    import inspect
+
+    def recursion_limiter(callback):
+      def recursion_wrapper(*args, **kwargs):
+          if len(inspect.stack()) / 2 > RECURSION_LIMIT:
+              raise RecursionError(
+                  f"maximum recursion depth exceeded for function {callback.__name__}"
+              )
+
+          callback(*args, **kwargs)
+  
+      return recursion_wrapper
     `
   );
 }
@@ -291,6 +312,11 @@ async function foreignModulesFromImports(
   return executedCode;
 }
 
+function decorateFunctionsIn(code) {
+  decoratedCode = code.replace(/\ndef /g, "\n@recursion_limiter\ndef ");
+  return decoratedCode;
+}
+
 async function evaluatePythonFromACE(code, editorName, mode) {
   await pyodideReadyPromise;
 
@@ -329,7 +355,10 @@ async function evaluatePythonFromACE(code, editorName, mode) {
       editorName
     );
 
-    pyodide.runPython(mainCode); // Running the code
+    let decoratedMainCode = decorateFunctionsIn(mainCode);
+
+    pyodide.runPython(decoratedMainCode); // Running the code
+
     let stdout = pyodide.runPython("__sys__.stdout.getvalue()");
     pyodide.runPython("__sys__.stdout.close()");
     var testDummy = mainCode.includes("dummy_");
@@ -427,7 +456,6 @@ async function playSilent(editorName) {
 
   localStorage.setItem(editorName, stream);
 
-  console.log(ideClassDiv.dataset.exclude);
   if (ideClassDiv.dataset.exclude != "") {
     for (let instruction of ideClassDiv.dataset.exclude.split(",")) {
       pyodide.runPython(`
@@ -678,13 +706,15 @@ async function checkAsync(editorName, mode) {
         )} ${pluralize(nL == 1, "interdit")} pour cet exercice !\n`;
       stdout += "";
     } else {
-      let executed_code = await foreignModulesFromImports(
+      let executedCode = await foreignModulesFromImports(
         code,
         { turtle: "pyo_js_turtle" },
         editorName
       );
-      pyodide.runPython(executed_code); // Running the code
-      // pyodide.runPython("from __future__ import annotations\n"+code);    // Running the student code (no output)
+
+      let decoratedExecutedCode = decorateFunctionsIn(executedCode);
+
+      pyodide.runPython(decoratedExecutedCode); // Running the code
 
       let unittest_code = restoreEscapedCharacters(
         document.getElementById("test_term_" + editorName).textContent
