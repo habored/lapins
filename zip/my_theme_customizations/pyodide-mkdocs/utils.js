@@ -76,6 +76,7 @@ function generateErrorLog(
     OverflowError: "Taille maximale de flottant dépassée",
     TabError: "Mélange d'indentations et d'espaces",
     RecursionError: "Erreur de récursion",
+    ValueError: "Valeur incorrecte",
     UnboundLocalError: "Variable non définie",
   };
   // Ellipsis is triggered when dots (...) are used
