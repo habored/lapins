@@ -5,18 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.9.1] - 2023-03-31 -> to commit 859ccc8
+## [0.9.1] - 2023-03-31
 
 ### User side modifications
 
-- Major | Assertions are now failing as expected in standard cases (asserts in loops are still experimental)
-- Major | ++Ctrl+C++ in the Terminal or IDE is copying if a selection is made, else it interrupts the process
-- Major | Reload button works now as expected
-- Major | Validating counts correctly the number of attempts of students
+- Major | PYODIDE : Imports are natively handled in Pyodide-MkDocs. No more tricks needed
+- Major | PYODIDE : Set a maximum recursion limit to avoid crash from Pyodide. See [Advanced](docs/advanced.md) for more info
+- Major | IDE : Assertions are now failing as expected in standard cases (asserts in loops are still experimental)
+- Major | IDE : Validating counts correctly the number of attempts of students
+- Major | IDE : Tables of tables are now displaying correctly with new version of Pyodide
 
-- Minor | Added a versioning number accessible from a Terminal or an IDE with Python command `version()`.
-- Minor | HDR are now read whatever actions you do
-
+- Minor | IDE : `input()` are now working as expected
+- Minor | IDE : Reload button works now as expected
+- Minor | IDE : HDR are now read whatever actions you do
+- Minor | IDE : Added an option in the IDE to set a maximal size from the Markdown file
+- Minor | TERMINAL : ++Ctrl+C++ in the Terminal or IDE is copying if a selection is made, else it interrupts the process
+- Minor | PYODIDE : Added a versioning number accessible from a Terminal or an IDE with Python command `version()`
+  
 ### Code quality
 
 - Minor | Fix deprecation warnings from new version of Pyodide
@@ -44,4 +49,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Major | Refactored `main.py` to improve robustness and readability
 - Major | CSS : CSS classes are now specialized to avoid scripts-mangling
 - Minor | Simplify remark handling for empty IDE
-

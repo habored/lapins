@@ -1,28 +1,53 @@
 # Changelog
 
-!!! note "[0.9.0] - 12-12-2022"
+All notable changes to this project will be documented in this file.
 
-    === "User side modifications"
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-        - Major | Updated Pyodide version to 21.3
-        - Major | Improved console outputs with Rich Text format
-        - Major | Centralised Pyodide-MkDocs file architecture in `custom_dir`
-        - Major | Improved documentation readability
+## [0.9.1] - 2023-03-31
 
-        --- 
+### User side modifications
 
-        - Minor | Updated ACE version to 12.5
-        - Minor | Updated Terminal version to 2.23
+- Major | PYODIDE : Imports are natively handled in Pyodide-MkDocs. No more tricks needed
+- Major | PYODIDE : Set a maximum recursion limit to avoid crash from Pyodide. See [Advanced](docs/advanced.md) for more info
+- Major | IDE : Assertions are now failing as expected in standard cases (asserts in loops are still experimental)
+- Major | IDE : Validating counts correctly the number of attempts of students
+- Major | IDE : Tables of tables are now displaying correctly with new version of Pyodide
 
-        --- 
+- Minor | IDE : `input()` are now working as expected
+- Minor | IDE : Reload button works now as expected
+- Minor | IDE : HDR are now read whatever actions you do
+- Minor | IDE : Added an option in the IDE to set a maximal size from the Markdown file
+- Minor | TERMINAL : ++Ctrl+C++ in the Terminal or IDE is copying if a selection is made, else it interrupts the process
+- Minor | PYODIDE : Added a versioning number accessible from a Terminal or an IDE with Python command `version()`
+  
+### Code quality
 
-        - Minor | IDE : Bug quote in vertical ide
-        - Minor | HDR : A regex is now in place and allows for mistakes in HDR tag
-        - Minor | HDR : When reloading a page, HDR is now hidden
-        - Minor | ERRORLOGGER : when making a mistake, the error was not always correctly displayed
+- Major | SAFARI : This browser doesn't support Pyodide-MkDocs anymore. We are working hard to get it back.
+- Major | Creation of a separate file for utilitary functions"
 
-    === "Code quality"
+- Minor | Fix deprecation warnings from new version of Pyodide
 
-        - Major | Refactored `main.py` to improve robustness and readability
-        - Major | CSS : CSS classes are now specialized to avoid scripts-mangling
-        - Minor | Simplify remark handling for empty IDE
+## [0.9.0] - 2022-12-21
+
+### User side modifications
+
+- Major | Updated Pyodide version to 21.3
+- Major | Improved console outputs with Rich Text format"
+- Major | Restructured pyodide-mkdocs file architecture
+- Major | Improved documentation readability
+
+- Minor | Updated ACE version to 12.5
+- Minor | Updated Terminal version to 2.23"
+
+- Minor | IDE : Bug quote in vertical ide
+- Minor | HDR : A regex is now in place and allows for mistakes in HDR tag
+- Minor | HDR : When reloading a page, HDR is now hidden
+- Minor | ERRORLOGGER : when making a mistake, the error was not always correctly displayed
+
+### Code quality
+
+- Major | Refactored `main.py` to improve robustness and readability
+- Major | CSS : CSS classes are now specialized to avoid scripts-mangling
+- Minor | Simplify remark handling for empty IDE

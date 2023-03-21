@@ -168,11 +168,11 @@ Par défaut, la commande `#!markdown {% raw %}{{IDE('exo2')}}{% endraw %}` perme
 
     Lors de l'appel à un IDE dans le fichier .md, il est possible de spécifier plusieurs options telles :
     
-    `#!markdown{% raw %}{{IDE("fichier1.py", MAX = 5, SANS = "sort, exec", SIZE = 14)}}{% raw %}`
+    `#!markdown {% raw %}{{IDE("fichier1.py", MAX = 5, SANS = "sort, exec", SIZE = 14)}}{% endraw %}`
 
     ou
 
-    `#!markdown{% raw %}{{IDE("fichier2.py", MAX = "+")}}{% raw %}`
+    `#!markdown {% raw %}{{IDE("fichier2.py", MAX = "+")}}{% endraw %}`
 
     - MAX : indique le nombre maximum d'essais autorisés pour résoudre un exercice avant révélation de la solution (1000 ou "+" pour infini). Par défaut : 5.
     - SANS : exclu des instructions Python (builtins ou non). Par défaut : "exec, eval".

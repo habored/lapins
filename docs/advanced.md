@@ -1,5 +1,13 @@
 # Options avancées
 
+## Version
+
+Pour connaitre la version de Pyodide-MkDocs que vous utilisez. Utiliser simplement le terminal ou le terminal associé à un IDE :
+
+- `version()`.
+
+Si cette commande n'existe pas, votre version est antérieure à la 0.9.1 et vous loupez de nombreuses fonctionnalités !
+
 ## Pyodide et récursion
 
 Les fonctions récursives peuvent prendre significativement plus de temps pour terminer. 
