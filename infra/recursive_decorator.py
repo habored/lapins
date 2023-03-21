@@ -9,7 +9,7 @@ def recursion_limiter(function):
             raise RecursionError(
                 f"maximum recursion depth exceeded for function {function.__name__}"
             )
-        function(*args, **kwargs)
+        return function(*args, **kwargs)
 
     return RecursionWrapper
 
@@ -21,11 +21,10 @@ def my_function(entier):
     return my_function(entier - 1)
 
 
-my_function(20)
+print(my_function(20))
+
+# def f(entier):
+#    return f(entier)
 
 
-def f(entier):
-    return f(entier)
-
-
-f(100)
+# f(100)

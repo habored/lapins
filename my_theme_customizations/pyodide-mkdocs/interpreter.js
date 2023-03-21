@@ -1,7 +1,7 @@
 var debug_mode = false;
 var dict = {}; // Global dictionnary tracking the number of clicks
 var hdrPlaceholderRe = /#\s*-[\s|-]*HDR\s*-[\s|-]*#/i;
-var CURRENT_REVISION = "0.9.0";
+var CURRENT_REVISION = "0.9.1";
 
 function sleep(s) {
   return new Promise((resolve) => setTimeout(resolve, s));
@@ -232,7 +232,7 @@ async function pyterm(id, height) {
                   f"maximum recursion depth exceeded for function {callback.__name__}"
               )
 
-          callback(*args, **kwargs)
+          return callback(*args, **kwargs)
   
       return recursion_wrapper
     `
@@ -313,7 +313,11 @@ async function foreignModulesFromImports(
 }
 
 function decorateFunctionsIn(code) {
-  decoratedCode = code.replace(/\ndef /g, "\n@recursion_limiter\ndef ");
+  let replacer = (match, p1, offset, chain) => {
+    return p1 + "@recursion_limiter\ndef ";
+  };
+
+  let decoratedCode = code.replace(/([\n]*)def /g, replacer);
   return decoratedCode;
 }
 
