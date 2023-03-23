@@ -32,6 +32,17 @@ async function main() {
 
 let pyodideReadyPromise = main();
 
+async function tryImportFromPyPi(promptLine) {
+  let hasImports = promptLine.startsWith("import");
+  if (hasImports) {
+    try {
+      await pyodide.loadPackage("micropip");
+      const micropip = pyodide.pyimport("micropip");
+      await micropip.install(promptLine.match(/import (\w+)/i)[1]);
+    } catch {}
+  }
+}
+
 async function pyterm(id, height) {
   await pyodideReadyPromise;
   let namespace = pyodide.globals.get("dict")();
@@ -94,12 +105,7 @@ async function pyterm(id, height) {
         }
       }
 
-      let hasImports = c.startsWith("import");
-      if (hasImports) {
-        await pyodide.loadPackage("micropip");
-        const micropip = pyodide.pyimport("micropip");
-        await micropip.install(c.match(/import (\w+)/i)[1]);
-      }
+      tryImportFromPyPi(c);
 
       let fut = pyconsole.push(c);
       term.set_prompt(fut.syntax_check === "incomplete" ? ps2 : ps1);
@@ -306,7 +312,9 @@ async function foreignModulesFromImports(
       executedCode = `${importLine}\n` + executedCode;
       executedCode = removeLines(executedCode, moduleName);
     } else {
-      await micropip.install(moduleName);
+      try {
+        await micropip.install(moduleName);
+      } catch {}
     }
   }
   return executedCode;
@@ -347,7 +355,6 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     .split("#tests"); // normalisation
   var mainCode = splitCode[0];
   var assertionCode = splitCode[1];
-  // The +1 has been added because the # Tests has been removed from the line count
   let mainCodeLength = mainCode.split("\n").length + 1;
 
   echo($.terminal.active(), ps1 + runScriptPrompt);
