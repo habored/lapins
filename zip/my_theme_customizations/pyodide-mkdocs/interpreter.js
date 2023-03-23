@@ -347,7 +347,8 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     .split("#tests"); // normalisation
   var mainCode = splitCode[0];
   var assertionCode = splitCode[1];
-  let mainCodeLength = mainCode.split("\n").length;
+  // The +1 has been added because the # Tests has been removed from the line count
+  let mainCodeLength = mainCode.split("\n").length + 1;
 
   echo($.terminal.active(), ps1 + runScriptPrompt);
 

@@ -41,7 +41,7 @@ function generateAssertionLog(errorLineInLog, code) {
   // PROBLEME s'il y a des parenthèses non correctement parenthésées dans l'expression à parser !
   let codeTable = code.split("\n");
   errorLineInLog -= 1;
-  console.log("generateAsssertionLog", code, codeTable, errorLineInLog);
+
   let endErrLineLog = errorLineInLog;
   let countPar = 0;
   do {
@@ -49,6 +49,7 @@ function generateAssertionLog(errorLineInLog, code) {
     countPar += countParenthesis(codeTable[endErrLineLog]);
     endErrLineLog++;
   } while (countPar !== 0 && !/^(\s*assert)/.test(codeTable[endErrLineLog]));
+
   return `${codeTable
     .slice(errorLineInLog, endErrLineLog)
     .join(" ")
@@ -93,15 +94,16 @@ function generateErrorLog(
         );
       }
       let prefix = "";
-      if (mainCodeLength != 0)
-        prefix += stress(" Erreur avec les tests publics :\n");
+      let isPublicTests = mainCodeLength != 0;
+      if (isPublicTests) prefix += stress(" Erreur avec les tests publics :\n");
 
       let isNoDescriptionInAssertion = errorTypeLog === "AssertionError";
       if (isNoDescriptionInAssertion) {
         errorTypeLog = `${errorTypeLog}: test ${warning(
           generateAssertionLog(errorLineInLog + mainCodeLength, code)
-        )} ${richTextFormat("échoué", "", "b")}`;
+        )} échoué`;
       }
+
       return (
         prefix +
         errorMessage(
@@ -133,8 +135,8 @@ function generateLog(err, code, mainCodeLength = 0) {
   let i = 0;
   while (!errLineLog[i].includes("line")) i++;
   // When <exec> appears, an extra line is executed on Pyodide side (correct for it with -1) // corrected in version XXX ?
-  //let shift = errLineLog[0].includes("<exec>") ? -1 : 0;
-  let shift = 0;
+  let shift = errLineLog[0].includes("<exec>") ? -1 : 0;
+  //let shift = 0;
   errLineLog =
     Number(errLineLog[i].slice(5 + errLineLog[i].indexOf("line"))) + shift; //+ src; // get line number
 

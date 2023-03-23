@@ -347,7 +347,7 @@ async function evaluatePythonFromACE(code, editorName, mode) {
     .split("#tests"); // normalisation
   var mainCode = splitCode[0];
   var assertionCode = splitCode[1];
-  let mainCodeLength = mainCode.split("\n").length;
+  let mainCodeLength = mainCode.split("\n").length + 1;
 
   echo($.terminal.active(), ps1 + runScriptPrompt);
 
