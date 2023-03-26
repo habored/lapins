@@ -21,13 +21,13 @@ const echo = (term, msg, ...opts) => {
 };
 
 async function main() {
-  globalThis.pyodide = await loadPyodide({
-    stdin: () => {
-      let result = prompt();
-      $.terminal.active().echo(result);
-      return result;
-    },
-  });
+  globalThis.pyodide = await loadPyodide();
+}
+
+function inputWithPrompt(text) {
+  let result = prompt(text);
+  $.terminal.active().echo(result);
+  return result;
 }
 
 let pyodideReadyPromise = main();
@@ -241,6 +241,10 @@ async function pyterm(id, height) {
           return callback(*args, **kwargs)
   
       return recursion_wrapper
+    
+    from js import inputWithPrompt
+    input = inputWithPrompt
+    __builtins__.input = inputWithPrompt
     `
   );
 }
