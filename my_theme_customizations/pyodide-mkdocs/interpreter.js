@@ -396,28 +396,28 @@ async function evaluatePythonFromACE(code, editorName, mode) {
           joinLib.push(splitJoin(instruction, "#import dummy_lib_"));
       let nI = joinInstr.length;
       let nL = joinLib.length;
-      stdout = ">>> Script exécuté : \n------\n";
+      stdout = "";
       if (nI > 0)
         stdout += ` ${pluralize(nI, "La", "Les")} ${pluralize(
           nI,
           "fonction"
-        )} ${splitJoin(
-          splitJoin(enumerize(joinInstr), "dummy_"),
-          "("
+        )} ${error(
+          splitJoin(splitJoin(enumerize(joinInstr), "dummy_"), "(")
         )} ${pluralize(nI, "est", "sont")} ${pluralize(
           nI,
           "interdite"
-        )} pour cet exercice !\n`;
+        )} pour cet exercice !`;
+      let spacer = nI > 0 && nL > 0 ? "\n" : "";
+      stdout += spacer;
       if (nL > 0)
         stdout += ` ${pluralize(nL, "Le", "Les")} ${pluralize(
           nL,
           "module"
-        )} ${splitJoin(enumerize(joinLib), "dummy_lib_")} ${pluralize(
+        )} ${error(splitJoin(enumerize(joinLib), "dummy_lib_"))} ${pluralize(
           nL,
           "est",
           "sont"
-        )} ${pluralize(nL, "interdit")} pour cet exercice !\n`;
-      stdout += "------";
+        )} ${pluralize(nL, "interdit")} pour cet exercice !`;
     }
 
     if (stdout !== "") echo($.terminal.active(), stdout);
