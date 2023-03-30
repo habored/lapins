@@ -325,11 +325,11 @@ async function foreignModulesFromImports(
 }
 
 function decorateFunctionsIn(code) {
-  let replacer = (match, p1, offset, chain) => {
-    return p1 + "@recursion_limiter\ndef ";
+  let replacer = (match, p1, p2, offset, chain) => {
+    return p1 + p2 + "@recursion_limiter\n" + p2 + "def ";
   };
 
-  let decoratedCode = code.replace(/([\n]*)def /g, replacer);
+  let decoratedCode = code.replace(/([\n]*)(\s*)def /g, replacer);
   return decoratedCode;
 }
 
