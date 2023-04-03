@@ -4,7 +4,7 @@ repo_url: https://gitlab.com/bouillotvincent/pyodide-mkdocs
 edit_uri: tree/main/docs/
 site_description: Tutoriel pour un IDE et un Terminal dans MkDocs Material
 copyright: |
-  Copyleft &#127279 2021 <a href="https://bouillotvincent.gitlab.io/tests-avec-mkdocs/" target="_blank" rel="noopener">Vincent BOUILLOT</a>
+  GNU GPLv3 2023 <a href="https://gitlab.com/bouillotvincent" target="_blank" rel="noopener">Vincent Bouillot</a>
 docs_dir: docs
 nav:
   - "Terminal ▶️ et IDE 🖥 dans MkDocs": index.md
